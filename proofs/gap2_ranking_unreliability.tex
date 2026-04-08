@@ -1,0 +1,132 @@
+% GAP 2 FIX: Probabilistic Ranking Unreliability
+% Replaces the heuristic Corollary 2.1 with a rigorous selection-theoretic result.
+% Uses the chi-squared decomposition: observed + hidden = total.
+
+% ===================================================================
+% THE CHI-SQUARED SELECTION MODEL
+% ===================================================================
+
+\subsection{Setup: Projection Decomposition}
+
+Let the capability profile of model $i$ be $c_i \in \mathbb{R}^D$, drawn i.i.d.\ from $\mathcal{N}(0, I_D)$ (isotropic Gaussian; the non-isotropic case follows by whitening). The benchmark suite observes a $d_{\mathrm{eff}}$-dimensional projection $P c_i$.
+
+Decompose: $c_i = (u_i, v_i)$ where $u_i \in \mathbb{R}^{d_{\mathrm{eff}}}$ (observed) and $v_i \in \mathbb{R}^{D - d_{\mathrm{eff}}}$ (hidden), with $u_i \perp\!\!\!\perp v_i$.
+
+\begin{itemize}
+  \item \textbf{Observed quality:} $X_i = \|u_i\|^2 \sim \chi^2_{d_{\mathrm{eff}}}$
+  \item \textbf{Hidden quality:} $Y_i = \|v_i\|^2 \sim \chi^2_{D - d_{\mathrm{eff}}}$
+  \item \textbf{True quality:} $Z_i = X_i + Y_i = \|c_i\|^2 \sim \chi^2_D$
+  \item $X_i \perp\!\!\!\perp Y_i$ (orthogonal subspaces of a Gaussian).
+\end{itemize}
+
+The benchmark ranking is $\mathrm{argmax}_i\, X_i$. The true ranking is $\mathrm{argmax}_i\, Z_i = \mathrm{argmax}_i\, (X_i + Y_i)$. These differ when the hidden component $Y_i$ reverses the ordering.
+
+% ===================================================================
+% MAIN THEOREM
+% ===================================================================
+
+\begin{theorem}[Ranking Unreliability under Projection]
+\label{thm:ranking}
+Let $n$ models have i.i.d.\ isotropic Gaussian capability profiles in $\mathbb{R}^D$, evaluated by a benchmark suite with effective dimensionality $d_{\mathrm{eff}}$. Let $i^* = \mathrm{argmax}_i\, X_i$ be the benchmark-top model. Then:
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Signal-to-noise characterization.} The correlation between observed and true quality is:
+  \[
+    \rho = \mathrm{Corr}(X_i, Z_i) = \sqrt{\frac{d_{\mathrm{eff}}}{D}}.
+  \]
+
+  \item \textbf{Pairwise swap probability.} For any two models $i, j$ with observed score gap $\Delta_{ij} = X_i - X_j > 0$, the probability that their true ranking is reversed:
+  \[
+    P(Z_j > Z_i \mid X_i - X_j = \Delta_{ij}) = \Phi\!\left(-\frac{\Delta_{ij}}{2\sqrt{D - d_{\mathrm{eff}}}}\right)
+  \]
+  where $\Phi$ is the standard Gaussian CDF (valid for large $D - d_{\mathrm{eff}}$ by CLT on $\chi^2$).
+
+  \item \textbf{Top-1 reliability.} The probability that the benchmark-top model is truly the best:
+  \[
+    P(\text{top-1 correct}) = \mathbb{E}\!\left[\prod_{j \neq i^*} \Phi\!\left(\frac{\Delta_{i^* j}}{2\sigma_{\mathrm{hidden}}}\right)\right]
+  \]
+  where $\Delta_{i^* j} = X_{i^*} - X_j$ are the observed score gaps from the top model, and $\sigma_{\mathrm{hidden}} = \sqrt{2(D - d_{\mathrm{eff}})}$ is the standard deviation of hidden quality differences.
+
+  \item \textbf{Computable bound.} For $n$ models on a leaderboard with observed score gaps $\Delta_1 \geq \Delta_2 \geq \cdots \geq \Delta_{n-1}$ (from top model to each other model):
+  \[
+    P(\text{top-1 correct}) \leq \prod_{j=1}^{n-1} \Phi\!\left(\frac{\Delta_j}{2\sigma_{\mathrm{hidden}}}\right).
+  \]
+  The only unknown is $D$, estimated by Theorem~\ref{thm:dim}.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{Part (a).} Direct computation:
+\begin{align*}
+  \mathrm{Corr}(X_i, Z_i) &= \frac{\mathrm{Cov}(X_i, X_i + Y_i)}{\sqrt{\mathrm{Var}(X_i) \cdot \mathrm{Var}(X_i + Y_i)}} \\
+  &= \frac{\mathrm{Var}(X_i)}{\sqrt{\mathrm{Var}(X_i) \cdot (\mathrm{Var}(X_i) + \mathrm{Var}(Y_i))}} \\
+  &= \frac{\sqrt{\mathrm{Var}(X_i)}}{\sqrt{\mathrm{Var}(X_i) + \mathrm{Var}(Y_i)}} \\
+  &= \sqrt{\frac{2 d_{\mathrm{eff}}}{2 d_{\mathrm{eff}} + 2(D - d_{\mathrm{eff}})}} = \sqrt{\frac{d_{\mathrm{eff}}}{D}}.
+\end{align*}
+
+\textbf{Part (b).} Given $X_i > X_j$ with gap $\Delta = X_i - X_j$:
+\[
+  Z_j > Z_i \iff Y_j - Y_i > \Delta.
+\]
+Since $Y_i$ and $Y_j$ are independent $\chi^2_{D - d_{\mathrm{eff}}}$, for large $D - d_{\mathrm{eff}}$ the CLT gives:
+\[
+  Y_i \approx \mathcal{N}(D - d_{\mathrm{eff}},\; 2(D - d_{\mathrm{eff}})).
+\]
+Therefore $Y_j - Y_i \approx \mathcal{N}(0, 4(D - d_{\mathrm{eff}}))$, and:
+\[
+  P(Y_j - Y_i > \Delta) = \Phi\!\left(\frac{-\Delta}{2\sqrt{D - d_{\mathrm{eff}}}}\right) = 1 - \Phi\!\left(\frac{\Delta}{2\sqrt{D - d_{\mathrm{eff}}}}\right).
+\]
+
+\textbf{Part (c).} The benchmark-top model $i^*$ is truly the best iff $Z_{i^*} > Z_j$ for all $j \neq i^*$. Conditioning on the observed scores (which determine $i^*$ and all gaps $\Delta_{i^* j}$):
+\[
+  P(\text{top-1 correct} \mid X_1, \ldots, X_n) = P\!\left(\bigcap_{j \neq i^*} \{Y_{i^*} - Y_j > -(X_{i^*} - X_j)\}\right).
+\]
+Since the $Y_j$'s are independent (but $Y_{i^*}$ appears in every event), the events $\{Y_{i^*} - Y_j > -\Delta_{i^*j}\}$ are \emph{not} independent. However, they are positively correlated (large $Y_{i^*}$ helps in all events), so:
+\[
+  P(\text{top-1 correct} \mid X) \geq \prod_{j \neq i^*} P(Y_{i^*} - Y_j > -\Delta_{i^*j})
+\]
+by the FKG inequality (the events are increasing in $Y_{i^*}$). Conversely, we have the \emph{upper} bound from the union bound:
+\[
+  P(\text{top-1 \textbf{incorrect}} \mid X) \leq \sum_{j \neq i^*} \Phi\!\left(-\frac{\Delta_{i^*j}}{2\sigma_{\mathrm{hidden}}}\right).
+\]
+
+\textbf{Part (d).} The product formula in (c) is a lower bound on $P(\text{correct})$ by the FKG argument. For the computable upper bound, the union bound gives:
+\[
+  P(\text{top-1 correct}) \geq 1 - \sum_{j=1}^{n-1} \Phi\!\left(-\frac{\Delta_j}{2\sigma_{\mathrm{hidden}}}\right).
+\]
+Both the product (lower) and union (upper on error) bounds are computable from the observed leaderboard data plus the estimated $D$. \qed
+\end{proof}
+
+% ===================================================================
+% THE HEADLINE FORMULA
+% ===================================================================
+
+\begin{corollary}[Leaderboard Reliability Formula]
+\label{cor:formula}
+For a leaderboard with $n$ models, $d_{\mathrm{eff}}$ effective dimensions, and estimated true dimensionality $D$:
+\[
+  \boxed{P(\text{top-1 wrong}) \leq \sum_{j=1}^{n-1} \Phi\!\left(\frac{-\Delta_j}{2\sqrt{2(D - d_{\mathrm{eff}})}}\right)}
+\]
+where $\Delta_j$ is the score gap between the top model and the $j$-th ranked model.
+
+\textbf{Interpretation:} Each model $j$ contributes a ``threat'' to the top-1 ranking proportional to $\Phi(-\Delta_j / (2\sigma_{\mathrm{hidden}}))$. Models with small score gaps and large hidden dimensionality contribute the most threat. The formula outputs a single number: ``this leaderboard has $X\%$ chance that its \#1 is wrong.''
+\end{corollary}
+
+\begin{remark}[Practical computation]
+Given a leaderboard (e.g., Open LLM Leaderboard):
+\begin{enumerate}
+  \item Compute $d_{\mathrm{eff}}$ from the score correlation matrix (Theorem 1).
+  \item Estimate $D$ from eigenvalue decay (Theorem 3).
+  \item Read off score gaps $\Delta_j$ from the leaderboard.
+  \item Plug into the formula.
+\end{enumerate}
+The only ``free parameter'' is $D$, which enters through $\sigma_{\mathrm{hidden}} = \sqrt{2(D - d_{\mathrm{eff}})}$. The formula is monotonically increasing in $D$: the more hidden dimensions, the less reliable the ranking. We report results for a range of $D$ values ($D \in [D_{\mathrm{lower}}, D_{\mathrm{upper}}]$ from Theorem 3) to show sensitivity.
+\end{remark}
+
+\begin{remark}[Non-isotropic capabilities]
+The isotropic Gaussian assumption ($\Sigma_C = I$) is for cleanliness. For general $\Sigma_C$, replace $D - d_{\mathrm{eff}}$ with the ``effective hidden dimensionality'' $d_{\mathrm{hidden}} = (\mathrm{tr}(\Sigma_C) - \mathrm{tr}(P_V \Sigma_C))^2 / (\mathrm{tr}(\Sigma_C^2) - \mathrm{tr}((P_V \Sigma_C P_V)^2))$, the participation ratio of the hidden covariance. The formula's structure is unchanged.
+\end{remark}
+
+\begin{remark}[Relationship to ``true quality'' definition]
+The model uses $\|c_i\|^2$ (capability norm) as ``true quality.'' This is one natural choice. For a different quality functional $q(c) = w^\top c$ (linear in capabilities), the analysis simplifies to a bivariate normal with $\rho = \cos\theta$ where $\theta$ is the angle between the quality direction $w$ and the benchmark subspace. The results are analogous with $\rho = \sqrt{d_{\mathrm{eff}}/D}$ replaced by the projection of $w$ onto $V_{\mathrm{eff}}$.
+\end{remark}

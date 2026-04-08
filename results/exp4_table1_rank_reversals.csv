@@ -1,0 +1,5 @@
+model_a,model_b,added,rank_a_before,rank_b_before,rank_a_after,rank_b_after
+abacusai/Smaug-34B-v0.1,fblgit/UNA-SimpleSmaug-34b-v1beta,AbacusResearch/Jallabi-34B,5,4,4,5
+abacusai/Smaug-34B-v0.1,fblgit/UNA-SimpleSmaug-34b-v1beta,OpenBuddy/openbuddy-mixtral-7bx8-v18.1-32k,5,4,4,5
+abacusai/Smaug-34B-v0.1,fblgit/UNA-SimpleSmaug-34b-v1beta,cognitivecomputations/dolphin-2.9.1-yi-1.5-34b,4,3,4,5
+abacusai/Smaug-34B-v0.1,fblgit/UNA-SimpleSmaug-34b-v1beta,upstage/SOLAR-10.7B-Instruct-v1.0,5,4,4,5

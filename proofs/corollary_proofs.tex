@@ -1,0 +1,62 @@
+% Corollary Proofs: Busemann-Petty Threshold Analogue
+% STEREOLOGY Paper — Proof Document
+
+\subsection{The Busemann-Petty Analogue for Benchmark Evaluation}
+
+\begin{proposition}[Benchmark Domination Does Not Imply Capability Domination]
+\label{prop:bp}
+For evaluation suites with effective dimensionality $d_{\mathrm{eff}} \geq 5$, there exist pairs of convex capability profiles $K, L \subset \mathbb{R}^D$ such that model $A$ (with profile $K$) scores strictly lower than model $B$ (with profile $L$) on \emph{every} benchmark:
+\[
+  \pi_i(A) < \pi_i(B) \quad \text{for all } i = 1, \ldots, k,
+\]
+yet model $A$ occupies a strictly larger volume of the capability space:
+\[
+  \mathrm{vol}_D(K) > \mathrm{vol}_D(L).
+\]
+\end{proposition}
+
+\begin{proof}
+This follows from the resolution of the Busemann-Petty problem and related phenomena in high-dimensional convex geometry.
+
+\textbf{Background.} The Busemann-Petty problem (1956) asks: if $K$ and $L$ are origin-symmetric convex bodies in $\mathbb{R}^d$ with $\mathrm{vol}_{d-1}(K \cap u^\perp) \leq \mathrm{vol}_{d-1}(L \cap u^\perp)$ for every direction $u$, does it follow that $\mathrm{vol}_d(K) \leq \mathrm{vol}_d(L)$? The answer, resolved over 1988--1999 by multiple authors \cite{lutwak1988intersection, gardner1994positive, zhang1999generalized, koldobsky1998intersection}, is:
+\begin{itemize}
+  \item \textbf{Yes} for $d \leq 4$.
+  \item \textbf{No} for $d \geq 5$. Counterexamples exist.
+\end{itemize}
+
+The related \emph{Shephard problem} \cite{petty1967projection, schneider1967projections} asks the analogous question for projection volumes rather than section volumes, and the answer is \textbf{No} for $d \geq 3$.
+
+\textbf{Connection to benchmarks.} Benchmark scores are scalar measurements --- closer to \emph{widths} $w_K(u) = h_K(u) + h_K(-u)$ than to section volumes $\mathrm{vol}_{d-1}(K \cap u^\perp)$ or projection volumes $\mathrm{vol}_{d-1}(K | u^\perp)$. The phenomenon underlying both the Busemann-Petty and Shephard results is more general: \emph{in sufficiently high dimensions, pointwise domination of lower-dimensional measurements does not entail domination of full-dimensional quantities.}
+
+For widths specifically: if $w_K(u) \leq w_L(u)$ for all $u \in S^{d-1}$, it does \emph{not} follow that $\mathrm{vol}_d(K) \leq \mathrm{vol}_d(L)$ in any dimension $d \geq 3$. This is because the width function determines the \emph{difference body} $K - K = \{x - y : x, y \in K\}$ (via the support function of $K - K$, which equals $w_K$), but the volume of $K$ is not determined by the volume of $K - K$ (the Rogers-Shephard inequality gives $\binom{2d}{d}^{-1} \mathrm{vol}(K-K) \leq \mathrm{vol}(K) \leq \mathrm{vol}(K-K)$, but these bounds are not tight enough to preserve ordering).
+
+\textbf{Application.} When $d_{\mathrm{eff}} \geq 5$, the effective subspace of the benchmark suite has sufficient dimensionality for the Busemann-Petty phenomenon to manifest. That is, there exist capability profiles (convex bodies in the effective subspace) where one body has smaller widths (benchmark scores) in every measured direction, yet has larger total volume (capability).
+
+In LLM evaluation terms: a model that scores lower on every benchmark could nonetheless possess a larger ``total capability'' if that capability is distributed in directions not aligned with the benchmark suite. The probability of such configurations increases rapidly with $d_{\mathrm{eff}}$. \qed
+\end{proof}
+
+\begin{remark}[Framing as analogue]
+We emphasize that the above is an \emph{analogue} of the Busemann-Petty result, not a direct application. The Busemann-Petty problem concerns hyperplane section volumes; our benchmarks measure widths (support function values). The phenomenon is the same --- pointwise domination of low-dimensional measurements fails to predict high-dimensional volume ordering --- but the precise dimension threshold for width measurements remains an \emph{open question}, connected to Gardner's Problem 8.2 \cite{gardner2006geometric}.
+
+The Busemann-Petty threshold ($d = 5$ for sections) and the Shephard threshold ($d = 3$ for projections) \emph{bracket} the likely range for the benchmark-score threshold. We conjecture the threshold for widths is $d = 3$ (same as Shephard), since widths are essentially one-dimensional projections, but this remains unproven.
+\end{remark}
+
+\begin{remark}[Practical implication]
+The Busemann-Petty analogue implies that ``benchmark domination'' --- the claim that model A is better than model B because A scores higher on every benchmark --- is not a valid inference when $d_{\mathrm{eff}} \geq 5$. This is a geometric obstruction, not a statistical one: even with perfect measurement and infinite data, pointwise benchmark superiority does not imply overall capability superiority.
+
+This has immediate consequences for LLM ranking methodologies. The common practice of declaring model A ``better'' than model B when A outperforms B on all benchmarks is formally unjustified when the evaluation suite has $d_{\mathrm{eff}} \geq 5$ --- which, as Experiment 1 shows, is sometimes (but not always) the case for major leaderboards.
+\end{remark}
+
+\subsection{Connection to Multi-Criteria Decision Making}
+
+The rank reversal corollary (Corollary~\ref{cor:reversal} in the Theorem 2 proof document) connects to a 40-year debate in multi-criteria decision making (MCDM). \citet{belton1983short} first demonstrated rank reversal in the Analytic Hierarchy Process (AHP): adding an irrelevant alternative can reverse the ranking of existing alternatives. This ``independence of irrelevant alternatives'' (IIA) violation has been extensively studied \cite{saaty1984inconsistency, dyer1990remarks, harker1987alternative}.
+
+Our contribution is to identify the \emph{geometric} root cause: rank reversal is inevitable when the effective dimensionality of the evaluation criteria is less than $n - 1$. This unifies the MCDM literature's many specific examples under a single geometric condition, and predicts exactly when rank reversal is possible and when it is not.
+
+\subsection{Combined Practical Message}
+
+\begin{enumerate}
+  \item \textbf{$d_{\mathrm{eff}} < n - 1$}: Rankings are unstable --- adding models can reverse existing rankings.
+  \item \textbf{$d_{\mathrm{eff}} \geq 5$}: Benchmark domination is unreliable --- scoring higher on every benchmark does not imply greater capability.
+  \item \textbf{Both together}: For a leaderboard with 50+ models and $d_{\mathrm{eff}} \approx 3\text{--}5$, both phenomena are active simultaneously.
+\end{enumerate}

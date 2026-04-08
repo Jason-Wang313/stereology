@@ -1,0 +1,73 @@
+% GAP 4 FIX: Distribution-Free Variance Capture Bound
+% Replaces the uniform-eigenvalue assumption with a concentration argument.
+% Amends Theorem 1, Part (a).
+
+% ===================================================================
+% STRENGTHENED THEOREM 1(a)
+% ===================================================================
+
+\begin{theorem}[Distribution-Free Variance Capture]
+\label{thm:deff-strengthened}
+Let $\Sigma_C \in \mathbb{R}^{D \times D}$ be the capability covariance (arbitrary eigenvalues $\mu_1 \geq \cdots \geq \mu_D \geq 0$), and let the $k$ benchmark directions span a $d_{\mathrm{eff}}$-dimensional effective subspace $V_{\mathrm{eff}}$.
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Worst-case (adversarial alignment):} The captured variance fraction satisfies:
+  \[
+    \frac{\mathrm{tr}(P_{V} \Sigma_C)}{\mathrm{tr}(\Sigma_C)} \leq \frac{\sum_{i=1}^{d_{\mathrm{eff}}} \mu_i}{\sum_{i=1}^D \mu_i}
+  \]
+  with equality when $V_{\mathrm{eff}}$ aligns with the top $d_{\mathrm{eff}}$ eigenvectors of $\Sigma_C$.
+
+  \item \textbf{Generic benchmarks (concentration):} If the benchmark subspace $V_{\mathrm{eff}}$ is drawn uniformly from the Grassmannian $\mathrm{Gr}(d_{\mathrm{eff}}, D)$ --- i.e., benchmark directions are not systematically aligned with the principal capability axes --- then:
+  \[
+    \mathbb{E}\!\left[\frac{\mathrm{tr}(P_V \Sigma_C)}{\mathrm{tr}(\Sigma_C)}\right] = \frac{d_{\mathrm{eff}}}{D}
+  \]
+  and this concentrates: for any $t > 0$,
+  \[
+    P\!\left(\left|\frac{\mathrm{tr}(P_V \Sigma_C)}{\mathrm{tr}(\Sigma_C)} - \frac{d_{\mathrm{eff}}}{D}\right| > t\right) \leq 2\exp\!\left(-\frac{D \, t^2}{8 \kappa^2(\Sigma_C)}\right)
+  \]
+  where $\kappa(\Sigma_C) = \mu_1 / \bar{\mu}$ is the condition ratio ($\bar{\mu} = \mathrm{tr}(\Sigma_C)/D$ is the average eigenvalue).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{Part (a)} follows from the Cauchy interlacing theorem. The projector $P_V$ has rank $d_{\mathrm{eff}}$, so $\mathrm{tr}(P_V \Sigma_C) = \sum_{i=1}^{d_{\mathrm{eff}}} \mu_i(P_V \Sigma_C P_V)$. By the Poincar\'e separation theorem (Fan 1949), $\mu_i(P_V \Sigma_C P_V) \leq \mu_i(\Sigma_C)$ for each $i$, with equality when $V = \mathrm{span}\{v_1, \ldots, v_{d_{\mathrm{eff}}}\}$ (top eigenvectors of $\Sigma_C$).
+
+\textbf{Part (b), expectation.} Let $P_V = \sum_{j=1}^{d_{\mathrm{eff}}} e_j e_j^\top$ where $\{e_j\}$ is an orthonormal basis for $V$, drawn uniformly. Then:
+\begin{align*}
+  \mathbb{E}[\mathrm{tr}(P_V \Sigma_C)] &= \mathbb{E}\!\left[\sum_{j=1}^{d_{\mathrm{eff}}} e_j^\top \Sigma_C e_j\right] = d_{\mathrm{eff}} \cdot \mathbb{E}[e_1^\top \Sigma_C e_1]
+\end{align*}
+where the last equality uses exchangeability of the basis vectors. For a uniformly random unit vector $e \in S^{D-1}$:
+\[
+  \mathbb{E}[e^\top \Sigma_C e] = \frac{\mathrm{tr}(\Sigma_C)}{D}
+\]
+(by the identity $\mathbb{E}[ee^\top] = I_D/D$). Therefore $\mathbb{E}[\mathrm{tr}(P_V \Sigma_C)] = d_{\mathrm{eff}} \cdot \mathrm{tr}(\Sigma_C) / D$.
+
+\textbf{Part (b), concentration.} The function $f(V) = \mathrm{tr}(P_V \Sigma_C) / \mathrm{tr}(\Sigma_C)$ on the Grassmannian is Lipschitz. To see this, note that for two subspaces $V, V'$ at geodesic distance $\theta$ on $\mathrm{Gr}(d_{\mathrm{eff}}, D)$:
+\[
+  |f(V) - f(V')| \leq \frac{2\mu_1}{\mathrm{tr}(\Sigma_C)} \cdot d_{\mathrm{eff}} \cdot \sin\theta \leq \frac{2d_{\mathrm{eff}} \kappa(\Sigma_C)}{D} \cdot \theta.
+\]
+
+The Grassmannian with its natural metric satisfies a concentration inequality \cite{meckes2019random}: for any $L$-Lipschitz function $f$ on $\mathrm{Gr}(d, D)$ with the geodesic metric:
+\[
+  P(|f - \mathbb{E}[f]| > t) \leq 2\exp\!\left(-\frac{(D - d + 1) t^2}{2L^2}\right).
+\]
+With $L = 2d_{\mathrm{eff}} \kappa(\Sigma_C) / D$ and $d = d_{\mathrm{eff}}$:
+\[
+  P\!\left(\left|f - \frac{d_{\mathrm{eff}}}{D}\right| > t\right) \leq 2\exp\!\left(-\frac{(D - d_{\mathrm{eff}} + 1) D^2 t^2}{8 d_{\mathrm{eff}}^2 \kappa^2}\right) \leq 2\exp\!\left(-\frac{D t^2}{8\kappa^2}\right)
+\]
+where the last step uses $D - d_{\mathrm{eff}} + 1 \geq D/2$ (when $d_{\mathrm{eff}} \leq D/2$, which holds by assumption since the blind spot is non-trivial) and $d_{\mathrm{eff}} \leq D$. \qed
+\end{proof}
+
+\begin{remark}[When does concentration hold?]
+The bound is meaningful when $D t^2 / \kappa^2$ is large. For $t = 0.1$ (captured fraction within 10\% of $d_{\mathrm{eff}}/D$), $D = 20$, and $\kappa = 3$ (moderate eigenvalue spread):
+\[
+  P(|f - d_{\mathrm{eff}}/D| > 0.1) \leq 2\exp(-20 \cdot 0.01 / 72) \approx 2e^{-0.003} \approx 1.99.
+\]
+This is vacuous! The concentration is tight only when $D \gg \kappa^2$, i.e., when the capability covariance is not too far from isotropic. For highly anisotropic capability distributions (a few capabilities dominate), the captured fraction depends heavily on alignment between benchmarks and top eigenvectors.
+
+\textbf{The robust statement for the paper:} The expectation $\mathbb{E}[f] = d_{\mathrm{eff}}/D$ holds unconditionally (no assumptions on $\Sigma_C$). The concentration is strong when $D$ is large relative to $\kappa^2$. When concentration fails, the variance in captured fraction is itself informative: it means the blind spot size depends critically on \emph{which} capabilities the benchmarks happen to measure.
+\end{remark}
+
+\begin{remark}[The ``generic benchmarks'' assumption]
+The uniformity assumption on $V_{\mathrm{eff}}$ (random subspace on the Grassmannian) is justified when benchmarks are designed independently of the model population's capability structure. In practice, benchmark designers do not know the eigenvectors of $\Sigma_C$; they design tests based on desirable capabilities (reasoning, knowledge, instruction following), which are unlikely to be systematically aligned with the principal components of inter-model variation. If anything, benchmark designers tend to target capabilities where models \emph{differ} (high-variance directions), which would \emph{increase} the captured fraction beyond $d_{\mathrm{eff}}/D$. Thus, $d_{\mathrm{eff}}/D$ serves as a conservative (lower) bound on captured variance when benchmarks are well-designed.
+\end{remark}

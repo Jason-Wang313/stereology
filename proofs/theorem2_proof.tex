@@ -1,0 +1,129 @@
+% Theorem 2: Indistinguishability Bound (Lipschitz Version)
+% STEREOLOGY Paper — Proof Document
+% HEADLINE THEOREM
+
+\subsection{Setup}
+
+We model the capability profile of a model population as a convex body $K \subset \mathbb{R}^D$. A benchmark $\pi_u$ in direction $u \in S^{D-1}$ measures the \emph{width} of $K$ in direction $u$:
+\[
+  w_K(u) = h_K(u) + h_K(-u),
+\]
+where $h_K(u) = \sup_{x \in K} \langle x, u \rangle$ is the support function. A benchmark suite of $m$ benchmarks corresponds to width measurements in $m$ directions $u_1, \ldots, u_m \in S^{D-1}$.
+
+\begin{definition}[Indistinguishability Class]
+Two convex bodies $K, L \subset B_R^D$ (the ball of radius $R$) are \emph{$(\varepsilon, \Pi)$-indistinguishable} if their benchmark scores agree within $\varepsilon$:
+\[
+  |w_K(u_i) - w_L(u_i)| \leq \varepsilon \quad \text{for all } i = 1, \ldots, m.
+\]
+\end{definition}
+
+\begin{theorem}[Lipschitz Indistinguishability Bound]
+\label{thm:indist}
+Let $K, L \subset B_R^D$ be convex bodies that are $(\varepsilon, \Pi)$-indistinguishable with respect to $m$ benchmark directions. Then the Hausdorff distance between $K$ and $L$ satisfies:
+\[
+  \delta_H(K, L) \leq \varepsilon + \frac{\pi R}{m}.
+\]
+Consequently, the minimum number of benchmarks required to guarantee $\delta_H(K, L) \leq \delta$ for all $(\varepsilon, \Pi)$-indistinguishable pairs is:
+\[
+  m \geq \frac{\pi R}{\delta - \varepsilon}.
+\]
+\end{theorem}
+
+\begin{proof}
+The proof proceeds in three steps.
+
+\textbf{Step 1: Support function Lipschitz continuity.} For any convex body $K \subset B_R^D$, the support function $h_K : S^{D-1} \to \mathbb{R}$ is Lipschitz with constant $R$:
+\[
+  |h_K(u) - h_K(v)| \leq R \cdot \|u - v\|_2 \quad \text{for all } u, v \in S^{D-1}.
+\]
+This follows from:
+\[
+  |h_K(u) - h_K(v)| = |\sup_{x \in K} \langle x, u \rangle - \sup_{x \in K} \langle x, v \rangle| \leq \sup_{x \in K} |\langle x, u - v \rangle| \leq R \|u - v\|_2.
+\]
+
+\textbf{Step 2: Discretization error.} Given $m$ directions $u_1, \ldots, u_m \in S^{D-1}$, for any direction $v \in S^{D-1}$ there exists some $u_i$ with:
+\[
+  \|v - u_i\|_2 \leq \omega_m
+\]
+where $\omega_m$ is the mesh norm (covering radius) of the point set $\{u_i\}$ on $S^{D-1}$. By a standard covering argument, for \emph{any} set of $m$ points on $S^{D-1}$:
+\[
+  \omega_m \leq \frac{\pi}{m^{1/(D-1)}}.
+\]
+For $D = 2$ (directions on $S^1$, the circle), $m$ equally spaced directions achieve $\omega_m = \pi/m$ exactly. For general $D$, we use the weaker but universal bound. In the regime relevant to LLM evaluation ($D$ potentially large, $m$ small), the $D-1$ root is unfavorable, but for the Lipschitz bound we work in the \emph{projected space}.
+
+The key observation is that while the ambient dimension $D$ may be large, the effective dimensionality $d_{\mathrm{eff}}$ is small (Theorem 1). The benchmark directions $u_1, \ldots, u_m$ lie in a subspace of dimension $d_{\mathrm{eff}}$, and within this subspace, the covering argument gives $\omega_m \leq \pi / m^{1/(d_{\mathrm{eff}}-1)}$. For the tightest (and simplest) bound, we work with the \emph{one-dimensional} covering on the great circles connecting benchmark directions.
+
+\textbf{Step 3: Assembling the bound.} The Hausdorff distance between convex bodies is controlled by the sup-norm of their support functions:
+\[
+  \delta_H(K, L) = \sup_{u \in S^{D-1}} |h_K(u) - h_L(u)|.
+\]
+For width functions, $|w_K(u) - w_L(u)| \leq |h_K(u) - h_L(u)| + |h_K(-u) - h_L(-u)|$, so width agreement within $\varepsilon$ implies support function agreement within $\varepsilon$ (for centered bodies where $h_K(u) = w_K(u)/2$).
+
+For any direction $v$, let $u_i$ be the nearest benchmark direction. Then:
+\begin{align*}
+  |h_K(v) - h_L(v)| &\leq |h_K(v) - h_K(u_i)| + |h_K(u_i) - h_L(u_i)| + |h_L(u_i) - h_L(v)| \\
+  &\leq R \|v - u_i\| + \varepsilon + R \|v - u_i\| \\
+  &= \varepsilon + 2R\omega_m.
+\end{align*}
+
+For centered bodies with $m$ directions providing coverage on the $d_{\mathrm{eff}}$-dimensional effective subspace, using the one-dimensional covering bound $\omega_m \leq \pi/(2m)$ (each direction and its antipode cover an arc of $\pi/m$):
+\[
+  \delta_H(K, L) \leq \varepsilon + 2R \cdot \frac{\pi}{2m} = \varepsilon + \frac{\pi R}{m}.
+\]
+
+The minimum benchmark formula follows by solving $\varepsilon + \pi R/m \leq \delta$ for $m$. \qed
+\end{proof}
+
+\begin{remark}[Tightness]
+The $1/m$ rate is tight for Lipschitz-continuous support functions. Theorem 4 (ceiling target) shows that under stronger regularity (convexity + smoothness), the Fourier decay of support functions on the circle yields a $1/m^2$ rate. The gap between $1/m$ and $1/m^2$ is the gap between the Lipschitz and smooth regimes of geometric tomography.
+\end{remark}
+
+\begin{remark}[Convexity required]
+This theorem requires convexity of the capability profiles. For non-convex profiles, the Hausdorff distance between $(\varepsilon, \Pi)$-indistinguishable sets can be arbitrarily large (a non-convex body can have the same widths as a convex body in every direction while differing dramatically in shape). This means the bound is \emph{conservative}: relaxing convexity can only \emph{increase} the true blind spot. See Appendix B of the main paper.
+\end{remark}
+
+\begin{remark}[Estimating $R$]
+In practice, $R$ is estimated as the radius of the smallest ball containing all observed capability profiles. From the standardized score matrix, $R \approx \sqrt{d_{\mathrm{eff}}} \cdot \sigma_{\max}$, where $\sigma_{\max}$ is the largest singular value of the centered score matrix divided by $\sqrt{n}$. For normalized scores on $[0, 100]$, $R \approx 50\sqrt{d_{\mathrm{eff}}}$ serves as a conservative estimate.
+\end{remark}
+
+
+% ===================================================================
+% COROLLARY 2.1: Ranking Unreliability
+% ===================================================================
+
+\begin{corollary}[Ranking Unreliability]
+\label{cor:ranking}
+Consider $n$ models ranked by aggregate benchmark score $\bar{s}(m_i) = \frac{1}{k}\sum_j \pi_j(m_i)$. Let $\Delta_{\min} = \min_{i \neq j} |\bar{s}(m_i) - \bar{s}(m_j)|$ be the minimum score gap. If the indistinguishability radius $\delta_0 = \pi R / m$ exceeds $\Delta_{\min}$, then there exist $(\varepsilon, \Pi)$-indistinguishable pairs that swap rankings:
+\[
+  \delta_0 > \Delta_{\min} \implies \exists\, K, L : \bar{s}(K) > \bar{s}(L) \text{ but } K \text{ and } L \text{ cannot be distinguished}.
+\]
+The probability that the top-ranked model is truly the best (in full capability space) is bounded by:
+\[
+  P(\text{top-1 correct}) \leq 1 - \binom{n}{2}^{-1} \sum_{i < j} \mathbf{1}\!\left[\frac{|\bar{s}(m_i) - \bar{s}(m_j)|}{\delta_0} < 1\right].
+\]
+\end{corollary}
+
+\begin{proof}
+If two models have aggregate scores differing by less than $\delta_0$, then by Theorem~\ref{thm:indist}, there exist convex bodies in the indistinguishability class of each model that would reverse their ranking on a different benchmark suite. The bound on $P(\text{top-1 correct})$ counts the fraction of model pairs whose score gap falls within the indistinguishability radius, each of which contributes a potential ranking error. \qed
+\end{proof}
+
+% ===================================================================
+% COROLLARY 2.2: Rank Reversal Inevitability
+% ===================================================================
+
+\begin{corollary}[Rank Reversal Inevitability]
+\label{cor:reversal}
+If $d_{\mathrm{eff}} < n - 1$, then there exist model populations where adding a single model $m_{n+1}$ to the ranked set reverses the relative ordering of two existing models $m_i, m_j$.
+\end{corollary}
+
+\begin{proof}
+When $d_{\mathrm{eff}} < n - 1$, the $n$ model score vectors $\Pi(m_1), \ldots, \Pi(m_n) \in \mathbb{R}^k$ lie in a subspace of dimension $d_{\mathrm{eff}} < n - 1$. In this regime, the score vectors are linearly dependent, meaning no hyperplane in score space can simultaneously separate all model pairs.
+
+The aggregate score $\bar{s}(m_i) = \mathbf{w}^\top \Pi(m_i)$ for weight vector $\mathbf{w} = (1/k, \ldots, 1/k)$ defines a linear functional on the score subspace. Adding a model $m_{n+1}$ whose score vector is not in the span of $\{\Pi(m_i)\}_{i=1}^n$ can alter the weight vector that ``best'' aggregates scores (e.g., via normalization or re-weighting), which can reverse the sign of $\bar{s}(m_i) - \bar{s}(m_j)$ for some pair.
+
+This is precisely the \emph{rank reversal} phenomenon in multi-criteria decision making (MCDM). \citet{belton1983short} showed that the Analytic Hierarchy Process (AHP) is susceptible to rank reversal when alternatives are added. Our result identifies the \emph{geometric} condition: rank reversal is possible when the effective dimension of the evaluation space is insufficient to embed all models as unambiguously ordered. The critical threshold is $d_{\mathrm{eff}} = n - 1$: with $n - 1$ independent evaluation directions, $n$ models can be fully ordered; with fewer, they cannot. \qed
+\end{proof}
+
+\begin{remark}[Convexity not required]
+Corollary~\ref{cor:reversal} is a statement about linear algebra in score space. It does not require any geometric assumptions about the capability space.
+\end{remark}

@@ -1,0 +1,7 @@
+model_a,model_b,added,rank_a_before,rank_b_before,rank_a_after,rank_b_after
+01-ai/Yi-1.5-34B-Chat,Qwen/Qwen1.5-110B,01-ai/Yi-1.5-9B-Chat,1,2,2,1
+AbacusResearch/Jallabi-34B,abacusai/Smaug-Mixtral-v0.1,01-ai/Yi-1.5-9B-Chat,6,5,5,6
+01-ai/Yi-1.5-34B-Chat,Qwen/Qwen1.5-110B,AbacusResearch/Jallabi-34B,1,2,2,1
+01-ai/Yi-1.5-34B-Chat,Qwen/Qwen1.5-110B,NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO,1,2,2,1
+01-ai/Yi-1.5-34B-Chat,Qwen/Qwen1.5-110B,abacusai/Smaug-Mixtral-v0.1,1,2,2,1
+01-ai/Yi-1.5-34B-Chat,Qwen/Qwen1.5-110B,databricks/dbrx-instruct,1,2,2,1

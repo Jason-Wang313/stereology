@@ -1,0 +1,18 @@
+{
+  "rank_reversals": {
+    "n_models": 12,
+    "d_eff": 3.553261287024336,
+    "predicted_susceptible": true,
+    "n_reversals_observed": 4
+  },
+  "rank_reversals_n8": {
+    "n_models": 8,
+    "d_eff": 3.6712408427973475,
+    "predicted_susceptible": true,
+    "n_reversals_observed": 6
+  },
+  "benchmark_domination": {
+    "n_violations_observed": 50,
+    "splits_examined": 80
+  }
+}

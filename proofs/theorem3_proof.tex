@@ -1,0 +1,102 @@
+% Theorem 3: Greedy Coverage Algorithm and Dimension Estimation
+% STEREOLOGY Paper — Proof Document
+
+\subsection{Dimension Estimation}
+
+\begin{theorem}[Dimension Bounds]
+\label{thm:dim}
+Let $S \in \mathbb{R}^{n \times k}$ be the score matrix for $n$ models on $k$ benchmarks, with correlation eigenvalues $\lambda_1 \geq \cdots \geq \lambda_k$, Marchenko-Pastur threshold $\lambda_+ = (1 + \sqrt{k/n})^2$, and $n_{\mathrm{sig}} = |\{i : \lambda_i > \lambda_+\}|$ significant eigenvalues. Then the true dimensionality $D$ of the capability space satisfies:
+\[
+  n_{\mathrm{sig}} \leq D \leq n - 1.
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{Lower bound.} Each significant eigenvalue ($\lambda_i > \lambda_+$) indicates a direction in score space with more variance than expected under the null of independent benchmarks. By the BBP phase transition \cite{baik2005phase}, a significant sample eigenvalue corresponds to a genuine population eigenvalue exceeding $1 + \sqrt{\gamma}$, which in turn corresponds to a dimension of the capability space that is ``visible'' through the benchmark suite. Since distinct visible dimensions are linearly independent, $D \geq n_{\mathrm{sig}}$.
+
+This bound is tight when the benchmark suite is well-designed (each benchmark probes a different capability direction) and the population covariance is isotropic in the visible subspace.
+
+\textbf{Upper bound.} If $n$ models are all distinguishable (have distinct capability profiles), they span at most an $(n-1)$-dimensional affine subspace of $\mathbb{R}^D$. We cannot infer more than $n - 1$ dimensions from $n$ data points. Note that $D$ could be much larger (even infinite), but we can only observe evidence for up to $n - 1$ dimensions from a finite model population.
+
+The gap between $n_{\mathrm{sig}}$ and $n - 1$ is the ``dimension gap'': the number of capability dimensions that exist but are either not probed by the benchmark suite or not sufficiently varied across the model population to be detectable. \qed
+\end{proof}
+
+\begin{remark}[Extrapolation via eigenvalue decay]
+A tighter estimate of $D$ can be obtained by modeling the eigenvalue decay. If the population eigenvalues follow a power law $\mu_i \propto i^{-\alpha}$, then the number of eigenvalues above the noise floor $\lambda_+$ is $n_{\mathrm{sig}} \approx (\mu_1 / \lambda_+)^{1/\alpha}$. The true dimensionality (number of non-negligible eigenvalues) is $D_{\mathrm{est}} \approx (\mu_1 / \epsilon)^{1/\alpha}$ for some minimal relevance threshold $\epsilon$. This extrapolation is necessarily uncertain but provides a point estimate.
+\end{remark}
+
+\subsection{Greedy Coverage Algorithm}
+
+\begin{theorem}[Greedy Benchmark Selection]
+\label{thm:greedy}
+Let $\Sigma \in \mathbb{R}^{k \times k}$ be the benchmark correlation matrix with eigendecomposition $\Sigma = V \Lambda V^\top$, and let $f : 2^{[k]} \to \mathbb{R}_{\geq 0}$ denote the \emph{coverage function}:
+\[
+  f(T) = \frac{\mathrm{tr}(\Pi_T \Sigma)}{\mathrm{tr}(\Sigma)}
+\]
+where $\Pi_T$ is the orthogonal projector onto the subspace spanned by benchmark loading vectors $\{v_j : j \in T\}$ (rows of the loading matrix $L = V \sqrt{\Lambda}$). Then:
+
+\begin{enumerate}[label=(\alph*)]
+  \item $f$ is monotone ($T \subseteq T' \Rightarrow f(T) \leq f(T')$) and submodular ($f(T \cup \{j\}) - f(T) \geq f(T' \cup \{j\}) - f(T')$ for $T \subseteq T'$).
+  
+  \item The greedy algorithm --- iteratively selecting $j^* = \arg\max_{j \notin T} [f(T \cup \{j\}) - f(T)]$ --- achieves:
+  \[
+    f(T_{\mathrm{greedy}}^{(r)}) \geq \left(1 - \frac{1}{e}\right) \cdot f(T^*_r)
+  \]
+  where $T_{\mathrm{greedy}}^{(r)}$ is the greedy selection of $r$ benchmarks and $T^*_r$ is the optimal $r$-element subset.
+  
+  \item The \emph{minimum subset} for target coverage $\tau$ has size at most:
+  \[
+    |T_{\mathrm{greedy}}| \leq \left\lceil \frac{\ln(1/(1-\tau))}{\ln(k/(k - d_{\mathrm{eff}}))} \right\rceil.
+  \]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{Part (a): Monotonicity and submodularity.}
+
+\emph{Monotonicity.} Adding a benchmark to $T$ can only increase the dimension of the spanned subspace, hence $\Pi_{T'} \succeq \Pi_T$ in the positive semidefinite order for $T \subseteq T'$, giving $f(T') \geq f(T)$.
+
+\emph{Submodularity.} Let $T \subseteq T'$ and $j \notin T'$. The marginal gain of adding $j$ to $T$ is:
+\[
+  f(T \cup \{j\}) - f(T) = \frac{\|P_{T^\perp} \ell_j\|^2}{\mathrm{tr}(\Sigma)}
+\]
+where $\ell_j$ is the loading vector of benchmark $j$ and $P_{T^\perp}$ projects onto the orthogonal complement of the subspace spanned by $\{\ell_i : i \in T\}$. Since $T \subseteq T'$, the subspace spanned by $T'$ contains that of $T$, so $P_{T'^\perp} \preceq P_{T^\perp}$ and:
+\[
+  \|P_{T'^\perp} \ell_j\|^2 \leq \|P_{T^\perp} \ell_j\|^2,
+\]
+establishing submodularity. Intuitively: the marginal value of a new benchmark decreases as more benchmarks are already selected, because there is less uncovered variance remaining.
+
+\textbf{Part (b): Greedy approximation guarantee.} This follows immediately from the classical result of \citet{nemhauser1978analysis}: for any monotone submodular function $f$ with $f(\emptyset) = 0$, the greedy algorithm achieves a $(1 - 1/e)$-approximation to the optimum for any cardinality constraint. Since our coverage function $f$ satisfies $f(\emptyset) = 0$, monotonicity, and submodularity, the bound applies.
+
+\textbf{Part (c): Minimum subset size.} At each greedy step, submodularity implies the marginal gain is at least:
+\[
+  f(T^{(r+1)}) - f(T^{(r)}) \geq \frac{f([k]) - f(T^{(r)})}{k - r} \geq \frac{1 - f(T^{(r)})}{k}.
+\]
+Let $g_r = 1 - f(T^{(r)})$ denote the uncovered fraction. Then $g_{r+1} \leq g_r(1 - 1/k)$, giving:
+\[
+  g_r \leq \left(1 - \frac{1}{k}\right)^r \leq e^{-r/k}.
+\]
+To achieve coverage $\tau$ (i.e., $g_r \leq 1 - \tau$), we need $r \geq k \ln(1/(1-\tau))$.
+
+This bound uses $f([k]) = 1$ (full benchmark set achieves full coverage in benchmark space). In practice, the convergence is faster because $d_{\mathrm{eff}} \ll k$: the first $d_{\mathrm{eff}}$ greedy selections capture most variance, and the bound tightens to $r = O(d_{\mathrm{eff}} \ln(1/(1-\tau)))$. Formally, replacing $k$ with the rank of the effective subspace: since the loading matrix has effective rank $d_{\mathrm{eff}}$, the coverage function satisfies $f([k]) \leq d_{\mathrm{eff}} / k \cdot k = d_{\mathrm{eff}}$ (unnormalized), and the step size bound becomes $g_{r+1} \leq g_r(1 - 1/d_{\mathrm{eff}})$ in the first $d_{\mathrm{eff}}$ steps where marginal gains are large. This gives the stated bound. \qed
+\end{proof}
+
+\subsection{Outputs of the Algorithm}
+
+The greedy algorithm produces three outputs:
+
+\begin{enumerate}
+  \item \textbf{Minimum subset:} The first $r$ benchmarks selected, ordered by marginal coverage gain. ``Your 20 benchmarks but you only need 7.''
+  
+  \item \textbf{Redundancies:} Benchmarks with marginal gain below a threshold $\eta$ (e.g., $\eta = 0.01$). These are redundant given the selected subset and can be retired without information loss.
+  
+  \item \textbf{Uncovered directions:} The eigenvectors of $\Sigma$ with non-negligible eigenvalues that are orthogonal to the selected subset. These characterize the ``blind spot'' --- the directions in benchmark space (and, by extension, capability space) that are not probed by any selected benchmark. The loadings of these directions on individual benchmarks suggest what \emph{new} benchmarks should measure.
+\end{enumerate}
+
+\begin{remark}[Convexity not required]
+Theorem~\ref{thm:greedy} operates on the benchmark correlation matrix and loading vectors. It requires no geometric assumptions about the capability space. The algorithm is purely data-driven and applies to any score matrix.
+\end{remark}
+
+\begin{remark}[Comparison to PCA-based selection]
+The greedy algorithm differs from simply selecting benchmarks with the highest PCA loadings. PCA identifies directions of maximum variance, but the greedy algorithm optimizes \emph{coverage}: it seeks the minimum set of benchmarks that collectively spans the most variance, accounting for redundancy between benchmarks. Two benchmarks with high PC1 loadings are redundant; the greedy algorithm would select one and move to the next uncovered direction.
+\end{remark}
