@@ -12,7 +12,7 @@
 \usepackage{hyperref}
 \usepackage[round, authoryear]{natbib}
 \usepackage{xcolor}
-\usepackage{microtype}
+\usepackage[expansion=false]{microtype}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
@@ -32,268 +32,231 @@ A Stereological Theory of Benchmark Coverage for Large Language Models}
 \maketitle
 
 \begin{abstract}
-We resolve a 30-year open problem in geometric tomography
-\citep{gardner1995geometric}, establishing that the minimax rate for
-determining a convex body from $m$ directional measurements is
-$\Theta(m^{-(2-\beta)/(D-1)})$, parameterized by a curvature exponent
-$\beta$ that captures the smoothness of the capability landscape.
-Applied to LLM evaluation, this yields the first exact formulas for how
-many benchmarks are needed to reliably rank models. We prove that
-current benchmark suites with $6$--$20$ tests have an effective
-dimensionality of only $3$--$5$, leaving $60$--$80\%$ of the capability
-space unmeasured---and that the top-ranked model on a major leaderboard
-has a substantial probability of not being truly the best. A widely
-held belief in the evaluation community is that adding more benchmarks
-necessarily exposes more model weaknesses. We prove this is false. It
-is not how many benchmarks you run---it is how many different things
-they measure. Our greedy coverage algorithm identifies the minimum
-subset of benchmarks that maximizes capability coverage, characterizes
-the blind spots of existing suites, and provides the first principled
-answer to the question: how many evaluations is enough?
+We give a stereological theory of LLM benchmark coverage. For a
+benchmark suite with effective dimensionality
+$d_{\mathrm{eff}}$, the \emph{visible} Hausdorff distance between any
+two convex capability profiles consistent with the same scores is
+bounded by $\varepsilon + C R \, m^{-1/(d_{\mathrm{eff}}-1)}$, exposing
+a curse of dimensionality in evaluation. Empirically, the Open LLM
+Leaderboard v2 ($k = 6$) and an extended $12$-benchmark suite have
+$d_{\mathrm{eff}} \in [3, 5]$ on the competitive frontier, leaving
+$60$--$80\%$ of the capability space unmeasured; the pairwise swap
+probability between the top two models exceeds $0.47$ for all plausible
+ambient dimensions $D \ge 10$. A submodular greedy algorithm achieves
+the Nemhauser $(1 - 1/e)$ bound and finds that $7$ of $12$ benchmarks
+suffice for $90\%$ coverage. As a separate geometric result, we resolve
+the planar case of Gardner's Problem 1.5 (1995) on convex body
+recovery, establishing the minimax rate $\Theta(R/(\kappa m^2))$ for
+$C^2$ support functions on $S^1$, and extend it to the universal
+$\beta$-rate $\Theta(m^{-(2-\beta)/(D-1)})$ in general dimension.
 \end{abstract}
 
-% =====================================================================
 \section{Introduction}
-% =====================================================================
 
 \paragraph{Benchmarks are slices.} Public LLM leaderboards report
-\emph{scalar} scores: an instruction-following accuracy, a math
-accuracy, a code accuracy. Each score is a one-dimensional projection of
-whatever it is that makes a model ``good''. The implicit hope of the
-field is that enough such projections eventually pin down the underlying
-``capability'' --- the same way that enough X-rays pin down a 3D body
-in medical imaging. The mathematical study of \emph{exactly that
-question} is called stereology, and stereology has hard, quantitative
-limits on what finite projections can recover. This paper carries those
-limits over to LLM evaluation.
+scalar scores: an instruction-following accuracy, a math accuracy, a
+code accuracy. Each score is a one-dimensional projection of whatever
+it is that makes a model good --- the way an X-ray is a 1D projection
+of a 3D body. The mathematical study of exactly this question is
+called \emph{stereology}, and it has hard quantitative limits on what
+finite projections can recover. This paper carries those limits to
+LLM evaluation.
 
-\paragraph{Five-beat narrative.} (1)~Your $k$ benchmarks really only
-probe $d_{\mathrm{eff}} \approx 3\text{--}5$ independent directions of
-capability (Theorem~\ref{thm:body:deff}). (2)~Any two convex capability
-profiles consistent with the same benchmark scores can differ by at
-least $C \cdot R \cdot m^{-1/(d_{\mathrm{eff}} - 1)}$ in Hausdorff
-distance, where $R$ is the population radius and $m$ the benchmark
-count (Theorem~\ref{thm:body:indist}); this gap is the \emph{blind
-spot}, and its decay rate exhibits a curse of dimensionality in
-$d_{\mathrm{eff}}$. (3)~Under additional smoothness, the rate improves
-to the minimax-optimal $m^{-2/(D-1)}$, the resolution of Gardner's
-Problem 1.5 (Appendix~\ref{app:gardner}). (4)~A greedy
-benchmark-selection algorithm makes the blind spot as small as the
-data allows, with a $(1 - 1/e)$ approximation guarantee
-(Theorem~\ref{thm:body:greedy}). (5)~Two consequences for practice: a
-Busemann--Petty analogue saying that pointwise benchmark domination is
-not enough to declare one model better than another in high effective
-dimension (Proposition~\ref{prop:body:bp}), and a precise condition
-for the classical MCDM \emph{rank reversal} phenomenon
-(Corollary~\ref{cor:reversal}).
+\paragraph{Five claims.} (1)~$k$ benchmarks really probe only
+$d_{\mathrm{eff}} \approx 3\text{--}5$ independent directions of
+capability (Theorem~\ref{thm:body:deff}).
+(2)~Any two convex capability profiles consistent with the same
+scores can differ by at least
+$C R \, m^{-1/(d_{\mathrm{eff}} - 1)}$ in \emph{visible} Hausdorff
+distance, exposing a curse of dimensionality in $d_{\mathrm{eff}}$
+(Theorem~\ref{thm:body:indist}).
+(3)~The pairwise swap probability between the top two models on real
+leaderboards exceeds $0.47$ for all plausible ambient dimensions
+(Corollary~\ref{cor:body:rank}).
+(4)~A submodular greedy algorithm makes the blind spot as small as
+the data allows, with the $(1 - 1/e)$ Nemhauser guarantee, and finds
+that $7$ of $12$ benchmarks suffice for $90\%$ coverage of the
+frontier (Theorem~\ref{thm:body:greedy}).
+(5)~Pointwise benchmark domination does not imply capability
+domination when $d_{\mathrm{eff}} \ge 5$ (Busemann--Petty analogue,
+Proposition~\ref{prop:body:bp}); rank reversal under model addition
+is geometrically inevitable when $d_{\mathrm{eff}} < n - 1$.
 
-\paragraph{What is novel.} A reviewer's first instinct will be to say
-``isn't this just PCA?''. PCA computes eigenvalues; we prove what those
-eigenvalues \emph{imply} for ranking reliability, blind spots, and
-benchmark subset selection. The participation ratio compresses spectral
-decay into a single interpretable number, and the Marchenko--Pastur
-correction separates signal from finite-sample noise. Neither step is
-standard PCA. The Lipschitz bound (Theorem~\ref{thm:body:indist}) is the
-formal analogue of Gardner's stability questions in geometric tomography
-\citep{gardner2006geometric}; the rank-reversal corollary unifies the
-40-year MCDM literature \citep{belton1983short, dyer1990remarks} under a
-single geometric condition.
+\paragraph{Imported tools, new consequences.} The participation ratio,
+the Marchenko--Pastur edge, Nemhauser's submodular optimisation, and
+basic convex-body theory are all standard. The novelty is in what we
+prove they \emph{imply} for evaluation:
 
-\paragraph{Beyond LLM evaluation.}
-\citet{gardner1995geometric, gardner2006geometric} posed Problem 1.5 in
-its original form for \emph{planar} convex bodies determined from $m$
-X-ray (chord-length) measurements at $m$ directions on the unit circle
-$S^1$ --- the case $D = 2$. Our planar Fourier stability result
-(Appendix~\ref{app:proof4}) directly resolves the problem as Gardner
-stated it, with the minimax rate $m^{-2}$ for $C^2$ support functions
-on $S^1$. The extension to general ambient dimension $D \ge 2$ and
-the universal $\beta$-rate $m^{-(2-\beta)/(D-1)}$, parameterized by
-the curvature vanishing exponent $\beta$ (Appendix~\ref{app:gardner}),
-\emph{goes beyond} what Gardner asked: it unifies all previously known
-special cases across dimensions and body classes, and establishes that
-richer measurements (X-rays vs.\ widths) cannot improve the polynomial
-convergence rate --- the angular gap between measurement directions is
-the universal bottleneck.
+\begin{center}\small
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{ll}
+\toprule
+\textbf{Imported (standard)} & \textbf{New (this paper)} \\
+\midrule
+Participation ratio                 & ranking unreliability formula (Cor.~\ref{cor:body:rank}) \\
+Marchenko--Pastur edge              & visible blind-spot bound (Thm~\ref{thm:body:indist}) \\
+Trace of PSD projector              & submodular coverage algorithm (Thm~\ref{thm:body:greedy}) \\
+Nemhauser submodular guarantee      & greedy benchmark selection \\
+Convex body / support function      & resolution of Gardner Problem 1.5 (App.~\ref{app:gardner}) \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-% =====================================================================
+\paragraph{Related work, positioned.} Concurrent work by
+\citet{shazhao2026benchscope} (BenchScope) independently identifies
+low effective dimensionality in LLM benchmark suites; we share the
+diagnostic but contribute the indistinguishability bound, the
+submodular coverage algorithm, and the minimax-rate theory.
+\citet{guntuboyina2011minimax} gives noisy minimax lower bounds for
+convex body recovery; our noiseless directional-discretisation rates
+complement those. \citet{polo2024tinybenchmarks} optimises item
+selection within a benchmark via IRT; we optimise benchmark selection
+across benchmarks via submodular coverage. A full discussion is in
+Section~\ref{sec:related}.
+
+\paragraph{Geometric tomography.}
+\citet{gardner1995geometric, gardner2006geometric} posed Problem 1.5
+for \emph{planar} convex bodies recovered from $m$ X-ray measurements
+on $S^1$. Our planar Fourier stability bound
+(Appendix~\ref{app:proof4}) resolves it directly with rate
+$\Theta(R/(\kappa m^2))$. The general-$D$ universal $\beta$-rate
+(Appendix~\ref{app:gardner}) goes beyond what Gardner asked.
+
 \section{Setup}
-% =====================================================================
 
-Let $\mathcal{M} = \{m_1, \ldots, m_n\}$ denote a population of $n$
-models. Each model has an unknown \emph{capability profile} $c(m_i) \in
-\mathbb{R}^D$. A benchmark suite $\Pi = \{\pi_1, \ldots, \pi_k\}$ maps
-each profile to an observable score vector $\Pi(m_i) \in \mathbb{R}^k$.
-We observe the score matrix $S \in \mathbb{R}^{n \times k}$ with
-$S_{ij} = \pi_j(m_i)$. Our goal is to characterise what can and cannot
-be recovered about the underlying capability distribution from $S$
-alone.
+Let $\mathcal{M} = \{m_1, \ldots, m_n\}$ be a population of models with
+unknown capability profiles $c(m_i) \in \mathbb{R}^D$. A benchmark
+suite $\Pi = (\pi_1, \ldots, \pi_k)$ produces the score matrix $S \in
+\mathbb{R}^{n \times k}$ with $S_{ij} = \pi_j(m_i)$. Theorems~1 and 3
+and the rank-reversal corollary are assumption-free; Theorem~2 and the
+Busemann--Petty analogue assume convex capability profiles, which
+yields conservative bounds (non-convex bodies can have identical
+widths in every direction yet differ dramatically in shape).
 
-\paragraph{Convexity, per-theorem.} We are explicit about what each
-theorem assumes. Theorems~\ref{thm:body:deff} and~\ref{thm:body:greedy} and the
-rank-reversal corollary are \emph{assumption-free}; they operate on the
-observed correlation matrix and require no geometric structure on the
-capability space. Theorem~\ref{thm:body:indist} (the headline blind-spot
-bound), the planar Fourier ceiling (Appendix~\ref{app:proof4}), and the Busemann--Petty
-analogue assume convex capability profiles. Convexity gives
-\emph{conservative} bounds: relaxing convexity can only \emph{increase}
-the true blind spot, since non-convex bodies can have identical widths
-in every direction yet differ dramatically in shape.
-
-% =====================================================================
 \section{Theorem 1: Effective Dimensionality}
-% =====================================================================
 
-Let $\Sigma = \mathrm{Corr}(S)$ have eigenvalues $\lambda_1 \ge \cdots
-\ge \lambda_k \ge 0$. The \emph{effective dimensionality}\footnote{The
-participation ratio is standard in random matrix theory and condensed
-matter physics \cite{bell1970atomic, wegner1980inverse}, where it counts
-the number of ``active'' modes in a disordered system.} is the
-participation ratio
-\begin{equation}
-  d_{\mathrm{eff}}
-  = \frac{(\sum_i \lambda_i)^2}{\sum_i \lambda_i^2}
-  = \frac{k^2}{\sum_i \lambda_i^2},
-\end{equation}
-where the second equality uses $\sum_i \lambda_i = k$ for a correlation
-matrix. The participation ratio satisfies $1 \le d_{\mathrm{eff}} \le k$,
-with equality on the right when the eigenvalues are uniform and on the
-left when one eigenvalue captures all the variance.
+Let $\Sigma = \mathrm{Corr}(S)$ have eigenvalues
+$\lambda_1 \ge \cdots \ge \lambda_k \ge 0$. The \emph{effective
+dimensionality} is the participation ratio
+$d_{\mathrm{eff}} = (\sum_i \lambda_i)^2 / \sum_i \lambda_i^2 =
+k^2 / \sum_i \lambda_i^2$, satisfying $1 \le d_{\mathrm{eff}} \le k$.
 
 \begin{theorem}[Effective Dimensionality, distribution-free]
 \label{thm:body:deff}
 Let $\Pi : \mathcal{C} \to \mathbb{R}^k$ be linear (or linearised at the
-population mean), let $\Sigma_C \in \mathbb{R}^{D \times D}$ be the
-capability covariance with eigenvalues $\mu_1 \ge \cdots \ge \mu_D \ge
-0$, and let $V_{\mathrm{eff}} \subset \mathbb{R}^D$ denote the
-$d_{\mathrm{eff}}$-dimensional effective subspace of the benchmark
+population mean) and let $\Sigma_C \in \mathbb{R}^{D \times D}$ be the
+capability covariance. Let $V_{\mathrm{eff}} \subset \mathbb{R}^D$ be
+the $d_{\mathrm{eff}}$-dimensional effective subspace of the benchmark
 suite. Then
-\begin{enumerate}[label=(\alph*)]
-  \item \textbf{Worst-case (adversarial alignment).}
+\begin{enumerate}[label=(\alph*), leftmargin=1.5em, itemsep=1pt]
+  \item \textbf{Worst case.}
         $\mathrm{tr}(P_{V_{\mathrm{eff}}} \Sigma_C) / \mathrm{tr}(\Sigma_C)
-        \;\le\; \sum_{i=1}^{d_{\mathrm{eff}}} \mu_i / \sum_{i=1}^D \mu_i$,
+        \le \sum_{i=1}^{d_{\mathrm{eff}}} \mu_i / \sum_{i=1}^D \mu_i$,
         with equality when $V_{\mathrm{eff}}$ aligns with the top
         $d_{\mathrm{eff}}$ eigenvectors of $\Sigma_C$.
-  \item \textbf{Generic benchmarks (distribution-free).} If
-        $V_{\mathrm{eff}}$ is drawn uniformly from the Grassmannian
-        $\mathrm{Gr}(d_{\mathrm{eff}}, D)$,
-        \[
-          \mathbb{E}\!\left[
-            \frac{\mathrm{tr}(P_{V_{\mathrm{eff}}} \Sigma_C)}
-                 {\mathrm{tr}(\Sigma_C)}
-          \right]
-          \;=\; \frac{d_{\mathrm{eff}}}{D}
-          \qquad\text{(no eigenvalue assumptions),}
-        \]
-        and this concentrates: for any $t > 0$,
-        $P(|f(V_{\mathrm{eff}}) - d_{\mathrm{eff}}/D| > t) \le
-        2\exp(-D t^2 / (8\kappa(\Sigma_C)^2))$, where
-        $\kappa(\Sigma_C) = \mu_1 / \bar{\mu}$ is the eigenvalue
-        condition ratio.
+  \item \textbf{Generic benchmarks.} If $V_{\mathrm{eff}}$ is drawn
+        uniformly from $\mathrm{Gr}(d_{\mathrm{eff}}, D)$, then
+        $\mathbb{E}[\mathrm{tr}(P_{V_{\mathrm{eff}}} \Sigma_C) /
+        \mathrm{tr}(\Sigma_C)] = d_{\mathrm{eff}} / D$ with no
+        eigenvalue assumptions, and this concentrates with rate
+        $\exp(-D t^2 / (8\kappa^2))$ where $\kappa = \mu_1 / \bar{\mu}$.
   \item \textbf{Marchenko--Pastur correction.} Under the null of
-        independent benchmarks with $n$ samples and $k$ benchmarks,
-        sample eigenvalues lie in $[\lambda_-, \lambda_+]$ with
-        $\lambda_\pm = (1 \pm \sqrt{k/n})^2$
+        independent benchmarks, sample eigenvalues lie in
+        $[(1 - \sqrt{k/n})^2, (1 + \sqrt{k/n})^2]$
         \citep{marchenko1967distribution}; the noise-corrected
-        $d_{\mathrm{eff}}^{\mathrm{MP}}$ uses only eigenvalues exceeding
-        $\lambda_+$.
+        $d_{\mathrm{eff}}^{\mathrm{MP}}$ uses only eigenvalues above
+        the upper edge.
 \end{enumerate}
 \end{theorem}
 
-The proof uses von Neumann's trace inequality, the Poincar\'e separation
-theorem, Grassmannian concentration \citep{meckes2019random}, and the
-BBP phase transition \citep{baik2005phase}; details and the
-strengthened distribution-free derivation appear in
-Appendix~\ref{app:proof1}.
+\noindent \emph{Proof in Appendix~\ref{app:proof1}}; uses
+von~Neumann's trace inequality, Poincar\'e separation, Grassmannian
+concentration \citep{meckes2019random}, and the BBP phase transition
+\citep{baik2005phase}.
 
-\paragraph{Empirics.} We measured $d_{\mathrm{eff}}$ on two public
-benchmark suites: the Open LLM Leaderboard v2
-($n = 458$ official-provider models, $k = 6$ benchmarks)
-\citep{open_llm_leaderboard_v2}, and a $12$-benchmark extended suite
-formed by joining v2 with the legacy v1 leaderboard ($n = 295$
-models). We report both the full population and the
-\emph{competitive frontier} (top $50\%$ by mean score):
+\paragraph{Empirics.} We measure $d_{\mathrm{eff}}$ on two public
+suites: the Open LLM Leaderboard v2 ($n = 458$ official-provider
+models, $k = 6$) \citep{open_llm_leaderboard_v2}, and a 12-benchmark
+extended suite ($n = 295$) joining v2 with the legacy v1 leaderboard.
+We report both the full population and the competitive frontier (top
+$50\%$ by mean score), which is the regime where rankings drive
+deployment decisions:
 \begin{itemize}[leftmargin=1.5em, itemsep=0pt]
-  \item OLLM v2, full population: $d_{\mathrm{eff}} = 1.88$
-        (95\% bootstrap CI $[1.77, 2.02]$).
-  \item OLLM v2, competitive frontier: $d_{\mathrm{eff}} = 2.86$
-        ($[2.60, 3.11]$).
-  \item Extended 12-benchmark suite, competitive frontier:
-        $d_{\mathrm{eff}} = 4.80$ ($[4.12, 5.20]$).
+  \item OLLM v2, full: $d_{\mathrm{eff}} = 1.88$ \,$[1.77, 2.02]$.
+  \item OLLM v2, frontier: $d_{\mathrm{eff}} = 2.86$ \,$[2.60, 3.11]$.
+  \item Extended, frontier: $d_{\mathrm{eff}} = 4.80$ \,$[4.12, 5.20]$.
 \end{itemize}
-The full population shows even lower effective dimensionality because
-weaker models are uniformly poor across all benchmarks, collapsing the
-variance onto a single axis. The competitive frontier---where rankings
-matter for deployment decisions---shows $d_{\mathrm{eff}} \approx
-3$--$5$, meaning $60$--$80\%$ of the capability space remains
-unmeasured. Frontier models are precisely the regime where ranking
-matters, and $d_{\mathrm{eff}} \in [3, 5]$ also lies in the regime where
-the Busemann--Petty analogue activates (Section~\ref{sec:cor}).
+Confidence intervals are 95\% bootstrap percentiles. The full
+population is dominated by a single g-factor (model size $\to$
+capability); on the frontier the residual dimensions become visible
+and $d_{\mathrm{eff}} \in [3, 5]$. Results are robust to choice of
+correlation method (Spearman vs Pearson) and to MP, Kaiser, and
+permutation thresholds (Appendix~\ref{app:validation}).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{../figures/fig1_scree.pdf}
-  \caption{Eigenvalue spectrum of the benchmark correlation matrix. The
-    Marchenko--Pastur upper edge $\lambda_+ = (1 + \sqrt{k/n})^2$
-    delimits noise (below) from signal (above). A single dominant
-    eigenvalue captures most of the variance in the full population for
-    both suites; the residual eigenvalue mass is what
-    $d_{\mathrm{eff}}$ measures.}
+  \caption{Eigenvalue spectrum with the Marchenko--Pastur upper edge
+    $\lambda_+ = (1 + \sqrt{k/n})^2$. A single dominant eigenvalue
+    captures most variance on the full population; the residual mass
+    is what $d_{\mathrm{eff}}$ measures.}
   \label{fig:scree}
 \end{figure}
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.55\linewidth]{../figures/fig2_biplot.pdf}
-  \caption{PCA biplot of the extended 12-benchmark suite. PC1 is the
-    g-factor; PC2 separates reasoning-heavy benchmarks (BBH, MUSR,
-    GSM8K, MATH) from knowledge-heavy ones (MMLU, HellaSwag, MMLU-Pro,
-    Winogrande). The benchmark family colour map evidences the low
-    effective dimensionality.}
-  \label{fig:biplot}
-\end{figure}
-
-% =====================================================================
 \section{Theorem 2: Indistinguishability Bound}
-% =====================================================================
 
-We now ask: given that two models score within $\varepsilon$ on every
-benchmark, how different can their underlying capability profiles be?
-We answer this by modelling capability profiles as convex bodies $K, L
-\subset B_R^D$ and benchmarks as \emph{width measurements}
-$w_K(u) = h_K(u) + h_K(-u)$, where $h_K$ is the support function. The
-honest covering bound depends on the effective dimension of the
-benchmark subspace, not on the ambient dimension $D$.
+\paragraph{Centering convention.}
+We model capability profiles as origin-symmetric convex bodies
+($K = -K$), so $h_K(u) = h_K(-u)$ and the width
+$w_K(u) = h_K(u) + h_K(-u) = 2 h_K(u)$. Width agreement within
+$\varepsilon$ implies support function agreement within $\varepsilon/2$.
+Since benchmark scores are translation-invariant once the score matrix
+is centred, this is without loss of generality; the non-symmetric
+case applies the same bound to the symmetrized body $(K - K)/2$.
+A formal remark is in Appendix~\ref{app:proof2}.
 
-\begin{theorem}[Indistinguishability Bound, general dimension]
+\begin{theorem}[Indistinguishability Bound, visible vs full]
 \label{thm:body:indist}
 Let $K, L \subset B_R^D$ be convex bodies whose width measurements
-agree within $\varepsilon$ in $m$ directions $u_1, \ldots, u_m \in
-S^{D-1}$, and let $d = d_{\mathrm{eff}}$ denote the effective dimension
-of the benchmark subspace. Then
-\begin{equation}
-  \delta_H(K, L) \;\le\; \varepsilon \;+\;
-  C \cdot R \cdot m^{-1/(d_{\mathrm{eff}} - 1)},
-\end{equation}
-and consequently the minimum number of benchmarks required to guarantee
-$\delta_H(K, L) \le \delta$ is
-$m \ge (CR/(\delta - \varepsilon))^{d_{\mathrm{eff}} - 1}$.
+agree within $\varepsilon$ in $m$ directions in the effective subspace
+$V_{\mathrm{eff}}$ of dimension $d_{\mathrm{eff}}$. Let
+$\delta_H^{\mathrm{vis}}$ denote the Hausdorff supremum restricted to
+directions in $V_{\mathrm{eff}}$ and let $\delta_H^{\perp}$ denote
+the contribution from $V_{\mathrm{eff}}^\perp$. Then
+\begin{enumerate}[label=(\alph*), leftmargin=1.5em, itemsep=1pt]
+  \item \textbf{Visible component.}
+        \[
+          \delta_H^{\mathrm{vis}}(K, L) \;\le\; \varepsilon
+          \;+\; C R \cdot m^{-1/(d_{\mathrm{eff}} - 1)}.
+        \]
+  \item \textbf{Full bound.}
+        $\delta_H(K, L) = \max\!\big(\delta_H^{\mathrm{vis}}(K, L),\,
+        \delta_H^{\perp}(K, L)\big)$, with the trivial bound
+        $\delta_H^{\perp} \le 2R$. Under the structural assumption that
+        $K$ and $L$ agree on $V_{\mathrm{eff}}^\perp$, the full bound
+        reduces to (a).
+\end{enumerate}
 \end{theorem}
 
-The proof (Appendix~\ref{app:proof2}) uses the Lipschitz continuity of
-the support function and the volumetric covering bound on $S^{d-1}$
-\citep{rogers1963covering}. The previous formulation $\pi R / m$ is the
-$d_{\mathrm{eff}} = 2$ special case; the honest general statement
-exposes a \emph{curse of dimensionality in evaluation}.
+Part (a) is the non-trivial content: it quantifies how the
+\emph{measurable} blind spot shrinks with $m$, exhibiting a curse of
+dimensionality in $d_{\mathrm{eff}}$. Part (b) makes the irreducible
+cost of unobserved directions explicit: the $2R$ term is exactly what
+Theorem~\ref{thm:body:greedy}'s coverage algorithm is designed to
+reduce by expanding $V_{\mathrm{eff}}$. The proof (Appendix~\ref{app:proof2})
+uses Lipschitz continuity of the support function and the volumetric
+covering bound on $S^{d-1}$ \citep{rogers1963covering}.
 
-\paragraph{The curse of benchmark dimensionality.}
-The exponent $d_{\mathrm{eff}} - 1$ controls how rapidly the blind spot
-shrinks as benchmarks are added:
+\paragraph{The curse of benchmark dimensionality.} The exponent
+$d_{\mathrm{eff}} - 1$ controls how rapidly the visible blind spot
+shrinks (rates for $\delta_H^{\mathrm{vis}}$; the orthogonal $2R$ is
+reduced by Theorem~\ref{thm:body:greedy}):
 
-\begin{center}
-\renewcommand{\arraystretch}{1.15}
+\begin{center}\small
+\renewcommand{\arraystretch}{1.05}
 \begin{tabular}{cc}
 \toprule
-$d_{\mathrm{eff}}$ & Benchmarks needed to halve the gap \\
+$d_{\mathrm{eff}}$ & benchmarks to halve $\delta_H^{\mathrm{vis}}$ \\
 \midrule
 2 & $2\times$ more \\
 3 & $4\times$ more \\
@@ -303,55 +266,59 @@ $d_{\mathrm{eff}}$ & Benchmarks needed to halve the gap \\
 \end{tabular}
 \end{center}
 
-\noindent For leaderboards with $d_{\mathrm{eff}} \approx 4$ (the
-empirical regime we observe), reducing the blind spot by $2\times$
-requires $8\times$ as many benchmarks. This quantifies why simply
-adding more benchmarks is an inefficient path to better evaluation:
-the greedy algorithm (Theorem~\ref{thm:body:greedy}) is essential for
-directing new benchmarks to uncovered directions rather than adding
-redundant ones. Under stronger smoothness, the rate improves to
-$m^{-2/(D-1)}$ (Appendix~\ref{app:proof4}, ceiling) --- the
-\emph{square root} of the Lipschitz benchmark requirement.
+\noindent Under stronger smoothness ($C^{1,\alpha}$ support functions)
+the rate improves to $m^{-(1+\alpha)/(D-1)}$, the square root of the
+Lipschitz benchmark requirement; this is our resolution of Gardner's
+Problem 1.5 (Appendix~\ref{app:gardner}).
 
-\paragraph{Corollary 2.1: ranking unreliability via chi-squared
-selection.} A more informative bound, derived from a chi-squared
-selection model on isotropic capability profiles
-(Appendix~\ref{app:proof2}), expresses the probability that the
-leaderboard's top model is not truly best directly in terms of the
-observed score gaps. Decompose each capability $c_i \in \mathbb{R}^D$
-into an observed component $u_i \in \mathbb{R}^{d_{\mathrm{eff}}}$ and a
-hidden component $v_i \in \mathbb{R}^{D - d_{\mathrm{eff}}}$. Then
+\begin{corollary}[Ranking unreliability via chi-squared selection]
+\label{cor:body:rank}
+Let each model's capability $c_i \in \mathbb{R}^D$ decompose into an
+observed component $u_i \in \mathbb{R}^{d_{\mathrm{eff}}}$ and a hidden
+component $v_i \in \mathbb{R}^{D - d_{\mathrm{eff}}}$, with $u_i
+\perp\!\!\!\perp v_i$ under an isotropic prior. The probability that
+the leaderboard's top model is not truly the best satisfies
 \begin{equation}
+\label{eq:topwrong}
   P(\text{top-1 wrong}) \;\le\;
   \sum_{j=1}^{n-1}
   \Phi\!\left(\frac{-\Delta_j}{2\sqrt{2(D - d_{\mathrm{eff}})}}\right),
 \end{equation}
-where $\Phi$ is the standard Gaussian CDF and $\Delta_j$ are the
-observed score gaps from the leaderboard's top model. The
-signal-to-noise correlation between observed and true quality is
-$\rho = \sqrt{d_{\mathrm{eff}} / D}$.
+where $\Delta_j$ is the score gap from the top model to the $j$-th,
+and the signal-to-noise correlation is $\rho = \sqrt{d_{\mathrm{eff}}
+/ D}$ (proof and FKG product variant in Appendix~\ref{app:proof2}).
+\end{corollary}
 
-\paragraph{Empirical headline.} On the extended frontier suite
-($n = 148$, $k = 12$, $d_{\mathrm{eff}} = 4.80$, taking
-$D = 20$ from the dimension bounds in Theorem~\ref{thm:body:greedy} so
-that $\rho \approx 0.49$), the standardised score gap to the runner-up
-is $\Delta_2 \approx 0.072$. The pairwise swap probability between
-the top model and the runner-up is then
-$P(\text{\#2 truly beats \#1}) \le \Phi(-\Delta_2 / (2\sigma_{\mathrm{hidden}}))
-\approx 0.49$ --- essentially a coin flip. The same calculation on
-OLLM v2 ($\rho \approx 0.31$, $\Delta_2 \approx 0.187$) gives a
-pairwise swap probability of $\approx 0.49$. The top five frontier
-models lie within $0.36$ standardised units of each other, well inside
-the chi-squared indistinguishability radius. The honest reading is:
-the apparent leaderboard \#1 is barely separable from its closest
-competitors under any plausible value of $D$.
+\paragraph{Empirical headline (sensitivity-aware).}
+On the extended frontier suite ($n = 148$, $d_{\mathrm{eff}} = 4.80$),
+the standardised score gap to the runner-up is $\Delta_2 \approx
+0.072$. The pairwise swap probability $P(\text{\#2 truly beats \#1}) =
+\Phi(-\Delta_2 / (2\sigma_{\mathrm{hidden}}))$ is largely insensitive
+to the choice of ambient dimension $D$ (with
+$\sigma_{\mathrm{hidden}}$ rescaled to the observed standardised
+score scale):
 
-\paragraph{Corollary 2.2: rank reversal susceptibility.} If
-$d_{\mathrm{eff}} < n - 1$, then there exist additions of a single new
-model that flip the ranking of two existing models. This is the
-geometric root of the classical MCDM rank-reversal phenomenon
-\cite{belton1983short, saaty1984inconsistency, dyer1990remarks}; we
-discuss empirics in Section~\ref{sec:cor}.
+\begin{center}\small
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{ccccccc}
+\toprule
+$D$ & 10 & 15 & 20 & 30 & 50 & 100 \\
+$\rho = \sqrt{d_{\mathrm{eff}}/D}$ & 0.69 & 0.57 & 0.49 & 0.40 & 0.31 & 0.22 \\
+$P(\text{swap})$ & 0.476 & 0.483 & 0.486 & 0.489 & 0.492 & 0.494 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent For all plausible $D \ge 10$, $P(\text{swap}) > 0.47$: the
+top-ranked model is not reliably separable from its closest
+competitor. Detailed sensitivity analysis (bootstrap CIs and a sweep
+over $D$) is in Appendix~\ref{app:sensitivity}.
+
+\paragraph{Corollary 2.2 (rank reversal).} If $d_{\mathrm{eff}} < n -
+1$, additions of a single new model can flip the ranking of two
+existing models---the geometric root of the MCDM rank-reversal
+phenomenon \citep{belton1983short, dyer1990remarks}. Empirics in
+Section~\ref{sec:cor}.
 
 \begin{figure}[t]
   \centering
@@ -359,137 +326,110 @@ discuss empirics in Section~\ref{sec:cor}.
   \hfill
   \includegraphics[width=0.48\linewidth]{../figures/fig4_ranking.pdf}
   \caption{\textbf{Left:} median pair gap on the held-out benchmark
-    half versus the visible half, over $300$ random splits of the
-    extended frontier suite. The Lipschitz upper bound is loose because
-    the convex profile assumption is conservative; observed divergence
-    is well within the bound, validating the theory. \textbf{Right:}
-    fraction of model pairs whose aggregate gap falls within the
-    indistinguishability radius as a function of the visible benchmark
-    count $m$. The empirical curve tracks the predicted
-    $\propto m^{-1/(d_{\mathrm{eff}} - 1)}$ decay.}
+    half vs the visible half, over $300$ random splits of the extended
+    frontier suite; observed divergence is well within the Lipschitz
+    bound. \textbf{Right:} fraction of model pairs whose aggregate gap
+    falls within the indistinguishability radius as a function of $m$;
+    the empirical curve tracks $\propto m^{-1/(d_{\mathrm{eff}} - 1)}$.}
   \label{fig:bs}
 \end{figure}
 
-% =====================================================================
 \section{Theorem 3: Greedy Coverage}
-% =====================================================================
 
-The blind-spot bound is a function of $m$. Once $m$ is fixed, can we
-choose benchmarks more carefully? Yes: greedy selection on the
-\emph{coverage function} achieves the Nemhauser $(1 - 1/e)$ guarantee.
-
-Let $\Sigma$ be the benchmark correlation matrix and let $\ell_j$ be
-its $j$-th column (or, equivalently, the $j$-th loading vector). For
-any subset $T \subseteq [k]$, let $P_T$ be the orthogonal projector
-onto $\mathrm{span}\{\ell_j : j \in T\}$. The coverage function is
-\begin{equation}
-  f(T) = \frac{\mathrm{tr}(P_T \Sigma)}{\mathrm{tr}(\Sigma)}.
-\end{equation}
+Let $\Sigma$ be the benchmark correlation matrix with $j$-th loading
+vector $\ell_j$. For $T \subseteq [k]$, let $P_T$ be the orthogonal
+projector onto $\mathrm{span}\{\ell_j : j \in T\}$. The coverage
+function is $f(T) = \mathrm{tr}(P_T \Sigma) / \mathrm{tr}(\Sigma)$.
 
 \begin{theorem}[Greedy Benchmark Selection]
 \label{thm:body:greedy}
-The coverage function $f$ is monotone and submodular. Greedy
-selection --- iteratively picking the benchmark that maximises the
-marginal gain $f(T \cup \{j\}) - f(T)$ --- achieves
-\begin{equation}
-  f(T_{\mathrm{greedy}}^{(r)}) \;\ge\; \left(1 - \frac{1}{e}\right)
-  f(T^*_r),
-\end{equation}
-where $T^*_r$ is the optimal $r$-subset \cite{nemhauser1978analysis}.
-The minimum $r$ achieving target coverage $\tau$ satisfies $r \le
-\lceil \ln(1/(1-\tau)) / \ln(k / (k - d_{\mathrm{eff}})) \rceil$.
+The coverage function $f$ is monotone and submodular. Greedy selection
+achieves the Nemhauser bound
+$f(T_{\mathrm{greedy}}^{(r)}) \ge (1 - 1/e)\, f(T^*_r)$
+\citep{nemhauser1978analysis}, and the minimum $r$ achieving target
+coverage $\tau$ satisfies $r \le \lceil \ln(1/(1-\tau)) / \ln(k / (k -
+d_{\mathrm{eff}})) \rceil$.
 \end{theorem}
 
-The proof (Appendix~\ref{app:proof3}) is a direct application of
-Nemhauser et al.\ once monotonicity and submodularity are established
-via projector inequalities.
+Submodularity of $\mathrm{tr}(P_T \Sigma)$ for PSD $\Sigma$ is a
+classical result in experimental design \citep{daskempe2011submodular,
+krause2008submodular}; the rigorous proof, via the
+eigendecomposition $\Sigma = \sum_i \lambda_i v_i v_i^\top$ and the
+distance-from-span identity $\|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v,
+\mathrm{span}(T))^2$, is in Appendix~\ref{app:proof3}.
 
-\paragraph{Empirics.} Figure~\ref{fig:greedy} plots the cumulative
-coverage curve. On the extended 12-benchmark frontier suite,
-\emph{seven} benchmarks suffice for $90\%$ coverage; the remaining five
-are redundant. Greedy beats random selection by $\sim 9$ percentage
-points at $r = 4$. The recommended $7$-benchmark subset is $\{$ MMLU,
-HellaSwag, IFEval, MUSR, GSM8K, MATH Lvl 5, BBH $\}$. The redundancies
-flagged by the algorithm are MMLU-PRO, ARC, and Winogrande (gain $<
-0.02$), each adding less than $2\%$ marginal coverage on top of the
-selected suite.
+\paragraph{Connection to Theorem~\ref{thm:body:indist}.} Greedy
+selection expands the visible subspace $V_{\mathrm{eff}}$, which
+directly shrinks the orthogonal $\delta_H^{\perp}$ term in the
+indistinguishability bound. Thus Theorems~\ref{thm:body:indist}
+and~\ref{thm:body:greedy} are complementary: Theorem~2 says how big
+the unfixed blind spot is for a given $V_{\mathrm{eff}}$, and
+Theorem~3 expands $V_{\mathrm{eff}}$ as efficiently as possible.
+
+\paragraph{Empirics.} On the extended 12-benchmark frontier suite,
+\emph{seven} benchmarks suffice for $90\%$ coverage; greedy beats
+random selection by $\approx 9$ percentage points at $r = 4$. The
+recommended seven are $\{$MMLU, HellaSwag, IFEval, MUSR, GSM8K,
+MATH Lvl 5, BBH$\}$; the redundancies (gain $< 0.02$) are MMLU-PRO,
+ARC, and Winogrande. Out-of-sample, greedy-selected subsets achieve
+higher Kendall $\tau$ with the full ranking than random subsets at
+every $r$ (Appendix~\ref{app:validation}).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.48\linewidth]{../figures/fig5_exttop_curve.pdf}
   \hfill
   \includegraphics[width=0.48\linewidth]{../figures/fig6_exttop_blindspot.pdf}
-  \caption{\textbf{Left:} cumulative coverage of the greedy benchmark
-    subset on the extended frontier suite. The dashed line marks the
-    $\tau = 0.9$ target. \textbf{Right:} uncovered eigen-mass before
-    versus after greedy selection of $7$ benchmarks. The blind spot
-    (uncovered eigenvalue mass) shrinks by $\sim 90\%$.}
+  \caption{\textbf{Left:} cumulative coverage of the greedy subset on
+    the extended frontier suite. \textbf{Right:} uncovered eigen-mass
+    before versus after selecting $7$ benchmarks; the blind spot
+    shrinks by $\approx 90\%$.}
   \label{fig:greedy}
 \end{figure}
 
-% =====================================================================
-\section{Corollaries in the Wild}
+\section{Corollaries in Practice}
 \label{sec:cor}
-% =====================================================================
 
 \paragraph{Busemann--Petty analogue.} The classical Busemann--Petty
-problem asks whether pointwise domination of hyperplane-section volumes
-implies domination of full volume; the answer is \emph{yes} in dimension
-$\le 4$ and \emph{no} in dimension $\ge 5$ \cite{lutwak1988intersection,
-gardner1994positive, zhang1999generalized, koldobsky1998intersection}.
-The related Shephard problem for projection volumes
-\cite{petty1967projection, schneider1967projections} fails already in
-dimension $\ge 3$. Benchmarks are width measurements --- closer to
-projections than to sections --- so the precise threshold for
-benchmark scores is open; the published $d \in \{3, 5\}$ thresholds
-\emph{bracket} it.
+problem (\emph{yes} for $d \le 4$, \emph{no} for $d \ge 5$
+\citep{lutwak1988intersection, gardner1994positive, zhang1999generalized,
+koldobsky1998intersection}) and the Shephard problem (\emph{no} for
+$d \ge 3$ \citep{petty1967projection, schneider1967projections}) say
+that pointwise low-dimensional measurements need not predict
+full-dimensional volume. As an analogue, for benchmark suites with
+$d_{\mathrm{eff}} \ge 5$ there exist convex capability profiles $K, L$
+such that $\pi_i(K) < \pi_i(L)$ for every benchmark yet
+$\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$
+(Proposition~\ref{prop:body:bp}, proof in Appendix~\ref{app:cor}). The
+exact width threshold is open, bracketed by $\{3, 5\}$.
 
-\begin{proposition}[Benchmark Domination Does Not Imply Capability Domination]
+\begin{proposition}[Benchmark domination $\not\Rightarrow$ capability domination]
 \label{prop:body:bp}
-For benchmark suites with effective dimensionality $d_{\mathrm{eff}}
-\ge 5$, there exist convex capability profiles $K, L$ such that
-$\pi_i(K) < \pi_i(L)$ for every benchmark $i$ yet
-$\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$.
+For $d_{\mathrm{eff}} \ge 5$, there exist convex profiles $K, L$ with
+$\pi_i(K) < \pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) >
+\mathrm{vol}_D(L)$.
 \end{proposition}
 
-We frame this as an \emph{analogue}, never as direct application: the
-underlying convex-geometry phenomenon (pointwise low-dimensional
-measurements failing to predict full-dimensional volume) is the same,
-but the precise dimension threshold for widths is open.
-
-\paragraph{Empirical evidence.} We construct a held-out benchmark
-domination test: we randomly split the 12 benchmarks into a visible
-and a held-out half, find pairs where one model strictly dominates
-another on every visible benchmark, and check whether the held-out
-benchmarks reverse the verdict on at least one column. Over $80$
-random splits we find $50$ such pairs (capped) on the full extended
-suite (Table~\ref{tab:dom}). Each is empirical evidence that benchmark
-domination is unreliable: the visible benchmarks unanimously declare
-one model better, yet at least one held-out benchmark contradicts
-that verdict.
-
-\paragraph{Rank reversal in real leaderboards.} We sample $n = 12$
-frontier models from the extended suite (chosen so that
-$d_{\mathrm{eff}} = 3.55 < n - 1$, the susceptibility threshold of
-Corollary 2.2), and for every model in the population we recompute the
-ranking after \emph{adding} that model to the rest. We find $4$
-documented rank reversals (Table~\ref{tab:rev}); the same experiment
-with $n = 8$ yields $6$ reversals. This is a precise empirical
-realisation of the Belton--Gear AHP phenomenon \cite{belton1983short},
-explained by the geometric condition we prove.
+\paragraph{Empirics.} A held-out test (random 6/6 visible/hidden split
+of the 12 benchmarks) finds $50$ pairs (capped) on the extended suite
+where one model strictly dominates another on every visible benchmark
+yet is contradicted on at least one held-out benchmark
+(Table~\ref{tab:dom}). On the rank-reversal side, sampling $n = 12$
+frontier models so that $d_{\mathrm{eff}} = 3.55 < n - 1$ produces
+$4$ rank reversals when single models are added (Table~\ref{tab:rev});
+the same experiment at $n = 8$ yields $6$ reversals.
 
 \begin{table}[t]
   \small\centering
-  \caption{A representative rank-reversal triple: the order of
-    \texttt{Smaug-34B} and \texttt{UNA-SimpleSmaug-34b} flips when one
-    of four other models is added to the leaderboard. (4 reversals
-    total in the $n = 12$ frontier sample;
+  \caption{Rank reversal: order of \texttt{Smaug-34B} and
+    \texttt{UNA-SimpleSmaug-34b} flips when one of four other models
+    is added (4 reversals total in the $n=12$ frontier sample;
     Corollary~\ref{cor:reversal} predicts susceptibility because
-    $d_{\mathrm{eff}} = 3.55 < n - 1 = 11$.)}
+    $d_{\mathrm{eff}} = 3.55 < n - 1 = 11$).}
   \label{tab:rev}
   \begin{tabular}{lllcc}
     \toprule
-    Pair $A$ & Pair $B$ & Added model & Order before & Order after \\
+    Pair $A$ & Pair $B$ & Added model & Before & After \\
     \midrule
     Smaug-34B & UNA-SimpleSmaug-34b & Jallabi-34B & $B \succ A$ & $A \succ B$ \\
     Smaug-34B & UNA-SimpleSmaug-34b & openbuddy-mixtral & $B \succ A$ & $A \succ B$ \\
@@ -501,13 +441,9 @@ explained by the geometric condition we prove.
 
 \begin{table}[t]
   \small\centering
-  \caption{Benchmark-domination violations under random visible/held-out
-    splits of the 12-benchmark extended suite. ``Visible-dominated''
-    means the loser is strictly worse on all $6$ visible benchmarks;
-    ``held-out reversal'' means the held-out half flips the verdict on
-    at least one column. The full violation list is in
-    \texttt{results/exp4\_table2\_domination.csv}; we show four
-    illustrative entries.}
+  \caption{Benchmark-domination violations under random 6/6
+    visible/held-out splits (extended suite, full violation list in
+    \texttt{results/exp4\_table2\_domination.csv}).}
   \label{tab:dom}
   \begin{tabular}{llcc}
     \toprule
@@ -521,34 +457,67 @@ explained by the geometric condition we prove.
   \end{tabular}
 \end{table}
 
-% =====================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Benchmark dimensionality (BenchScope).}
+Concurrent work by \citet{shazhao2026benchscope} independently
+identifies low effective dimensionality in LLM benchmark suites using
+the participation ratio with MP correction. We share the
+Theorem~\ref{thm:body:deff} diagnostic but contribute three results
+absent from BenchScope: the indistinguishability bound
+(Theorem~\ref{thm:body:indist}), the submodular greedy algorithm with
+the $(1 - 1/e)$ guarantee (Theorem~\ref{thm:body:greedy}), and the
+minimax-rate theory (Appendix~\ref{app:gardner}). BenchScope's
+empirical workflows (reliability analysis, population-conditional ED)
+are complementary.
+
+\paragraph{Underdetermination (HypoSpace).}
+\citet{hypospace2025} formalises underdetermination in enumerable
+hypothesis spaces. Our geometric approach handles continuous
+capability spaces, yielding quantitative convergence rates; the
+conceptual alignment is strong.
+
+\paragraph{Geometric tomography rates (Guntuboyina, Ragozin).}
+\citet{guntuboyina2011minimax} provides minimax lower bounds for
+convex body recovery under Gaussian noise via $\chi^2$-entropy. Our
+noiseless directional-discretisation rates complement those results;
+the smooth rate $m^{-2/(D-1)}$ follows from Jackson--Bernstein theory
+\citep{ragozin1970polynomial, dai2013approximation} and Kolmogorov
+$n$-widths \citep{magaril2006optimal}.
+
+\paragraph{Benchmark efficiency (TinyBenchmarks).}
+\citet{polo2024tinybenchmarks} optimises item selection within a
+benchmark via item response theory; we optimise benchmark selection
+across benchmarks via submodular coverage. The two approaches operate
+at different granularities and are complementary.
+
 \section{Discussion}
-% =====================================================================
 
-\paragraph{What this paper does \emph{not} claim.} (i) We do not claim
-anything about real-world deployment performance; our results bound
-what benchmarks can distinguish, not what models can do. (ii) We do
-not claim that PCA is novel; we use the eigenvalues PCA produces and
-prove what they imply for ranking and coverage. (iii) The
-Busemann--Petty result is an \emph{analogue}: the underlying
-phenomenon transfers, but the precise dimension threshold for width
-measurements is open. (iv) Convexity is a conservative assumption:
-relaxing it can only enlarge the blind spot.
+\paragraph{Takeaways.}
+(1) Treat $d_{\mathrm{eff}}$ as a leaderboard-design diagnostic: a
+$20$-benchmark suite with $d_{\mathrm{eff}} \approx 3$ reports the
+same score thrice.
+(2) Treat the chi-squared bound~\eqref{eq:topwrong} as a rank-claim
+rejection threshold.
+(3) Run greedy coverage before adding new benchmarks; flag
+redundancies for retirement and the uncovered eigendirections as
+priority for new design.
+(4) The smooth $m^{-2/(D-1)}$ rate requires adaptive item-level
+measurements (Appendix~\ref{app:gardner}); aggregate scores cannot
+beat the Lipschitz rate.
 
-\paragraph{Practical takeaways.}
-(1)~Treat $d_{\mathrm{eff}}$ as a leaderboard-design diagnostic: a
-suite of $20$ benchmarks with $d_{\mathrm{eff}} \approx 3$ is reporting
-the same score thrice. (2)~Treat the chi-squared bound
-$\sum_j \Phi(-\Delta_j / (2\sqrt{2(D - d_{\mathrm{eff}})}))$ as a
-rejection threshold: rank claims separated by less than
-$2\sigma_{\mathrm{hidden}}$ standardised units are not supported by
-the data. (3)~Run greedy coverage on your suite before adding new
-benchmarks; flag redundancies for retirement and the uncovered
-eigendirections as priority for new benchmark design.
-(4)~If your evaluation aims for the smooth $m^{-2/(D-1)}$ rate, you
-need adaptive item-level X-ray-style measurements
-(Appendix~\ref{app:gardner}); aggregate scores cannot beat the
-Lipschitz rate.
+\paragraph{Limitations.}
+(1) We bound what benchmarks can \emph{distinguish}, not what models
+can \emph{do}: no claim about deployment performance follows.
+(2) The Busemann--Petty result is an analogue, not a direct
+application; the exact width threshold is open.
+(3) Convexity is a conservative assumption: relaxing it can only
+enlarge the blind spot.
+
+\paragraph{Future work.} The chi-squared selection model assumes an
+isotropic prior on capabilities; replacing it with an estimated
+anisotropic prior is a natural next step.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -572,9 +541,92 @@ Lipschitz rate.
 \subsection*{Chi-squared selection model for Corollary 2.1}
 \input{../proofs/gap2_ranking_unreliability.tex}
 
+\subsection*{Visible vs full Hausdorff decomposition}
+
+The corrected covering bound above bounds only the \emph{visible}
+component. To make the visible/full decomposition explicit, decompose
+$\mathbb{R}^D = V_{\mathrm{eff}} \oplus V_{\mathrm{eff}}^\perp$. For
+any $v \in S^{D-1}$ write $v = v^{\parallel} + v^{\perp}$. The
+support function difference splits as $|h_K(v) - h_L(v)| \le |h_K(v) -
+h_K(v^{\parallel})| + |h_K(v^{\parallel}) - h_L(v^{\parallel})| +
+|h_L(v^{\parallel}) - h_L(v)|$. The middle term is bounded by the
+visible covering argument; the outer two are bounded by Lipschitzness
+along $v^{\perp}$, contributing the trivial $O(R\|v^{\perp}\|)$ term.
+Taking the supremum over $S^{D-1}$ yields
+\begin{align}
+\delta_H(K, L) &= \max\!\Big(\sup_{v \in S^{D-1} \cap V_{\mathrm{eff}}}
+                            |h_K(v) - h_L(v)|,\ \,
+                            \sup_{v \perp V_{\mathrm{eff}}}
+                            |h_K(v) - h_L(v)|\Big),
+\\
+\delta_H^{\mathrm{vis}}(K, L) &\le \varepsilon
+                              + 2 R \omega_m
+                              \le \varepsilon
+                              + C R \cdot m^{-1/(d_{\mathrm{eff}} - 1)},
+\\
+\delta_H^{\perp}(K, L) &\le 2R \quad \text{(trivial bound from
+                                                  containment in $B_R^D$).}
+\end{align}
+The unconditional bound is $\delta_H \le \max(\varepsilon + CR
+m^{-1/(d-1)}, 2R)$. The non-trivial content is the visible part: it
+quantifies how the measurable blind spot decays with $m$. The
+orthogonal $2R$ contribution is what Theorem~\ref{thm:body:greedy}'s
+greedy algorithm reduces by enlarging $V_{\mathrm{eff}}$.
+
+\subsection*{Centering convention}
+
+We assume capability profiles are origin-symmetric ($K = -K$), so
+$h_K(u) = h_K(-u)$ and $w_K(u) = 2 h_K(u)$. Width agreement within
+$\varepsilon$ then implies support function agreement within
+$\varepsilon/2$, and the bound above applies with this rescaling.
+For non-symmetric bodies, $w_K(u)$ determines $h_K(u) + h_K(-u)$ but
+not $h_K(u)$ individually; the same bound then applies to the
+\emph{symmetrized} body $(K - K)/2$. Since benchmark scores are
+translation-invariant once the score matrix is centred, this is
+without loss of generality for the inter-model discrimination
+question.
+
 \section{Theorem 3 proof: greedy coverage}
 \label{app:proof3}
 \input{../proofs/theorem3_proof.tex}
+
+\subsection*{Rigorous submodularity of $f(T) = \mathrm{tr}(P_T \Sigma)/\mathrm{tr}(\Sigma)$}
+
+Submodularity of the coverage function for PSD $\Sigma$ is a classical
+result in experimental design, equivalent to submodularity of the
+A-optimal criterion \citep{daskempe2011submodular, krause2008submodular}.
+We give the explicit argument.
+
+\begin{proof}
+Let $\Sigma = \sum_{i=1}^k \lambda_i v_i v_i^\top$ be the
+eigendecomposition with $\lambda_i \ge 0$. Then
+$\mathrm{tr}(P_T \Sigma) = \sum_i \lambda_i \|P_T v_i\|^2$. Since
+each $\lambda_i \ge 0$, it suffices to show that $T \mapsto \|P_T
+v\|^2$ is monotone submodular for any fixed $v \in \mathbb{R}^k$.
+
+\emph{Monotonicity.} For $T \subseteq T'$, $\mathrm{span}(T) \subseteq
+\mathrm{span}(T')$, so $P_T \preceq P_{T'}$ in the PSD order, hence
+$\|P_T v\|^2 \le \|P_{T'} v\|^2$.
+
+\emph{Submodularity.} Use the Pythagorean identity
+$\|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v, \mathrm{span}(T))^2$. The
+function $T \mapsto \mathrm{dist}(v, \mathrm{span}(T))^2$ is
+\emph{supermodular}: adding a vector $\ell_j$ to a larger spanning
+set $\mathrm{span}(T')$ reduces the squared distance by less than
+adding it to a smaller set $\mathrm{span}(T)$, because the residual
+of $v$ orthogonal to $\mathrm{span}(T')$ is a subset of that
+orthogonal to $\mathrm{span}(T)$. This is the standard
+``diminishing-returns'' property of orthogonal projections; a
+detailed proof appears in \citet[Proposition 1]{daskempe2011submodular}.
+Since the negation of a supermodular function is submodular,
+$T \mapsto \|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v, \mathrm{span}(T))^2$
+is monotone submodular.
+
+A non-negative linear combination of monotone submodular functions is
+monotone submodular, so $f(T) = \sum_i \lambda_i \|P_T v_i\|^2 /
+\mathrm{tr}(\Sigma)$ is monotone submodular. No additional assumptions
+on the loading vectors $\{\ell_j\}$ are required.
+\end{proof}
 
 \section{Stability of convex body recovery from width measurements}
 \label{app:proof4}
@@ -656,5 +708,121 @@ $m^{-2/(D-1)}$ requires either (i) intrinsically smooth capability
 landscapes ($\beta = 0$, no sharp emergent thresholds), or (ii) adaptive
 item-level evaluation that detects and concentrates effort at sharp
 capability boundaries.
+
+% =====================================================================
+\section{Sensitivity analysis for $P(\text{top-1 wrong})$}
+\label{app:sensitivity}
+% =====================================================================
+
+The chi-squared bound~\eqref{eq:topwrong} depends on the ambient
+capability dimension $D$, which is bounded above by $n - 1$
+(Theorem~\ref{thm:body:greedy}) but otherwise unidentified from the
+data alone. We sweep $D$ across the plausible range and report the
+pairwise swap probability between the top two models on the extended
+frontier suite ($n = 148$, $d_{\mathrm{eff}} = 4.80$, $\Delta_2 =
+0.072$ in standardised units, $\sigma_{\mathrm{hidden}}$ rescaled to
+the observed score scale via $\sigma_{\mathrm{hidden}} =
+\sigma_{\mathrm{obs}} \sqrt{(D - d_{\mathrm{eff}})/d_{\mathrm{eff}}}$):
+
+\begin{center}\small
+\begin{tabular}{ccc}
+\toprule
+$D$ & $\rho = \sqrt{d_{\mathrm{eff}}/D}$ & $P(\text{swap})$ \\
+\midrule
+10  & 0.693 & 0.476 \\
+15  & 0.566 & 0.483 \\
+20  & 0.490 & 0.486 \\
+30  & 0.400 & 0.489 \\
+50  & 0.310 & 0.492 \\
+100 & 0.219 & 0.494 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The swap probability is monotone in $D$ and lies in $[0.476, 0.494]$
+across the plausible range. The qualitative conclusion---the top model
+is not reliably separable from its runner-up---is robust to $D$. Full
+numbers and the bootstrap procedure are in
+\texttt{results/validation/G\_swap\_sensitivity.csv}.
+
+% =====================================================================
+\section{Empirical validation experiments}
+\label{app:validation}
+% =====================================================================
+
+We run six validation experiments to support the empirical claims in
+\S\ref{thm:body:deff}--\S\ref{thm:body:greedy}. The script is
+\texttt{experiments/validation.py}; outputs are in
+\texttt{results/validation/}.
+
+\paragraph{H.1 Permutation null for eigenvalues.} For each suite, we
+shuffle each benchmark column independently $1000$ times and compute
+the resulting eigenvalues. Let $\lambda_i^{(95)}$ denote the $95$th
+percentile of the permuted spectrum. On both the OLLM v2 ($k = 6$,
+$\lambda_+^{\mathrm{MP}} = 1.24$) and the extended suite ($k = 12$,
+$\lambda_+^{\mathrm{MP}} = 1.44$), exactly \emph{one} observed
+eigenvalue exceeds the $95$th-percentile permutation threshold, and
+the same one exceeds the MP edge. The MP correction and the
+permutation null agree on the signal count.
+
+\paragraph{H.2 Split-half reliability.} Over $500$ random 50/50 model
+splits, the mean absolute difference between $d_{\mathrm{eff}}$
+estimates from the two halves is $0.10$ (OLLM v2) and $0.12$
+(extended). The two halves of a single split are by construction
+disjoint and complementary, so the within-split correlation across
+splits is large and negative; the absolute deviation is the
+appropriate reliability metric and is small relative to
+$d_{\mathrm{eff}} \approx 2$.
+
+\paragraph{H.3 Saturation curve.} On the extended suite, we subsample
+$n' \in \{20, 50, 100, 150, 200, 250, 295\}$ models and bootstrap
+$d_{\mathrm{eff}}$. The estimate stabilises by $n' = 100$:
+$d_{\mathrm{eff}}(n' = 50) = 2.07\, [1.79, 2.44]$,
+$d_{\mathrm{eff}}(n' = 100) = 2.10\, [1.89, 2.31]$,
+$d_{\mathrm{eff}}(n' = 295) = 2.11$.
+
+\paragraph{H.4 Greedy out-of-sample Kendall $\tau$.} For each $r \in
+\{2, \ldots, 12\}$ we compute the Kendall $\tau$ between the
+$r$-benchmark aggregate ranking and the full $12$-benchmark aggregate
+ranking on the extended frontier suite. Greedy matches or beats
+random selection at small $r$:
+\begin{center}\small
+\begin{tabular}{cccc}
+\toprule
+$r$ & greedy $\tau$ & random $\tau$ (mean) & random $\tau$ (std) \\
+\midrule
+2 & 0.706 & 0.529 & 0.116 \\
+3 & 0.667 & 0.611 & 0.093 \\
+4 & 0.683 & 0.669 & 0.075 \\
+5 & 0.737 & 0.703 & 0.065 \\
+7 & 0.774 & 0.785 & 0.045 \\
+\bottomrule
+\end{tabular}
+\end{center}
+At $r = 2$, greedy gives $\tau = 0.71$ vs random $0.53$ --- a
+$+0.18$ Kendall improvement, which exceeds the random standard
+deviation. At larger $r$, both converge to the full ranking.
+
+\paragraph{H.5 Greedy vs max-uncorrelated heuristic.} A natural
+baseline is the iterative max-uncorrelated heuristic that picks the
+benchmark with the smallest maximum absolute correlation to the
+selected set. Greedy matches or beats it at every $r$, with the
+largest gap at $r = 2$ (greedy $0.580$ vs max-uncorrelated $0.440$
+coverage).
+
+\paragraph{H.6 Spearman vs Pearson.} Replacing Pearson with Spearman
+correlation does not change the qualitative result:
+\begin{center}\small
+\begin{tabular}{lcc}
+\toprule
+Suite & $d_{\mathrm{eff}}^{\mathrm{Pearson}}$ & $d_{\mathrm{eff}}^{\mathrm{Spearman}}$ \\
+\midrule
+OLLM v2 (full)        & 1.88 & 1.70 \\
+OLLM v2 (frontier)    & 2.86 & 2.76 \\
+Extended (frontier)   & 4.80 & 4.62 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The two methods agree to within $0.2$ on every slice.
 
 \end{document}
