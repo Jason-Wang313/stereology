@@ -1,19 +1,4 @@
-% RESIDUAL 1: SELF-CONTAINED PROOF OF CURVATURE-REGULARITY
-%
-% The Schneider/Alexandrov dependency was a RED HERRING.
-%
-% I was worried about extending the Hessian formula W(v) = ∇²h + hI
-% to non-smooth settings. But the proof doesn't need that formula.
-% It needs the GRADIENT REGULARITY of h_K, which follows from:
-%   1. The tangent-point map p*(v) = argmax_{x∈K} ⟨x,v⟩
-%   2. The rate of change of p* = principal radii of curvature
-%   3. Path integration
-%
-% None of these require the Hessian to exist as a matrix.
-% None require Alexandrov's theorem.
-% The proof is elementary convex geometry + the implicit function theorem.
-
-\begin{theorem}[Curvature-Regularity: Self-Contained Proof]
+\begin{theorem}[Curvature--regularity correspondence]
 \label{thm:curv-reg-sc}
 Let $K \subset B_R^D$ be a strictly convex body (boundary contains no line segment). Let $\Sigma \subset S^{D-1}$ be a closed set such that $\partial K$ is $C^2$ with positive Gauss curvature at all points $p^*(v)$ for $v \notin \Sigma$, and the maximum principal radius of curvature satisfies:
 \[
@@ -23,7 +8,7 @@ for some $\beta \in [0, 1)$. Then $h_K \in C^{1, 1-\beta}(S^{D-1})$.
 \end{theorem}
 
 \begin{proof}
-The proof has three components, none requiring the Hessian of $h_K$ to exist as a classical matrix.
+The proof has three components.
 
 \textbf{Component 1: The tangent-point map.}
 
@@ -31,7 +16,7 @@ For $v \in S^{D-1}$, define $p^*(v) = \arg\max_{x \in K} \langle x, v \rangle$. 
 \[
   \nabla_{S^{D-1}} h_K(v) = p^*(v) - \langle p^*(v), v \rangle \, v = \Pi_{T_v S^{D-1}}(p^*(v)).
 \]
-This is a standard fact: $h_K(v) = \langle p^*(v), v \rangle$, and for nearby direction $v + \delta v$: $h_K(v + \delta v) \geq \langle p^*(v), v + \delta v \rangle = h_K(v) + \langle p^*(v), \delta v \rangle$, with equality to first order by optimality. No smoothness of $\partial K$ is needed --- only strict convexity (unique maximizer).
+This is a standard fact: $h_K(v) = \langle p^*(v), v \rangle$, and for nearby direction $v + \delta v$: $h_K(v + \delta v) \geq \langle p^*(v), v + \delta v \rangle = h_K(v) + \langle p^*(v), \delta v \rangle$, with equality to first order by optimality. Strict convexity of $K$ (unique maximizer) suffices.
 
 \textbf{Component 2: Rate of change of the tangent-point map.}
 
@@ -39,7 +24,7 @@ For $v \notin \Sigma$ (where $\partial K$ is $C^2$ with positive curvature): the
 \[
   \|dp^*(v)\| = \|(\mathrm{II}_{p^*(v)})^{-1}\| = r_{\max}(v)
 \]
-where $\mathrm{II}$ is the second fundamental form. This is elementary: a small change $\delta v$ in the normal direction shifts the tangent point by $\delta p = (\mathrm{II})^{-1} \delta v$, and the eigenvalues of $(\mathrm{II})^{-1}$ are the principal radii $r_1, \ldots, r_{D-1}$.
+where $\mathrm{II}$ is the second fundamental form. A small change $\delta v$ in the normal direction shifts the tangent point by $\delta p = (\mathrm{II})^{-1} \delta v$, and the eigenvalues of $(\mathrm{II})^{-1}$ are the principal radii $r_1, \ldots, r_{D-1}$.
 
 Therefore, for $v \notin \Sigma$:
 \[
@@ -76,8 +61,7 @@ If $\gamma$ passes through the $d$-neighborhood of $\Sigma$: let $t_0$ be the po
   &\leq 2 \int_0^{d/2} s^{-\beta} \, ds + 2\int_0^{d/2} s^{-\beta} \, ds \\
   &= 4 \cdot \frac{(d/2)^{1-\beta}}{1-\beta} = \frac{2^{2-\beta+1}}{1-\beta} \cdot \frac{d^{1-\beta}}{2} \leq \frac{C}{1-\beta} d^{1-\beta}.
 \end{align*}
-
-(The first inequality uses: the worst case is $\delta_0 = 0$, where the path goes through $\Sigma$ itself. In that case $\delta(t) \geq |t - t_0|$ by the triangle inequality.) \qed (claim)
+The worst case is $\delta_0 = 0$, where the path goes through $\Sigma$ itself; then $\delta(t) \geq |t - t_0|$ by the triangle inequality. \qed (claim)
 
 Combining:
 \[
@@ -90,26 +74,8 @@ For $d(v_0, v_1) \leq 1$: the first term dominates (since $1-\beta < 1$), giving
 Therefore $\nabla h_K \in C^{0, 1-\beta}(S^{D-1})$, hence $h_K \in C^{1, 1-\beta}(S^{D-1})$. \qed
 \end{proof}
 
-\begin{remark}[What this proof uses]
-\begin{itemize}
-  \item \textbf{Strict convexity of $K$:} Ensures unique maximizer $p^*(v)$ for all $v$, hence $\nabla h_K$ exists everywhere.
-  \item \textbf{$C^2$ boundary away from $\Sigma$:} Ensures $p^*$ is differentiable away from $\Sigma$, with $\|dp^*\| = r_{\max}$.
-  \item \textbf{Path integration on $S^{D-1}$:} Integrates the local Lipschitz bound to get global H\"older continuity.
-\end{itemize}
-
-\textbf{What this proof does NOT use:}
-\begin{itemize}
-  \item Schneider's formula $W = \nabla^2 h + hI$ (not needed).
-  \item Alexandrov's theorem on a.e.\ twice-differentiability (not needed).
-  \item Any distributional or measure-theoretic notion of the Hessian (not needed).
-  \item Any approximation or limiting argument (not needed).
-\end{itemize}
-
-The proof is entirely self-contained using: the definition of the support function, strict convexity, the implicit function theorem (away from $\Sigma$), and integration.
-\end{remark}
-
 \begin{remark}[Extension to non-strictly-convex bodies ($\beta \geq 1$)]
-For bodies with flat faces ($\beta \geq 1$): $K$ is NOT strictly convex, so $p^*(v)$ may not be unique at some directions. At such directions, $\nabla h_K$ does not exist (in the classical sense). However:
+For bodies with flat faces ($\beta \geq 1$): $K$ is not strictly convex, so $p^*(v)$ may not be unique at some directions, and $\nabla h_K$ does not exist in the classical sense at those directions. However:
 \begin{itemize}
   \item $h_K$ is still Lipschitz on $S^{D-1}$ (with constant $R$).
   \item $\nabla h_K$ exists a.e.\ (Rademacher's theorem).
@@ -118,5 +84,3 @@ For bodies with flat faces ($\beta \geq 1$): $K$ is NOT strictly convex, so $p^*
 \end{itemize}
 This corresponds to $\beta \geq 1 \Rightarrow h_K \in C^1$ at best, consistent with the $\beta$-rate $m^{-(2-\beta)/(D-1)} = m^{-1/(D-1)}$ for $\beta = 1$.
 \end{remark}
-
-\textbf{STATUS: Residual 1 is eliminated. The curvature-regularity correspondence has a fully self-contained proof requiring no external references beyond basic convex geometry and calculus. Confidence: 100\%.}

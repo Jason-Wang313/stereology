@@ -1,20 +1,4 @@
-% THE LAST 1%: LINEARIZATION IS UNNECESSARY
-%
-% I built three layers of proof for "X-rays = widths":
-%   Layer 1: Center-function obstruction (fragile, needs centroid matching)
-%   Layer 2: Angular concentration / Fisher information (clean, but linearized)
-%   Layer 3: THIS — no linearization, no statistics, no Fisher, no center functions
-%
-% The actual proof is three sentences:
-%   1. Between measurement directions, there are angular gaps of width ω_m.
-%   2. In these gaps, the only information comes from C^{1,α} interpolation.
-%   3. Interpolation across a gap of width ω gives error O(ω^{1+α}).
-%
-% That's the upper bound. The lower bound is the null-space construction 
-% with the check that ‖∇g‖ → 0 (so X-ray perturbation vanishes).
-% No linearization anywhere.
-
-\section{X-Rays = Widths: The Three-Line Proof}
+\section{X-Rays and Widths Have the Same Stability Rate}
 
 \begin{theorem}[X-ray and width stability rates are equal]
 \label{thm:final}
@@ -54,49 +38,6 @@ For any noise level $\varepsilon > 0$: for $m$ large enough, $|\delta C| < \vare
 \textbf{Combined:} Both bounds give $\Theta(M m^{-(1+\alpha)/(D-1)})$. \qed
 \end{proof}
 
-\begin{remark}[What this proof uses]
-\begin{enumerate}
-  \item Angular gaps of width $\omega_m \sim m^{-1/(D-1)}$ exist (covering bound on $S^{D-1}$).
-  \item $C^{1,\alpha}$ interpolation across a gap of width $\omega$ has error $O(M\omega^{1+\alpha})$.
-  \item The null-space perturbation has $\|\nabla g\| \to 0$ (Bernstein: gradient of a polynomial with vanishing values is small).
-\end{enumerate}
-\end{remark}
-
-\begin{remark}[What this proof does NOT use]
-\begin{itemize}
-  \item Fisher information (no statistics)
-  \item Linearization of the forward map (no Jacobians)
-  \item Center functions or chord-center decomposition (no algebraic structure)
-  \item Centroid matching or any normalization (no conventions)
-  \item Symmetry of the body (works for all convex bodies)
-  \item Fourier analysis or spherical harmonics (no spectral theory)
-  \item The Radon transform or its properties (no integral geometry)
-\end{itemize}
-\end{remark}
-
 \begin{remark}[Why the angular gap is the bottleneck, not the measurement type]
-The upper bound uses only one fact about the measurement: it provides \emph{some} constraint near each $u_i$. Whether that constraint comes from a width (one scalar), an X-ray (a function), or a full tomographic scan (the complete density in a strip) is irrelevant. The bottleneck is the gap between measurement directions, where the reconstruction relies purely on regularity.
-
-This is why the rate is measurement-independent: \emph{no measurement at direction $u$ can help you reconstruct $h$ at a direction $v$ far from $u$, beyond what the regularity of $h$ already guarantees.}
+The upper bound uses only one fact about the measurement: it provides \emph{some} constraint near each $u_i$. Whether that constraint comes from a width (one scalar), an X-ray (a function), or a full tomographic scan (the complete density in a strip) is irrelevant. The bottleneck is the gap between measurement directions, where the reconstruction relies purely on regularity. No measurement at direction $u$ can help reconstruct $h$ at a direction $v$ far from $u$, beyond what the regularity of $h$ already guarantees.
 \end{remark}
-
-\section{Final Status}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Result} & \textbf{Status} & \textbf{Confidence} \\
-\midrule
-$\beta$-rate for widths & THEOREM & 100\% \\
-$\beta$-rate for X-rays & THEOREM & 100\% \\
-X-ray = width rate & THEOREM & 100\% \\
-X-ray exact recovery threshold & THEOREM & 95\% \\
-Adaptive strategy & THEOREM & 95\% \\
-\midrule
-\textbf{Gardner Problem 1.5} & \textbf{RESOLVED} & \textbf{100\%} \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The proof of the core result (X-ray rate = width rate = $m^{-(2-\beta)/(D-1)}$) is non-linearized, non-statistical, and uses only: covering bounds on spheres, $C^{1,\alpha}$ interpolation, and the Bernstein inequality for gradient control. Each ingredient is a textbook fact. The proof is three sentences.

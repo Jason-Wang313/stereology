@@ -1,94 +1,68 @@
-% STEREOLOGY — Proof Index
+% STEREOLOGY -- Proof Index
 % Maps each theorem/corollary to its definitive proof source.
-% Claude Code should use THESE versions when typesetting the paper.
 
-\section*{Proof Sources (Definitive Versions)}
+\section*{Proof Sources}
 
 \begin{description}
 
 \item[Theorem 1 (Effective Dimensionality)]~\\
   \textbf{Base:} \texttt{theorem1\_proof.tex}\\
-  \textbf{Strengthened (distribution-free):} \texttt{gap4\_theorem1\_strengthened.tex}\\
-  \textbf{Use strengthened version.} Part (a) now has both worst-case and generic-benchmarks bounds, with Grassmannian concentration. Part (b) Marchenko-Pastur unchanged.\\
-  \textbf{Convexity: NOT required.}
+  \textbf{Distribution-free strengthening:} \texttt{gap4\_theorem1\_strengthened.tex}\\
+  Part (a) has both worst-case and generic-benchmarks bounds, with Grassmannian concentration. Part (b) Marchenko-Pastur correction.\\
+  \textbf{Convexity: not required.}
 
 \item[Theorem 2 (Indistinguishability Bound)]~\\
   \textbf{Base:} \texttt{theorem2\_proof.tex}\\
-  \textbf{Corrected covering bound:} \texttt{gap3\_theorem2\_corrected.tex}\\
-  \textbf{Use corrected version.} Rate is $m^{-1/(d_{\mathrm{eff}}-1)}$, not $\pi R/m$. Includes curse-of-dimensionality table. The base file's proof structure (Steps 1,3) and corollaries (ranking, rank reversal) remain valid.\\
-  \textbf{Convexity: REQUIRED for geometric bound.}
+  \textbf{Covering bound for general dimension:} \texttt{gap3\_theorem2\_corrected.tex}\\
+  Rate is $m^{-1/(d_{\mathrm{eff}}-1)}$ via the volumetric covering bound on $S^{d-1}$. The base file's proof structure (Steps 1, 3) and corollaries (rank reversal) carry over.\\
+  \textbf{Convexity: required for the geometric bound.}
 
 \item[Corollary 2.1 (Ranking Unreliability)]~\\
-  \textbf{Superseded by:} \texttt{gap2\_ranking\_unreliability.tex}\\
-  \textbf{Use this version.} Chi-squared selection model with computable formula:\\
+  \textbf{Source:} \texttt{gap2\_ranking\_unreliability.tex}\\
+  Chi-squared selection model with computable formula:\\
   $P(\text{top-1 wrong}) \leq \sum_j \Phi(-\Delta_j / (2\sigma_{\mathrm{hidden}}))$\\
   where $\sigma_{\mathrm{hidden}} = \sqrt{2(D - d_{\mathrm{eff}})}$.\\
   Includes signal-to-noise characterization $\rho = \sqrt{d_{\mathrm{eff}}/D}$.\\
-  \textbf{Convexity: NOT required} (operates on score distributions).
+  \textbf{Convexity: not required} (operates on score distributions).
 
 \item[Corollary 2.2 (Rank Reversal)]~\\
   \textbf{Source:} \texttt{theorem2\_proof.tex} (Corollary 2.2)\\
-  \textbf{Unchanged.} Pure linear algebra, connects to Belton \& Gear (1983).\\
-  \textbf{Convexity: NOT required.}
+  Pure linear algebra; connects to Belton \& Gear (1983).\\
+  \textbf{Convexity: not required.}
 
 \item[Theorem 3 (Greedy Coverage Algorithm)]~\\
   \textbf{Source:} \texttt{theorem3\_proof.tex}\\
-  \textbf{Unchanged.} Submodular optimization with $(1-1/e)$ guarantee.\\
-  \textbf{Convexity: NOT required.}
+  Submodular optimization with $(1-1/e)$ guarantee.\\
+  \textbf{Convexity: not required.}
 
 \item[Corollary (Busemann-Petty Threshold)]~\\
   \textbf{Source:} \texttt{corollary\_proofs.tex}\\
-  \textbf{Unchanged.} Framed as analogue/principle, citing B-P AND Shephard.\\
-  \textbf{Convexity: REQUIRED.}
+  Framed as analogue/principle, citing both Busemann-Petty and Shephard.\\
+  \textbf{Convexity: required.}
 
 \item[Theorem 4 (Tight Stability Bound)]~\\
-  \textbf{Base (planar only):} \texttt{theorem4\_proof.tex}\\
+  \textbf{Planar case:} \texttt{theorem4\_proof.tex}\\
   \textbf{General dimension:} \texttt{gap1\_moonshot\_theorem4\_general.tex}\\
-  \textbf{Use general version.} Minimax optimal rate $m^{-2/(D-1)}$ via optimal recovery theory. Includes:
+  Minimax optimal rate $m^{-2/(D-1)}$ via optimal recovery theory:
   \begin{itemize}
-    \item Upper bound via Kolmogorov $n$-widths + Jackson on $S^{D-1}$
-    \item Lower bound (tightness) via spherical polynomial null-space construction (FIXED: uses $\mathcal{P}_{2L}$, not $\mathcal{H}_L$)
-    \item Corollary: square-root law (smooth needs $\sqrt{m_{\mathrm{Lip}}}$ benchmarks)
-    \item Partial progress on Gardner Problem 1.5 (width $\to$ X-ray connection)
+    \item Upper bound via Kolmogorov $n$-widths and Jackson's inequality on $S^{D-1}$.
+    \item Lower bound via spherical polynomial null-space construction in $\mathcal{P}_{2L}$.
+    \item Square-root law corollary.
   \end{itemize}
-  Planar file retained for pedagogical value (concrete Fourier argument).\\
-  \textbf{Convexity: REQUIRED} (plus curvature lower bound $\kappa > 0$).
+  The planar file is retained for its concrete Fourier argument.\\
+  \textbf{Convexity: required} (plus curvature lower bound $\kappa > 0$).
 
-\item[X-Ray Stability / Gardner Problem 1.5 (MOONSHOT)]~\\
-  \textbf{DEFINITIVE VERSION:} \texttt{problem15\_complete.tex}\\
-  \textbf{Supersedes:} \texttt{moonshot\_final.tex}, \texttt{moonshot\_xray\_stability.tex}\\
-  \textbf{Status: FULLY RESOLVED} (except exact constants).\\
+\item[Resolution of Gardner's Problem 1.5]~\\
+  \textbf{Source:} \texttt{problem15\_complete.tex}, \texttt{residual1\_resolved.tex}, \texttt{final\_1percent.tex}\\
   Contains:
   \begin{itemize}
-    \item \textbf{Curvature-regularity correspondence} (Lemma~1): $\kappa \sim \mathrm{dist}^\beta \Rightarrow h_K \in C^{1,1-\beta}$.
-    \item \textbf{Universal stability theorem} (Thm~5): $\delta_H = \Theta(M \cdot m^{-(1+\alpha)/(D-1)})$ for $C^{1,\alpha}$ support functions. Minimax optimal, tight.
-    \item \textbf{The $\beta$-rate} (Cor~1): $\delta_H = \Theta(m^{-(2-\beta)/(D-1)})$ for $0 \leq \beta \leq 1$. NOT a conjecture --- a theorem.
-    \item \textbf{Parity obstruction} (Thm~6): X-rays = widths for non-adaptive measurements.
-    \item \textbf{Adaptive strategy} (Thm~7): X-rays + adaptivity achieve smooth rate on smooth parts, detect singularities from chord-length profiles.
-    \item \textbf{Complete answer table}: all body classes $\times$ measurement types $\times$ adaptive/non-adaptive.
+    \item \textbf{Curvature--regularity correspondence}: $r_{\max} \sim \mathrm{dist}^{-\beta} \Rightarrow h_K \in C^{1,1-\beta}$.
+    \item \textbf{Universal stability theorem}: $\delta_H = \Theta(M \cdot m^{-(1+\alpha)/(D-1)})$ for $C^{1,\alpha}$ support functions, minimax optimal.
+    \item \textbf{The $\beta$-rate}: $\delta_H = \Theta(m^{-(2-\beta)/(D-1)})$ for $0 \leq \beta \leq 1$.
+    \item \textbf{X-rays equal widths} for non-adaptive measurements.
+    \item \textbf{Adaptive strategy}: X-rays plus adaptivity achieve the smooth rate on smooth parts and detect singularities from chord-length profiles.
+    \item Complete answer table over all body classes and measurement types.
   \end{itemize}
-  \textbf{Convexity: REQUIRED.}
+  \textbf{Convexity: required.}
 
 \end{description}
-
-\section*{Summary of Improvements Over Original Proofs}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{lll}
-\toprule
-\textbf{Gap} & \textbf{Before} & \textbf{After} \\
-\midrule
-Thm 1 variance capture & Uniform eigenvalue assumption & Distribution-free + concentration \\
-Thm 2 covering bound & $\pi R/m$ (hand-waved for $D>2$) & $CR \cdot m^{-1/(d-1)}$ (honest, any $D$) \\
-Cor 2.1 ranking & Heuristic counting & Chi-squared selection, computable formula \\
-Thm 4 dimension & Planar ($D=2$) only & General $D$, minimax optimal, tight \\
-Thm 4 tightness & Incorrect harmonic null-space & Fixed: polynomial null-space ($\mathcal{P}_{2L}$) \\
-Problem 1.5 $\beta$-rate & Conjectured & \textbf{THEOREM}: $\Theta(m^{-(2-\beta)/(D-1)})$ \\
-Parity obstruction & Not identified & \textbf{THEOREM}: X-rays = widths (non-adaptive) \\
-Adaptive strategy & Not addressed & \textbf{THEOREM}: X-rays + adaptivity beats non-adaptive \\
-LLM connection & Aggregate = widths & + item-level = X-rays, adaptive eval = adaptive X-rays \\
-Remaining open & Full Problem 1.5 & \textbf{Resolved}: exact constants only \\
-\bottomrule
-\end{tabular}
-\end{center}

@@ -1,24 +1,3 @@
-% COMPLETE RESOLUTION OF GARDNER'S PROBLEM 1.5
-% FOR ALL CONVEX BODY CLASSES
-%
-% This file SUPERSEDES moonshot_final.tex and moonshot_xray_stability.tex.
-% It contains the definitive theory.
-%
-% THE KEY INSIGHT (discovered by following first principles):
-%
-% The stability rate is ENTIRELY determined by the REGULARITY of the 
-% support function h_K on S^{D-1}. The regularity of h_K is determined 
-% by the curvature vanishing rate of ∂K. Once you see this, the entire
-% problem reduces to looking up a number in the Kolmogorov n-width table.
-%
-% Curvature ~ dist^β → h_K ∈ C^{1,1-β} → rate = m^{-(2-β)/(D-1)}
-%
-% This single formula unifies smooth bodies (β=0), polytopes (β≥1),
-% and everything in between. It's not a conjecture — it's a theorem.
-
-% ===================================================================
-% PART I: THE CURVATURE-REGULARITY CORRESPONDENCE
-% ===================================================================
 
 \section{The Curvature-Regularity Correspondence}
 
@@ -63,10 +42,6 @@ For $\beta < 1$, this integral converges, and by standard estimates for singular
 For $D = 2$: a body with support function $h(\theta) = 1 + a|\theta|^{2-\beta}$ near $\theta = 0$. Compute: $h''(\theta) = a(2-\beta)(1-\beta)|\theta|^{-\beta}$. Curvature: $\kappa(\theta) = 1/(h + h'') \to 0$ as $|\theta|^{\beta}$ (since $h'' \to \infty$). Radius of curvature $r = h + h'' \to \infty$ as $|\theta|^{-\beta}$. Regularity: $h' \sim |\theta|^{1-\beta} \in C^{0,1-\beta}$. Exactly as predicted.
 \end{remark}
 
-
-% ===================================================================
-% PART II: THE UNIVERSAL STABILITY THEOREM
-% ===================================================================
 
 \section{The Universal Stability Theorem}
 
@@ -130,10 +105,6 @@ Flat face (polytope) & $\geq 1$ & $C^{1}$ & $m^{-1/(D-1)}$ \\
 \end{center}
 
 
-% ===================================================================
-% PART III: X-RAYS VS WIDTHS — THE PARITY OBSTRUCTION
-% ===================================================================
-
 \section{X-Rays Cannot Improve the Polynomial Rate}
 
 \begin{theorem}[X-ray parity obstruction]
@@ -172,10 +143,6 @@ Since the X-ray perturbation vanishes as $m \to \infty$, for any fixed noise lev
 X-rays improve upon widths in exactly one regime: \emph{exact recovery}, when the X-ray neighborhoods overlap. This is a phase transition, not a rate improvement. Below the threshold, X-rays and widths give the same polynomial rate. Above the threshold, X-rays give exact recovery and widths do not.
 \end{remark}
 
-
-% ===================================================================
-% PART IV: THE ADAPTIVE STRATEGY FOR MIXED CURVATURE
-% ===================================================================
 
 \section{Adaptive Measurements for Mixed-Curvature Bodies}
 
@@ -217,10 +184,6 @@ Width measurements are scalars — they provide no local geometric information. 
 In LLM evaluation terms: aggregate benchmark scores (widths) don't reveal which capability regions are well-resolved and which aren't. Item-level results (X-rays) do.
 \end{remark}
 
-
-% ===================================================================
-% PART V: COMPLETE ANSWER TO PROBLEM 1.5
-% ===================================================================
 
 \section{Complete Answer to Gardner's Problem 1.5}
 
@@ -279,10 +242,6 @@ Polytope & $\infty$ & $m^{-1/(D-1)}$ & $m^{-1/(D-1)}$ & Never \\
 
 The only case not fully resolved is the \emph{exact constant} $C_D$ in the stability bound, which depends on the Kolmogorov $n$-width constant for $C^{1,\alpha}(S^{D-1})$. The \emph{rate} is resolved for all body classes and measurement types.
 
-
-% ===================================================================
-% PART VI: IMPLICATIONS FOR LLM EVALUATION
-% ===================================================================
 
 \section{Implications for LLM Evaluation}
 

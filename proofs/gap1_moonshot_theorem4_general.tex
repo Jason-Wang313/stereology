@@ -1,27 +1,3 @@
-% GAP 1 + MOONSHOT: High-Dimensional Fourier Stability + Gardner Problem 1.5
-% Replaces the planar-only Theorem 4 with a general-D result via optimal recovery theory.
-% Also states partial progress on Problem 1.5.
-
-% ===================================================================
-% KEY INSIGHT (supersedes the planar proof)
-% ===================================================================
-%
-% The planar proof (theorem4_proof.tex) used Jackson's theorem + trigonometric
-% interpolation on S^1. This works beautifully for D=2 but the naive extension
-% to S^{D-1} via spherical harmonics is killed by the Lebesgue constant
-% (grows polynomially in the degree, consuming the approximation rate).
-%
-% The FIX: use optimal recovery theory, which gives the minimax rate directly
-% without going through explicit interpolation. The rate depends only on the
-% smoothness class and the dimension of the sphere.
-%
-% For C^2 functions on S^{D-1}: optimal recovery rate from m function values
-% is m^{-2/(D-1)}. This is the EXACT rate of Theorem 4.
-
-% ===================================================================
-% THEOREM 4: GENERAL DIMENSION
-% ===================================================================
-
 \begin{theorem}[Stability of Convex Body Determination from Width Measurements]
 \label{thm:stability-general}
 Let $K, L \subset B_R^D$ be origin-symmetric convex bodies with Gauss curvature bounded below by $\kappa > 0$ (equivalently, the principal radii of curvature satisfy $r_i \geq \kappa$ for all $i$). Let their support functions $h_K, h_L \in C^2(S^{D-1})$, and suppose that $m$ width measurements agree within $\varepsilon$:
@@ -134,10 +110,6 @@ Immediate from $m^{-2/(D-1)} = (m^{-1/(D-1)})^2$ and inverting: $m_{\mathrm{smoo
 \end{proof}
 
 
-% ===================================================================
-% MOONSHOT: TOWARD GARDNER'S PROBLEM 1.5
-% ===================================================================
-
 \subsection{Connection to Gardner's Problem 1.5}
 
 Gardner \cite{gardner1995geometric} posed the following:
@@ -195,10 +167,6 @@ For origin-symmetric convex bodies in $\mathbb{R}^D$ with curvature $\geq \kappa
 Benchmarks are scalar measurements --- closer to widths than X-rays. Thus Theorem~\ref{thm:stability-general} is the directly applicable result. However, richer evaluation methods (e.g., full response distributions rather than accuracy scores, or item-level results rather than aggregate scores) correspond to X-ray-like measurements and should enable substantially better discrimination between models. This connects to the IRT (Item Response Theory) approach of \citet{polo2024tinybenchmarks}: item-level analysis gives ``X-ray'' information, while aggregate scores give only ``width'' information.
 \end{remark}
 
-
-% ===================================================================
-% THE PRACTICAL MESSAGE
-% ===================================================================
 
 \subsection{Practical Implications}
 

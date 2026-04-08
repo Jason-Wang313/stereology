@@ -559,30 +559,30 @@ Lipschitz rate.
 \label{app:proof1}
 \input{../proofs/theorem1_proof.tex}
 
-\subsection*{Distribution-free strengthening (Gap 4)}
+\subsection*{Distribution-free strengthening}
 \input{../proofs/gap4_theorem1_strengthened.tex}
 
 \section{Theorem 2 proof: indistinguishability}
 \label{app:proof2}
 \input{../proofs/theorem2_proof.tex}
 
-\subsection*{Corrected covering bound for general dimension (Gap 3)}
+\subsection*{Covering bound for general dimension}
 \input{../proofs/gap3_theorem2_corrected.tex}
 
-\subsection*{Chi-squared selection model for Corollary 2.1 (Gap 2)}
+\subsection*{Chi-squared selection model for Corollary 2.1}
 \input{../proofs/gap2_ranking_unreliability.tex}
 
 \section{Theorem 3 proof: greedy coverage}
 \label{app:proof3}
 \input{../proofs/theorem3_proof.tex}
 
-\section{Ceiling target: stability of convex body recovery}
+\section{Stability of convex body recovery from width measurements}
 \label{app:proof4}
 
-\subsection*{Planar Fourier proof (pedagogical, retained)}
+\subsection*{Planar Fourier proof}
 \input{../proofs/theorem4_proof.tex}
 
-\subsection*{General-dimension stability via optimal recovery (Gap 1)}
+\subsection*{General-dimension stability via optimal recovery}
 \input{../proofs/gap1_moonshot_theorem4_general.tex}
 
 \section{Corollary proofs (Busemann--Petty analogue, rank reversal)}
@@ -599,12 +599,11 @@ determined from $m$ X-ray measurements at $m$ directions on the unit
 circle $S^1$. That is, the problem as stated concerns the stability of
 the inverse map ``$m$ chord-length functions $\to$ a convex body in
 the plane.'' Our planar Fourier stability bound
-(Appendix~\ref{app:proof4}, retained in pedagogical form as the warm-up
-ceiling result) \emph{directly resolves} Problem 1.5 as Gardner stated
-it: for $C^2$ support functions on $S^1$ with curvature bounded below
-by $\kappa > 0$, the minimax rate is $\delta_H = \Theta(R / (\kappa
-m^2))$, matching the lower bound from the polynomial null-space
-construction.
+(Appendix~\ref{app:proof4}) \emph{directly resolves} Problem 1.5 as
+Gardner stated it: for $C^2$ support functions on $S^1$ with curvature
+bounded below by $\kappa > 0$, the minimax rate is $\delta_H = \Theta(R
+/ (\kappa m^2))$, matching the lower bound from the polynomial
+null-space construction.
 
 \paragraph{Going beyond Gardner's question.}
 This appendix then \emph{extends} the resolution along two axes
@@ -626,10 +625,10 @@ one Gardner posed.
 \begingroup
 \let\oldsection\section
 \let\oldsubsection\subsection
-\renewcommand{\section}[1]{\subsection{#1}}
-\renewcommand{\subsection}[1]{\subsubsection{#1}}
+\renewcommand{\section}[1]{\subsection*{#1}}
+\renewcommand{\subsection}[1]{\subsubsection*{#1}}
 
-\subsection{The curvature--regularity correspondence}
+\subsection*{The curvature--regularity correspondence}
 \input{../proofs/residual1_resolved.tex}
 
 \input{../proofs/problem15_complete.tex}
@@ -640,7 +639,7 @@ one Gardner posed.
 \let\subsection\oldsubsection
 \endgroup
 
-\subsection{Implications for LLM evaluation}
+\subsection*{Implications for LLM evaluation}
 
 The complete answer table specialises to LLM evaluation as follows.
 Aggregate benchmark scores (one scalar per model per benchmark)
