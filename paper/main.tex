@@ -100,14 +100,20 @@ formal analogue of Gardner's stability questions in geometric tomography
 single geometric condition.
 
 \paragraph{Beyond LLM evaluation.}
-Our results resolve Gardner's Problem 1.5 (1995) on the stability of
-convex body determination from finite measurements. The minimax rate
-$m^{-(2-\beta)/(D-1)}$, parameterized by the curvature vanishing
-exponent $\beta$, unifies all previously known special cases and
-establishes that richer measurements (X-rays vs.\ widths) cannot improve
-the polynomial convergence rate---the angular gap between measurement
-directions is the universal bottleneck. The complete resolution is in
-Appendix~\ref{app:gardner}.
+\citet{gardner1995geometric, gardner2006geometric} posed Problem 1.5 in
+its original form for \emph{planar} convex bodies determined from $m$
+X-ray (chord-length) measurements at $m$ directions on the unit circle
+$S^1$ --- the case $D = 2$. Our planar Fourier stability result
+(Appendix~\ref{app:proof4}) directly resolves the problem as Gardner
+stated it, with the minimax rate $m^{-2}$ for $C^2$ support functions
+on $S^1$. The extension to general ambient dimension $D \ge 2$ and
+the universal $\beta$-rate $m^{-(2-\beta)/(D-1)}$, parameterized by
+the curvature vanishing exponent $\beta$ (Appendix~\ref{app:gardner}),
+\emph{goes beyond} what Gardner asked: it unifies all previously known
+special cases across dimensions and body classes, and establishes that
+richer measurements (X-rays vs.\ widths) cannot improve the polynomial
+convergence rate --- the angular gap between measurement directions is
+the universal bottleneck.
 
 % =====================================================================
 \section{Setup}
@@ -586,14 +592,34 @@ Lipschitz rate.
 \section{Resolution of Gardner's Problem 1.5}
 \label{app:gardner}
 
-This appendix collects the complete resolution of Gardner's Problem 1.5
-on the stability of convex body determination from finite measurements
-\citep{gardner1995geometric}. The key insight is that the stability rate
-is entirely determined by the regularity of the support function on
-$S^{D-1}$, which in turn is determined by the curvature vanishing rate
-of $\partial K$. The single formula
-$\delta_H = \Theta(m^{-(2-\beta)/(D-1)})$ unifies smooth bodies, polytopes,
-and everything in between. This is not a conjecture --- it is a theorem.
+\paragraph{Scope of Gardner's original problem.}
+\citet{gardner1995geometric, gardner2006geometric} posed Problem 1.5 in
+its original form for \emph{planar} convex bodies in $\mathbb{R}^2$
+determined from $m$ X-ray measurements at $m$ directions on the unit
+circle $S^1$. That is, the problem as stated concerns the stability of
+the inverse map ``$m$ chord-length functions $\to$ a convex body in
+the plane.'' Our planar Fourier stability bound
+(Appendix~\ref{app:proof4}, retained in pedagogical form as the warm-up
+ceiling result) \emph{directly resolves} Problem 1.5 as Gardner stated
+it: for $C^2$ support functions on $S^1$ with curvature bounded below
+by $\kappa > 0$, the minimax rate is $\delta_H = \Theta(R / (\kappa
+m^2))$, matching the lower bound from the polynomial null-space
+construction.
+
+\paragraph{Going beyond Gardner's question.}
+This appendix then \emph{extends} the resolution along two axes
+Gardner did not consider: (i) general ambient dimension $D \ge 2$, with
+$m$ measurement directions on $S^{D-1}$ rather than $S^1$, and (ii)
+arbitrary curvature vanishing rates $\beta \in [0, \infty]$, including
+mixed-curvature bodies and polytopes. The key insight is that the
+stability rate is entirely determined by the regularity of the support
+function on $S^{D-1}$, which in turn is determined by the curvature
+vanishing rate of $\partial K$. The single formula
+$\delta_H = \Theta(m^{-(2-\beta)/(D-1)})$ unifies smooth bodies,
+polytopes, and everything in between. The planar case $D = 2$, $\beta
+= 0$ recovers Gardner's original $m^{-2}$ rate as a special case. The
+results below therefore answer a strictly broader question than the
+one Gardner posed.
 
 % Demote section / subsection inside the imported proof files so they
 % become subsection / subsubsection of this appendix section.
