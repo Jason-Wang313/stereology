@@ -1,0 +1,5 @@
+m,convex_diam,nonconvex_diam,convex_mean_width,nonconvex_mean_width
+8,2.93,4.973,1.653,2.352
+16,2.964,4.87,1.694,2.898
+32,2.897,4.999,1.733,2.741
+64,2.945,4.897,1.672,2.874

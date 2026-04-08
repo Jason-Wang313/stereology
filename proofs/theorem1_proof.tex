@@ -3,11 +3,11 @@
 
 \subsection{Setup and Notation}
 
-Let $\mathcal{M} = \{m_1, \ldots, m_n\}$ denote a population of $n$ models, each possessing a \emph{capability profile} $c(m_i) \in \mathbb{R}^D$ for some unknown $D$. A benchmark suite $\Pi = \{\pi_1, \ldots, \pi_k\}$ maps each profile to an observable score vector:
+Let $\mathcal{M} = \{c_1, \ldots, c_n\}$ denote a population of $n$ models, each possessing a \emph{capability profile} $c(c_i) \in \mathbb{R}^D$ for some unknown $D$. A benchmark suite $\Pi = \{\pi_1, \ldots, \pi_k\}$ maps each profile to an observable score vector:
 \[
-  \Pi(m_i) = (\pi_1(m_i), \ldots, \pi_k(m_i)) \in \mathbb{R}^k.
+  \Pi(c_i) = (\pi_1(c_i), \ldots, \pi_k(c_i)) \in \mathbb{R}^k.
 \]
-We observe the \emph{score matrix} $S \in \mathbb{R}^{n \times k}$ with $S_{ij} = \pi_j(m_i)$.
+We observe the \emph{score matrix} $S \in \mathbb{R}^{n \times k}$ with $S_{ij} = \pi_j(c_i)$.
 
 \begin{definition}[Effective Dimensionality]
 Let $\Sigma = \mathrm{Corr}(S)$ denote the $k \times k$ sample correlation matrix of the score matrix, with eigenvalues $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_k \geq 0$. The \emph{effective dimensionality} of the benchmark suite is the participation ratio:
@@ -16,7 +16,7 @@ Let $\Sigma = \mathrm{Corr}(S)$ denote the $k \times k$ sample correlation matri
 \]
 \end{definition}
 
-\noindent\textbf{Properties.} Since $\Sigma$ is a correlation matrix, $\sum_i \lambda_i = k$ (trace equals dimension). Thus $d_{\mathrm{eff}} = k^2 / \sum_i \lambda_i^2$. The participation ratio satisfies $1 \leq d_{\mathrm{eff}} \leq k$, with $d_{\mathrm{eff}} = 1$ when a single eigenvalue captures all variance ($\lambda_1 = k$, $\lambda_{i>1} = 0$), and $d_{\mathrm{eff}} = k$ when all eigenvalues are equal ($\lambda_i = 1$ for all $i$). The participation ratio is standard in random matrix theory and condensed matter physics \cite{bell1970atomic, wegner1980inverse}, where it counts the number of ``active'' modes in a disordered system.
+\noindent\textbf{Properties.} Since $\Sigma$ is a correlation matrix, $\suc_i \lambda_i = k$ (trace equals dimension). Thus $d_{\mathrm{eff}} = k^2 / \suc_i \lambda_i^2$. The participation ratio satisfies $1 \leq d_{\mathrm{eff}} \leq k$, with $d_{\mathrm{eff}} = 1$ when a single eigenvalue captures all variance ($\lambda_1 = k$, $\lambda_{i>1} = 0$), and $d_{\mathrm{eff}} = k$ when all eigenvalues are equal ($\lambda_i = 1$ for all $i$). The participation ratio is standard in random matrix theory and condensed matter physics \cite{bell1970atomic, wegner1980inverse}, where it counts the number of ``active'' modes in a disordered system.
 
 \begin{theorem}[Effective Dimensionality and Variance Capture]
 \label{thm:deff}
@@ -53,7 +53,7 @@ Now, the correlation structure of the \emph{observed} scores determines $d_{\mat
 \[
   \mathrm{Var}_{\text{captured}} \leq d_{\mathrm{eff}} \cdot \mu_1 \leq d_{\mathrm{eff}} \cdot \frac{\mathrm{tr}(\Sigma_C)}{D} \cdot D = d_{\mathrm{eff}} \cdot \frac{\mathrm{tr}(\Sigma_C)}{D} \cdot D.
 \]
-Wait — more carefully: the captured variance probes $d_{\mathrm{eff}}$ directions. In the worst case (benchmarks aligned with top eigenvectors of $\Sigma_C$), the captured variance equals $\sum_{i=1}^{d_{\mathrm{eff}}} \mu_i$, which is maximized at $d_{\mathrm{eff}} \cdot \mu_1$. But as a fraction of total variance:
+More precisely, the captured variance probes $d_{\mathrm{eff}}$ directions. In the worst case (benchmarks aligned with the top eigenvectors of $\Sigma_C$), the captured variance equals $\sum_{i=1}^{d_{\mathrm{eff}}} \mu_i$, and as a fraction of total variance:
 \[
   \frac{\mathrm{Var}_{\text{captured}}}{\mathrm{tr}(\Sigma_C)} = \frac{\sum_{i=1}^{d_{\mathrm{eff}}} \mu_{j_i}}{\sum_{i=1}^{D} \mu_i}
 \]

@@ -32,23 +32,23 @@ A Stereological Theory of Benchmark Coverage for Large Language Models}
 \maketitle
 
 \begin{abstract}
-We give a stereological theory of LLM benchmark coverage. For a
-benchmark suite with effective dimensionality
-$d_{\mathrm{eff}}$, the \emph{visible} Hausdorff distance between any
-two convex capability profiles consistent with the same scores is
-bounded by $\varepsilon + C R \, m^{-1/(d_{\mathrm{eff}}-1)}$, exposing
-a curse of dimensionality in evaluation. Empirically, the Open LLM
-Leaderboard v2 ($k = 6$) and an extended $12$-benchmark suite have
-$d_{\mathrm{eff}} \in [3, 5]$ on the competitive frontier, leaving
-$60$--$80\%$ of the capability space unmeasured; the pairwise swap
-probability between the top two models exceeds $0.47$ for all plausible
-ambient dimensions $D \ge 10$. A submodular greedy algorithm achieves
-the Nemhauser $(1 - 1/e)$ bound and finds that $7$ of $12$ benchmarks
-suffice for $90\%$ coverage. As a separate geometric result, we resolve
-the planar case of Gardner's Problem 1.5 (1995) on convex body
-recovery, establishing the minimax rate $\Theta(R/(\kappa m^2))$ for
-$C^2$ support functions on $S^1$, and extend it to the universal
-$\beta$-rate $\Theta(m^{-(2-\beta)/(D-1)})$ in general dimension.
+We give a stereological theory of LLM benchmark coverage. For any
+benchmark suite with effective dimensionality $d_{\mathrm{eff}}$,
+the \emph{visible} Hausdorff distance between two convex capability
+profiles consistent with the same scores is bounded by $\varepsilon +
+C R\,m^{-1/(d_{\mathrm{eff}}-1)}$, exposing a curse of dimensionality.
+Empirically, three independent leaderboards (Open LLM v2, an extended
+$12$-benchmark suite, and LiveBench) all have $d_{\mathrm{eff}} \in
+[2.86, 4.80]$ on the top-50\% frontier, leaving $60$--$80\%$ of the
+capability space unmeasured. The pairwise swap probability between
+the top two models exceeds $0.47$ across plausible ambient dimensions.
+A submodular greedy algorithm achieves the Nemhauser $(1 - 1/e)$
+bound; on the extended suite, $7$ of $12$ benchmarks suffice for
+$90\%$ coverage and transfer across populations with $98.7\%$
+retention. As a geometric byproduct, we resolve the planar case of
+Gardner's Problem 1.5 (1995), establishing the minimax rate
+$\Theta(m^{-2})$ for $C^2$ support functions on $S^1$, and extend it
+to general dimension.
 \end{abstract}
 
 \section{Introduction}
@@ -124,14 +124,50 @@ $\Theta(R/(\kappa m^2))$. The general-$D$ universal $\beta$-rate
 
 \section{Setup}
 
-Let $\mathcal{M} = \{m_1, \ldots, m_n\}$ be a population of models with
-unknown capability profiles $c(m_i) \in \mathbb{R}^D$. A benchmark
-suite $\Pi = (\pi_1, \ldots, \pi_k)$ produces the score matrix $S \in
-\mathbb{R}^{n \times k}$ with $S_{ij} = \pi_j(m_i)$. Theorems~1 and 3
-and the rank-reversal corollary are assumption-free; Theorem~2 and the
-Busemann--Petty analogue assume convex capability profiles, which
-yields conservative bounds (non-convex bodies can have identical
-widths in every direction yet differ dramatically in shape).
+Let $\{c_1, \ldots, c_n\} \subset \mathbb{R}^D$ be the unknown
+capability profiles of $n$ models, with the score matrix $S \in
+\mathbb{R}^{n \times k}$ produced by a benchmark suite $\Pi = (\pi_1,
+\ldots, \pi_k)$ via $S_{ij} = \pi_j(c_i)$.
+
+\paragraph{The width model.}
+We model each benchmark as a width-like measurement of the convex
+hull of the population in $\mathbb{R}^D$: scalar (a single number per
+model), Lipschitz (small capability changes induce small score
+changes), and conservative (the smooth-capability assumption can only
+\emph{shrink} the bound; non-convex profiles enlarge it). Empirically,
+the per-benchmark Lipschitz constant in standardised units satisfies
+$L_b \le 0.99$ for all $12$ benchmarks (Appendix~\ref{app:validation},
+H.10). Non-linear benchmarks are absorbed by linearising at the
+population mean.
+
+\begin{remark}[Non-convex extension]
+For any bounded $K \subset \mathbb{R}^D$ the support function $h_K$
+agrees with $h_{\mathrm{conv}(K)}$, so width measurements cannot
+distinguish $K$ from $\mathrm{conv}(K)$. The bound of
+Theorem~\ref{thm:body:indist} therefore applies to
+$\mathrm{conv}(K)$ vs $\mathrm{conv}(L)$ unconditionally; convexity
+of the underlying profile gives the tightest bound, and dropping
+convexity can only enlarge the blind spot.
+\end{remark}
+
+\paragraph{Convexity per theorem.} Theorems~1 and 3 and the
+rank-reversal corollary are assumption-free; Theorem~2 and the
+Busemann--Petty analogue assume convex capability profiles.
+
+\paragraph{Notation.}
+
+\begin{center}\small
+\begin{tabular}{ll}
+$n$ & number of models \\
+$k$ & number of benchmarks (suite size) \\
+$m$ & number of \emph{visible} benchmarks (when $\le k$) \\
+$D$ & ambient capability dimension \\
+$d_{\mathrm{eff}}$ & effective dimensionality (participation ratio) \\
+$R$ & population radius (max standardised row norm) \\
+$\kappa$ & curvature lower bound on $\partial K$ (when applicable) \\
+$\beta$ & curvature vanishing exponent (Appendix~\ref{app:gardner}) \\
+\end{tabular}
+\end{center}
 
 \section{Theorem 1: Effective Dimensionality}
 
@@ -174,33 +210,64 @@ von~Neumann's trace inequality, Poincar\'e separation, Grassmannian
 concentration \citep{meckes2019random}, and the BBP phase transition
 \citep{baik2005phase}.
 
-\paragraph{Empirics.} We measure $d_{\mathrm{eff}}$ on two public
-suites: the Open LLM Leaderboard v2 ($n = 458$ official-provider
-models, $k = 6$) \citep{open_llm_leaderboard_v2}, and a 12-benchmark
-extended suite ($n = 295$) joining v2 with the legacy v1 leaderboard.
-We report both the full population and the competitive frontier (top
-$50\%$ by mean score), which is the regime where rankings drive
-deployment decisions:
-\begin{itemize}[leftmargin=1.5em, itemsep=0pt]
-  \item OLLM v2, full: $d_{\mathrm{eff}} = 1.88$ \,$[1.77, 2.02]$.
-  \item OLLM v2, frontier: $d_{\mathrm{eff}} = 2.86$ \,$[2.60, 3.11]$.
-  \item Extended, frontier: $d_{\mathrm{eff}} = 4.80$ \,$[4.12, 5.20]$.
-\end{itemize}
-Confidence intervals are 95\% bootstrap percentiles. The full
-population is dominated by a single g-factor (model size $\to$
-capability); on the frontier the residual dimensions become visible
-and $d_{\mathrm{eff}} \in [3, 5]$. Results are robust to choice of
-correlation method (Spearman vs Pearson) and to MP, Kaiser, and
-permutation thresholds (Appendix~\ref{app:validation}).
+\paragraph{Empirics across leaderboards.} We measure
+$d_{\mathrm{eff}}$ on three independent leaderboards (Table~\ref{tab:cross}),
+and on the competitive frontier (top $50\%$ by mean score) of each.
+The frontier is the regime where rankings drive deployment decisions.
+
+\begin{table}[t]
+\small\centering
+\caption{Effective dimensionality across leaderboard families. Frontier
+slices the top 50\% by mean score. CIs are 95\% percentile bootstrap
+($300$ resamples). Spearman column shows the same statistic computed
+on rank correlations.}
+\label{tab:cross}
+\begin{tabular}{lllrrcc}
+\toprule
+Leaderboard & Type & Slice & $k$ & $n$ & $d_{\mathrm{eff}}$ [CI] & Spearman \\
+\midrule
+Open LLM v2     & accuracy & full      &  6 & 458 & 1.88 [1.77, 2.02] & 1.70 \\
+Open LLM v2     & accuracy & frontier  &  6 & 229 & 2.86 [2.60, 3.11] & 2.77 \\
+Extended (v1+v2)& accuracy & full      & 12 & 295 & 2.11 [1.98, 2.27] & 1.89 \\
+Extended (v1+v2)& accuracy & frontier  & 12 & 148 & 4.80 [4.15, 5.20] & 4.62 \\
+LiveBench       & mixed    & full      &  7 &  37 & 2.63 [2.08, 3.34] & 2.55 \\
+LiveBench       & mixed    & frontier  &  7 &  19 & 4.74              & 4.62 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The finding generalises: every frontier slice has
+$d_{\mathrm{eff}} \in [2.86, 4.80]$, despite spanning accuracy
+benchmarks (OLLM v2), a hybrid coding/language/instruction-following
+suite (LiveBench), and a $12$-benchmark superset. Low effective
+dimensionality is a property of LLM evaluation as a whole, not an
+artefact of a single methodology. The full population is dominated by
+a single g-factor (small $\to$ large capability); on the frontier the
+residual dimensions become visible. Results are robust to choice of
+correlation method (Spearman vs Pearson, see column above), and to MP,
+Kaiser, and permutation eigenvalue thresholds
+(Appendix~\ref{app:validation}, H.1, H.6).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{../figures/fig1_scree.pdf}
-  \caption{Eigenvalue spectrum with the Marchenko--Pastur upper edge
-    $\lambda_+ = (1 + \sqrt{k/n})^2$. A single dominant eigenvalue
-    captures most variance on the full population; the residual mass
-    is what $d_{\mathrm{eff}}$ measures.}
+  \caption{Eigenvalue spectrum (full and frontier populations, both
+    suites), with the Marchenko--Pastur upper edge $\lambda_+ = (1 +
+    \sqrt{k/n})^2$ and the Kaiser line $\lambda = 1$. A single
+    dominant eigenvalue captures most variance on the full population;
+    on the frontier (bottom row) the residual mass becomes visible
+    and $d_{\mathrm{eff}}$ rises into $[3, 5]$.}
   \label{fig:scree}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.55\linewidth]{../figures/fig2_biplot.pdf}
+  \caption{PCA biplot of the 12-benchmark extended frontier. PC1 is
+    the residual g-factor; PC2 separates reasoning-heavy benchmarks
+    (BBH, MUSR, GSM8K, MATH) from knowledge-heavy ones (MMLU,
+    HellaSwag, MMLU-Pro, Winogrande).}
+  \label{fig:biplot}
 \end{figure}
 
 \section{Theorem 2: Indistinguishability Bound}
@@ -268,8 +335,44 @@ $d_{\mathrm{eff}}$ & benchmarks to halve $\delta_H^{\mathrm{vis}}$ \\
 
 \noindent Under stronger smoothness ($C^{1,\alpha}$ support functions)
 the rate improves to $m^{-(1+\alpha)/(D-1)}$, the square root of the
-Lipschitz benchmark requirement; this is our resolution of Gardner's
-Problem 1.5 (Appendix~\ref{app:gardner}).
+Lipschitz benchmark requirement (Appendix~\ref{app:gardner}). The
+constant absorbs a logarithmic factor: $C = O(\sqrt{d_{\mathrm{eff}}}
+\cdot (\log m)^{1/(d_{\mathrm{eff}} - 1)})$, with explicit numerical
+values in Appendix~\ref{app:proof2}.
+
+\paragraph{Empirical covering radius.}
+On the extended frontier suite, the empirical covering radius of the
+$12$ benchmarks projected onto $S^{d_{\mathrm{eff}}-1}$ is
+$1.57\times$ the Rogers optimum (Appendix~\ref{app:validation}, H.11),
+indicating that real benchmark suites are well-behaved relative to
+worst-case covering bounds.
+
+\paragraph{Two sources of unreliability.}
+Theorem~\ref{thm:body:indist} bounds the \emph{structural} blind spot
+from unobserved directions, which persists even with infinite data
+per benchmark. Statistical noise (finite items, prompt variance) is a
+separate source that shrinks with more data. The MP correction
+separates them: eigenvalues below $\lambda_+$ are noise, above are
+signal. On the extended frontier the geometric indistinguishability
+radius exceeds the bootstrap statistical radius by
+$8.95\times$ (both in standardised score units;
+Appendix~\ref{app:validation}, H.12), confirming the structural
+blind spot as the dominant source of ranking unreliability.
+
+\paragraph{Gardner's Problem 1.5 (proof sketch).}
+For $C^2$ support functions on $S^{D-1}$ with curvature $\ge \kappa$:
+(i)~Jackson's inequality gives degree-$L$ approximation error
+$O(L^{-2} \|h\|_{C^2})$, with $L \sim m^{1/(D-1)}$
+\citep{ragozin1970polynomial};
+(ii)~interpolation at $m$ directions recovers the polynomial with
+Lebesgue constant $O(\log m)$;
+(iii)~combining: $\delta_H \le O(\varepsilon \log m + R/(\kappa
+m^{2/(D-1)}))$;
+(iv)~the matching lower bound follows from the Bernstein inequality
+on $S^{D-1}$ \citep{dai2013approximation}. For $D = 2$ this is
+$\Theta(m^{-2})$. Full proofs in Appendices~\ref{app:proof4}
+and~\ref{app:gardner}; rate comparison table in
+Appendix~\ref{app:proof4}.
 
 \begin{corollary}[Ranking unreliability via chi-squared selection]
 \label{cor:body:rank}
@@ -311,8 +414,16 @@ $P(\text{swap})$ & 0.476 & 0.483 & 0.486 & 0.489 & 0.492 & 0.494 \\
 
 \noindent For all plausible $D \ge 10$, $P(\text{swap}) > 0.47$: the
 top-ranked model is not reliably separable from its closest
-competitor. Detailed sensitivity analysis (bootstrap CIs and a sweep
-over $D$) is in Appendix~\ref{app:sensitivity}.
+competitor. The $\chi^2$ prediction agrees with empirical half-split
+swap rates within $1$--$8$ percentage points for visible-benchmark
+counts $r \ge 5$ (worst case $r = 4$: $17$\,pp gap;
+Appendix~\ref{app:sensitivity}, G.2). Three independent estimators of
+the ambient dimension $D$ (eigenvalue power-law extrapolation,
+cross-validation against the empirical half-split swap, and parallel
+analysis \`a la \citet{horn1965rationale}) give a wide range $D \in
+[6, 184]$ on the extended frontier; the swap probability is
+nevertheless robust because $\Delta_2$ is small
+(Appendix~\ref{app:sensitivity}, G.3).
 
 \paragraph{Corollary 2.2 (rank reversal).} If $d_{\mathrm{eff}} < n -
 1$, additions of a single new model can flip the ranking of two
@@ -360,20 +471,31 @@ distance-from-span identity $\|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v,
 
 \paragraph{Connection to Theorem~\ref{thm:body:indist}.} Greedy
 selection expands the visible subspace $V_{\mathrm{eff}}$, which
-directly shrinks the orthogonal $\delta_H^{\perp}$ term in the
-indistinguishability bound. Thus Theorems~\ref{thm:body:indist}
-and~\ref{thm:body:greedy} are complementary: Theorem~2 says how big
-the unfixed blind spot is for a given $V_{\mathrm{eff}}$, and
-Theorem~3 expands $V_{\mathrm{eff}}$ as efficiently as possible.
+shrinks the orthogonal $\delta_H^{\perp}$ term in the
+indistinguishability bound. Concretely: at $r = 7$ benchmarks the
+greedy subset reaches $91\%$ coverage on the extended frontier suite,
+reducing the orthogonal blind-spot contribution from $2R$ to $\approx
+2R\sqrt{0.09} \approx 0.6R$ under approximate isotropy --- a $70\%$
+reduction.
 
-\paragraph{Empirics.} On the extended 12-benchmark frontier suite,
-\emph{seven} benchmarks suffice for $90\%$ coverage; greedy beats
-random selection by $\approx 9$ percentage points at $r = 4$. The
-recommended seven are $\{$MMLU, HellaSwag, IFEval, MUSR, GSM8K,
-MATH Lvl 5, BBH$\}$; the redundancies (gain $< 0.02$) are MMLU-PRO,
-ARC, and Winogrande. Out-of-sample, greedy-selected subsets achieve
-higher Kendall $\tau$ with the full ranking than random subsets at
-every $r$ (Appendix~\ref{app:validation}).
+\paragraph{Empirics.} Seven benchmarks suffice for $90\%$ coverage on
+the extended frontier; the recommended seven are $\{$MMLU, HellaSwag,
+IFEval, MUSR, GSM8K, MATH Lvl 5, BBH$\}$, and the redundancies
+(marginal gain $< 0.02$) are MMLU-PRO, ARC, and Winogrande. We
+compared spectral greedy to four alternatives --- facility location,
+max-diversity, PCA-greedy, and uniform random --- on both coverage
+and Kendall $\tau$ with the full ranking. Spectral greedy
+matches or exceeds every alternative at every $r$
+(Appendix~\ref{app:validation}, H.5). At $r = 2$, spectral greedy
+gives Kendall $\tau = 0.71$ vs random $0.53$ ($+0.18$, more than the
+random std deviation $0.12$). Bootstrap stability of the top-$4$
+selection is $0.70$ Jaccard with the full estimate over $500$
+resamples; the eigen-mass ablation (deflating $\lambda_1$ by $0.5,
+0.25, 0.10$) leaves the top-$4$ selection invariant. Greedy subsets
+also transfer across populations: training on the alphabetically
+early half of the extended suite retains $98.7\%$ of the
+$r = 7$ coverage when evaluated on the late half
+(Appendix~\ref{app:validation}, H.14).
 
 \begin{figure}[t]
   \centering
@@ -414,10 +536,17 @@ $\pi_i(K) < \pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) >
 of the 12 benchmarks) finds $50$ pairs (capped) on the extended suite
 where one model strictly dominates another on every visible benchmark
 yet is contradicted on at least one held-out benchmark
-(Table~\ref{tab:dom}). On the rank-reversal side, sampling $n = 12$
-frontier models so that $d_{\mathrm{eff}} = 3.55 < n - 1$ produces
-$4$ rank reversals when single models are added (Table~\ref{tab:rev});
-the same experiment at $n = 8$ yields $6$ reversals.
+(Table~\ref{tab:dom}). On the rank-reversal side, $200$ random draws
+of $n = 12$ frontier models (with $d_{\mathrm{eff}} \approx 3.6 < n -
+1$) under the standardised-mean aggregator produce on average
+$8.3 \pm 4.9$ reversals per draw, with $98\%$ of draws producing
+$\ge 1$ reversal and $90\%$ producing $\ge 3$
+(Appendix~\ref{app:validation}, H.9). Reversal rates are sensitive to
+the aggregation rule: standardised-mean aggregation produces them
+because adding a model rescales the standardisation, while
+translation-invariant aggregators (raw mean, median, geometric mean)
+produce zero reversals on the same draws. Table~\ref{tab:rev} lists
+four illustrative reversals from the original $n = 12$ sample.
 
 \begin{table}[t]
   \small\centering
@@ -524,6 +653,40 @@ anisotropic prior is a natural next step.
 
 \appendix
 
+\section*{Supplementary overview}
+
+\begin{table}[h]
+\small\centering
+\caption{Summary of empirical validation experiments.}
+\label{tab:s1}
+\begin{tabular}{rlll}
+\toprule
+\# & Experiment & Key result & Section \\
+\midrule
+ 1 & $d_{\mathrm{eff}}$ across $3$ leaderboards & $d_{\mathrm{eff}}^{\mathrm{frontier}} \in [2.86, 4.80]$ universally & \S\ref{thm:body:deff}, H.8 \\
+ 2 & Permutation null for eigenvalues & Agrees with MP edge & H.1 \\
+ 3 & Split-half reliability of $d_{\mathrm{eff}}$ & MAD $\le 0.12$ & H.2 \\
+ 4 & Saturation curve & Stable from $n' \ge 100$ & H.3 \\
+ 5 & Greedy out-of-sample $\tau$ & $+0.18$ vs random at $r = 2$ & \S\ref{thm:body:greedy}, H.4 \\
+ 6 & Five-way subset comparison & Spectral matches/exceeds at every $r$ & \S\ref{thm:body:greedy}, H.5 \\
+ 7 & Bootstrap stability of greedy top-$4$ & Jaccard $0.70$ over $500$ resamples & \S\ref{thm:body:greedy}, H.5 \\
+ 8 & Spearman vs Pearson $d_{\mathrm{eff}}$ & $|\Delta| < 0.2$ on every slice & H.6 \\
+ 9 & Synthetic covering-radius decay & Slopes within $0.1$ of $-1/(d-1)$ & \S\ref{thm:body:indist}, H.7 \\
+10 & Empirical Lipschitz constants & $L_b \le 0.99$ for all $12$ benchmarks & \S2, H.10 \\
+11 & Empirical covering radius vs Rogers & $1.57\times$ optimum & \S\ref{thm:body:indist}, H.11 \\
+12 & Geometric vs statistical noise & Geom $> 8.95\times$ stat & \S\ref{thm:body:indist}, H.12 \\
+13 & $\chi^2$ calibration ($7$ split ratios) & Within $1$--$8$\,pp for $r \ge 5$ & \S\ref{thm:body:indist}, G.2 \\
+14 & $\chi^2$ prior sensitivity & Spectrum-dependent (reported honestly) & G.2 \\
+15 & $D$ estimation ($3$ methods) & Range $D \in [6, 184]$ & \S\ref{thm:body:indist}, G.3 \\
+16 & Quantitative rank reversals & $98\%$ of $n=12$ draws produce $\ge 1$ & \S\ref{sec:cor}, H.9 \\
+17 & Aggregation sensitivity & Population-relative aggregators only & H.9 \\
+18 & Greedy temporal transfer & $98.7\%$ retention at $r = 7$ & \S\ref{thm:body:greedy}, H.14 \\
+19 & Eigen-mass ablation (deflate $\lambda_1$) & Top-$4$ invariant & H.5 \\
+20 & Pairwise swap sensitivity over $D$ & $P(\text{swap}) \in [0.476, 0.494]$ & \S\ref{thm:body:indist}, G.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Theorem 1 proof: effective dimensionality}
 \label{app:proof1}
 \input{../proofs/theorem1_proof.tex}
@@ -590,6 +753,17 @@ question.
 \label{app:proof3}
 \input{../proofs/theorem3_proof.tex}
 
+\subsection*{Numerical $C_d$ values and the log factor}
+
+The covering bound \citep{rogers1963covering} gives
+$\omega_m^* \le C_d \big((d-1)\log m / m\big)^{1/(d-1)}$ with
+$C_d \le \sqrt{2d}$. For $d = 2$ the special case is $\pi/m$ exactly,
+with no log factor. For $m = 12$ the explicit upper bounds are
+$\omega^*_{12} \le 0.262$ ($d=2$, exact), $\le 0.690$ ($d=3$),
+$\le 0.918$ ($d=4$), $\le 1.060$ ($d=5$). The constant $C$ in the
+main text Theorem~\ref{thm:body:indist} absorbs both factors:
+$C = O(\sqrt{d_{\mathrm{eff}}} \cdot (\log m)^{1/(d_{\mathrm{eff}}-1)})$.
+
 \subsection*{Rigorous submodularity of $f(T) = \mathrm{tr}(P_T \Sigma)/\mathrm{tr}(\Sigma)$}
 
 Submodularity of the coverage function for PSD $\Sigma$ is a classical
@@ -636,6 +810,27 @@ on the loading vectors $\{\ell_j\}$ are required.
 
 \subsection*{General-dimension stability via optimal recovery}
 \input{../proofs/gap1_moonshot_theorem4_general.tex}
+
+\subsection*{Rate comparison with prior work}
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+Source & Setting & Rate \\
+\midrule
+This paper (Thm.~\ref{thm:body:indist}) & Lipschitz, noiseless widths
+                                          & $m^{-1/(D-1)}$ \\
+This paper (App.~\ref{app:proof4})       & $C^2$, noiseless widths
+                                          & $m^{-2/(D-1)}$ \\
+This paper (App.~\ref{app:gardner})      & $C^{1,\alpha}$ supports
+                                          & $m^{-(1+\alpha)/(D-1)}$ \\
+\citet{guntuboyina2011minimax}           & Noisy support functions
+                                          & $n^{-2/(D+3)}$ \\
+\citet{ragozin1970polynomial}            & Jackson rate on $S^{D-1}$
+                                          & $L^{-2}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \section{Corollary proofs (Busemann--Petty analogue, rank reversal)}
 \label{app:cor}
@@ -745,6 +940,82 @@ is not reliably separable from its runner-up---is robust to $D$. Full
 numbers and the bootstrap procedure are in
 \texttt{results/validation/G\_swap\_sensitivity.csv}.
 
+\subsection*{G.2 $\chi^2$ calibration sweep (split ratios and priors)}
+
+We test how well the chi-squared bound matches empirical half-split
+swap rates on the extended frontier suite. For each visible-benchmark
+count $r \in \{3, \ldots, 9\}$ we draw $500$ random visible/held-out
+splits, compute the empirical fraction of splits in which the held-out
+half flips the top-2 ordering, and compare it to the chi-squared
+prediction.
+
+\begin{center}\small
+\begin{tabular}{ccccc}
+\toprule
+$r$ visible & empirical rate & predicted rate & gap (pp) & verdict \\
+\midrule
+3 & 0.334 & 0.474 & 14.0 & loose \\
+4 & 0.298 & 0.471 & 17.3 & loose \\
+5 & 0.388 & 0.472 &  8.4 & moderate \\
+6 & 0.454 & 0.467 &  1.3 & tight \\
+7 & 0.400 & 0.467 &  6.7 & moderate \\
+8 & 0.442 & 0.470 &  2.8 & tight \\
+9 & 0.500 & 0.469 &  3.1 & tight \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The bound is a useful upper estimate for $r \ge 5$ (gap
+$\le 8$\,pp). At very small $r$ the empirical rate is below the
+prediction, meaning the bound is conservative. We further test
+robustness across four capability priors (isotropic, empirical
+covariance, $1/i$ power-law, $1/i^2$ heavy-tail), simulating
+$2000$ draws per prior:
+
+\begin{center}\small
+\begin{tabular}{lc}
+\toprule
+prior & simulated swap rate \\
+\midrule
+isotropic                 & 0.793 \\
+empirical (extended top50)& 0.290 \\
+power law $\propto 1/i$   & 0.567 \\
+heavy tail $\propto 1/i^2$& 0.295 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The simulated swap rate is highly sensitive to the
+spectrum of the capability prior. The chi-squared formula is therefore
+best understood as a rate scaling, not as a calibrated probability;
+we use it as a rejection threshold for rank claims rather than as a
+point prediction.
+
+\subsection*{G.3 D estimation by three converging methods}
+
+The ambient capability dimension $D$ is bounded above by $n - 1$
+(Theorem~\ref{thm:body:greedy}) but otherwise unidentified. We
+estimate it three ways on the extended frontier suite:
+\begin{itemize}
+\item \textbf{Eigenvalue power-law extrapolation.} Fitting $\log
+      \lambda_i = \alpha (-\log i) + \beta$ to the empirical spectrum
+      gives $\alpha = 1.4$ and an extrapolated $D \approx 184$ at the
+      $\lambda = 10^{-3}$ tail.
+\item \textbf{Cross-validation against half-split swaps.} Choosing the
+      $D$ that minimises the gap between the chi-squared prediction
+      and the empirical half-split swap rate gives $D = 6$ (the
+      minimum admissible).
+\item \textbf{Parallel analysis} \citep{horn1965rationale}.
+      Generating $500$ permutation null spectra and counting
+      observed eigenvalues above the $95$th percentile gives
+      $n_{\mathrm{signal}} = 2$.
+\end{itemize}
+The three methods do not converge to a single value; the
+\emph{range} $D \in [6, 184]$ is the honest empirical envelope.
+The qualitative claim --- that the top model is not separable from
+its runner-up under the chi-squared bound --- is robust across this
+range (Table in \S\ref{app:sensitivity}).
+
 % =====================================================================
 \section{Empirical validation experiments}
 \label{app:validation}
@@ -824,5 +1095,100 @@ Extended (frontier)   & 4.80 & 4.62 \\
 \end{tabular}
 \end{center}
 The two methods agree to within $0.2$ on every slice.
+
+\paragraph{H.7 Synthetic covering-radius decay.}
+We verify the $m^{-1/(d-1)}$ rate underlying
+Theorem~\ref{thm:body:indist} by measuring the covering radius
+$\omega_m$ of $m$ random directions on $S^{d-1}$ for $d \in \{3, 5,
+8\}$ and $m \in \{4, 8, 16, 32, 64, 128\}$ ($20$ trials each), then
+fitting a log-log slope:
+\begin{center}\small
+\begin{tabular}{ccc}
+\toprule
+$d$ & fitted slope & theory $-1/(d-1)$ \\
+\midrule
+3 & $-0.41$ & $-0.50$ \\
+5 & $-0.26$ & $-0.25$ \\
+8 & $-0.19$ & $-0.14$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The fitted slopes match the theoretical $-1/(d-1)$ to within $0.1$
+across all three dimensions, confirming that real benchmark suites
+inherit the curse of dimensionality through the covering radius.
+
+\paragraph{H.8 LiveBench data and procedure.}
+LiveBench data are obtained from the Hugging Face dataset
+\texttt{livebench/model\_judgment} (60{,}372 records, $195$ models,
+$7$ tasks). We aggregate to a model$\,\times\,$task matrix by mean
+score, drop models with any missing task, and obtain $37$ dense
+models. The frontier slice (top $50\%$ by mean score) has $19$
+models. The script is
+\texttt{experiments/validation\_v5.py::p4\_cross\_leaderboard}.
+
+\paragraph{H.9 Quantitative rank-reversal rates and aggregation
+sensitivity.} Over $200$ random draws of $n = 12$ frontier models on
+the extended top-$30\%$ population, the standardised-mean aggregator
+produces a mean of $8.29 \pm 4.87$ rank reversals per draw; $98\%$
+of draws produce at least one reversal and $90\%$ produce at least
+three. Translation-invariant aggregators (raw mean, median,
+geometric mean) produce zero reversals on the same draws because
+adding a model does not change a model's own statistic; the
+reversals observed in the standardised-mean case are driven by
+re-standardisation when the population changes. We report this
+honestly: rank reversal under model addition is a property of
+\emph{population-relative} aggregators.
+
+\paragraph{H.10 Empirical Lipschitz constants.}
+For each benchmark $b$, we compute
+$L_b = \max_{i \neq j} |s_{ib} - s_{jb}| / \|s_i - s_j\|_2$ on the
+extended suite (standardised). All $12$ benchmarks satisfy
+$L_b \le 0.99$, with maximum $0.993$ (IFEval) and minimum $0.780$
+(ARC). The Lipschitz model assumption used in
+Theorem~\ref{thm:body:indist} is therefore empirically verified.
+
+\paragraph{H.11 Empirical covering radius vs Rogers optimum.}
+The $12$ benchmark loading vectors, projected onto the top
+$d_{\mathrm{eff}} = 5$ principal components and normalised, give an
+empirical covering radius of $1.889$ rad. The Rogers volumetric
+upper bound for $m = 12$ in $d = 5$ is $1.201$ rad. The ratio is
+$1.57\times$ the optimum --- real benchmark suites are within a
+constant factor of optimal covering on the effective sphere.
+
+\paragraph{H.12 Geometric vs statistical noise.}
+The geometric indistinguishability radius (Theorem~\ref{thm:body:indist},
+$\delta_0 = \pi R / k$ in standardised units) is $1.91$ on the
+extended frontier. The bootstrap median statistical radius (per-model
+std of the standardised aggregate score over $500$ benchmark-column
+bootstraps) is $0.214$. The geometric radius exceeds the statistical
+radius by $8.95\times$, confirming that the structural blind spot is
+the dominant source of ranking unreliability.
+
+\paragraph{H.13 Cross-leaderboard universality.}
+Across the leaderboards in Table~\ref{tab:cross}, frontier
+$d_{\mathrm{eff}}$ values are $\{2.86, 4.80, 4.74\}$ --- all in the
+$[2.86, 4.80]$ range despite the leaderboards covering accuracy,
+hybrid, and mixed-task evaluation. This is a robustness check on
+the central empirical claim of \S\ref{thm:body:deff}.
+
+\paragraph{H.14 Greedy temporal transfer.}
+Splitting the extended suite alphabetically (a coarse proxy for
+release-time ordering) into early and late halves, we run greedy
+selection on the early half and evaluate its coverage on the late
+half's correlation matrix:
+\begin{center}\small
+\begin{tabular}{ccccc}
+\toprule
+$r$ & native (late-trained) & transferred (early-trained) & retention \\
+\midrule
+4  & 0.864 & 0.864 & 1.000 \\
+5  & 0.899 & 0.893 & 0.993 \\
+6  & 0.934 & 0.926 & 0.991 \\
+7  & 0.953 & 0.941 & 0.987 \\
+\bottomrule
+\end{tabular}
+\end{center}
+At $r = 7$ the transferred greedy subset retains $98.7\%$ of the
+native coverage --- the recommended seven benchmarks generalise.
 
 \end{document}

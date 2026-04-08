@@ -1,0 +1,5 @@
+aggregator,mean_reversals,fraction_at_least_one
+mean_raw,0.0,0.0
+mean_zscored,7.91,0.98
+median,0.0,0.0
+geometric_mean,0.0,0.0

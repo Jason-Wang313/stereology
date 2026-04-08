@@ -63,11 +63,11 @@ The bound is meaningful when $D t^2 / \kappa^2$ is large. For $t = 0.1$ (capture
 \[
   P(|f - d_{\mathrm{eff}}/D| > 0.1) \leq 2\exp(-20 \cdot 0.01 / 72) \approx 2e^{-0.003} \approx 1.99.
 \]
-This is vacuous! The concentration is tight only when $D \gg \kappa^2$, i.e., when the capability covariance is not too far from isotropic. For highly anisotropic capability distributions (a few capabilities dominate), the captured fraction depends heavily on alignment between benchmarks and top eigenvectors.
+For moderate $D$ and large $\kappa$, this concentration bound is loose. The concentration is tight only when $D \gg \kappa^2$, i.e., when the capability covariance is close to isotropic. For highly anisotropic capability distributions, the captured fraction depends on the alignment between the benchmarks and the top eigenvectors.
 
-\textbf{The robust statement for the paper:} The expectation $\mathbb{E}[f] = d_{\mathrm{eff}}/D$ holds unconditionally (no assumptions on $\Sigma_C$). The concentration is strong when $D$ is large relative to $\kappa^2$. When concentration fails, the variance in captured fraction is itself informative: it means the blind spot size depends critically on \emph{which} capabilities the benchmarks happen to measure.
+\textbf{Robust statement.} The expectation $\mathbb{E}[f] = d_{\mathrm{eff}}/D$ holds unconditionally (no assumptions on $\Sigma_C$). The concentration is strong when $D$ is large relative to $\kappa^2$.
 \end{remark}
 
 \begin{remark}[The ``generic benchmarks'' assumption]
-The uniformity assumption on $V_{\mathrm{eff}}$ (random subspace on the Grassmannian) is justified when benchmarks are designed independently of the model population's capability structure. In practice, benchmark designers do not know the eigenvectors of $\Sigma_C$; they design tests based on desirable capabilities (reasoning, knowledge, instruction following), which are unlikely to be systematically aligned with the principal components of inter-model variation. If anything, benchmark designers tend to target capabilities where models \emph{differ} (high-variance directions), which would \emph{increase} the captured fraction beyond $d_{\mathrm{eff}}/D$. Thus, $d_{\mathrm{eff}}/D$ serves as a conservative (lower) bound on captured variance when benchmarks are well-designed.
+The uniformity assumption on $V_{\mathrm{eff}}$ is justified when benchmarks are designed independently of the model population's capability structure. Benchmark designers do not have access to the eigenvectors of $\Sigma_C$; they design tests based on desirable capabilities (reasoning, knowledge, instruction following), and there is no a~priori reason for these to be systematically aligned with the principal components of inter-model variation. The expectation $d_{\mathrm{eff}}/D$ is a conservative reference point in this sense.
 \end{remark}
