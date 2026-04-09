@@ -1,0 +1,7 @@
+prior,swap_rate
+isotropic,0.784
+empirical,0.305
+power_1_over_i,0.555
+power_1_over_i2,0.304
+sqrt_decay,0.705
+adversarial,0.0

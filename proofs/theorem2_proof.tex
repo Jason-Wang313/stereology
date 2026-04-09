@@ -93,7 +93,7 @@ In practice, $R$ is estimated as the radius of the smallest ball containing all 
 
 \begin{corollary}[Ranking Unreliability]
 \label{cor:ranking}
-Consider $n$ models ranked by aggregate benchmark score $\bar{s}(c_i) = \frac{1}{k}\suc_j \pi_j(c_i)$. Let $\Delta_{\min} = \min_{i \neq j} |\bar{s}(c_i) - \bar{s}(c_j)|$ be the minimum score gap. If the indistinguishability radius $\delta_0 = \pi R / m$ exceeds $\Delta_{\min}$, then there exist $(\varepsilon, \Pi)$-indistinguishable pairs that swap rankings:
+Consider $n$ models ranked by aggregate benchmark score $\bar{s}(c_i) = \frac{1}{k}\sum_j \pi_j(c_i)$. Let $\Delta_{\min} = \min_{i \neq j} |\bar{s}(c_i) - \bar{s}(c_j)|$ be the minimum score gap. If the indistinguishability radius $\delta_0 = \pi R / m$ exceeds $\Delta_{\min}$, then there exist $(\varepsilon, \Pi)$-indistinguishable pairs that swap rankings:
 \[
   \delta_0 > \Delta_{\min} \implies \exists\, K, L : \bar{s}(K) > \bar{s}(L) \text{ but } K \text{ and } L \text{ cannot be distinguished}.
 \]

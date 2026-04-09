@@ -1,0 +1,440 @@
+{
+  "W1_width_model": {
+    "table": [
+      {
+        "benchmark": "IFEval",
+        "r2_linear_top5pc": 0.979,
+        "r2_quadratic": 0.983,
+        "r2_gap": 0.004,
+        "eta_max": 18.2909,
+        "sf_recon_error": 0.087
+      },
+      {
+        "benchmark": "BBH",
+        "r2_linear_top5pc": 0.88,
+        "r2_quadratic": 0.892,
+        "r2_gap": 0.011,
+        "eta_max": 68.428,
+        "sf_recon_error": 0.968
+      },
+      {
+        "benchmark": "MATH Lvl 5",
+        "r2_linear_top5pc": 0.83,
+        "r2_quadratic": 0.897,
+        "r2_gap": 0.067,
+        "eta_max": 17.6832,
+        "sf_recon_error": 0.48
+      },
+      {
+        "benchmark": "GPQA",
+        "r2_linear_top5pc": 0.814,
+        "r2_quadratic": 0.85,
+        "r2_gap": 0.036,
+        "eta_max": 11.8042,
+        "sf_recon_error": 0.49
+      },
+      {
+        "benchmark": "MUSR",
+        "r2_linear_top5pc": 0.984,
+        "r2_quadratic": 0.987,
+        "r2_gap": 0.003,
+        "eta_max": 20.9515,
+        "sf_recon_error": 0.075
+      },
+      {
+        "benchmark": "MMLU-PRO",
+        "r2_linear_top5pc": 0.934,
+        "r2_quadratic": 0.945,
+        "r2_gap": 0.01,
+        "eta_max": 20.1224,
+        "sf_recon_error": 0.793
+      },
+      {
+        "benchmark": "ARC",
+        "r2_linear_top5pc": 0.979,
+        "r2_quadratic": 0.981,
+        "r2_gap": 0.002,
+        "eta_max": 68.831,
+        "sf_recon_error": 0.669
+      },
+      {
+        "benchmark": "HellaSwag",
+        "r2_linear_top5pc": 0.958,
+        "r2_quadratic": 0.978,
+        "r2_gap": 0.021,
+        "eta_max": 18.4044,
+        "sf_recon_error": 0.403
+      },
+      {
+        "benchmark": "MMLU",
+        "r2_linear_top5pc": 0.925,
+        "r2_quadratic": 0.949,
+        "r2_gap": 0.024,
+        "eta_max": 88.342,
+        "sf_recon_error": 1.014
+      },
+      {
+        "benchmark": "TruthfulQA",
+        "r2_linear_top5pc": 0.978,
+        "r2_quadratic": 0.979,
+        "r2_gap": 0.001,
+        "eta_max": 36.9635,
+        "sf_recon_error": 0.107
+      },
+      {
+        "benchmark": "Winogrande",
+        "r2_linear_top5pc": 0.963,
+        "r2_quadratic": 0.974,
+        "r2_gap": 0.011,
+        "eta_max": 100.4387,
+        "sf_recon_error": 0.462
+      },
+      {
+        "benchmark": "GSM8K",
+        "r2_linear_top5pc": 0.795,
+        "r2_quadratic": 0.814,
+        "r2_gap": 0.019,
+        "eta_max": 100.4946,
+        "sf_recon_error": 1.031
+      }
+    ],
+    "max_eta": 100.4946,
+    "median_eta": 28.9575,
+    "max_r2_gap": 0.067,
+    "median_sf_error": 0.485,
+    "diameter_pop": 7.423
+  },
+  "W5_priors": {
+    "table": [
+      {
+        "prior": "isotropic",
+        "swap_rate": 0.784
+      },
+      {
+        "prior": "empirical",
+        "swap_rate": 0.305
+      },
+      {
+        "prior": "power_1_over_i",
+        "swap_rate": 0.555
+      },
+      {
+        "prior": "power_1_over_i2",
+        "swap_rate": 0.304
+      },
+      {
+        "prior": "sqrt_decay",
+        "swap_rate": 0.705
+      },
+      {
+        "prior": "adversarial",
+        "swap_rate": 0.0
+      }
+    ],
+    "min_swap_across_priors": 0.0
+  },
+  "W7_cross_suite": {
+    "table": [
+      {
+        "src": "OLLM v2 frontier",
+        "tgt": "Extended frontier (shared 6 benches)",
+        "shared_k": 6,
+        "transferred_at_r4": 0.891,
+        "native_at_r4": 0.896,
+        "retention_at_r4": 0.994,
+        "perturbation_op_norm": 0.524
+      }
+    ]
+  },
+  "W11_noise_ratio": {
+    "table": [
+      {
+        "leaderboard": "OLLM v2 frontier",
+        "geom_radius": 2.645,
+        "stat_radius": 0.242,
+        "ratio": 10.93
+      },
+      {
+        "leaderboard": "Extended frontier",
+        "geom_radius": 1.912,
+        "stat_radius": 0.215,
+        "ratio": 8.88
+      },
+      {
+        "leaderboard": "LiveBench frontier",
+        "geom_radius": 1.93,
+        "stat_radius": 0.31,
+        "ratio": 6.24
+      }
+    ]
+  },
+  "M1_omega_within": {
+    "table": [
+      {
+        "r": 2,
+        "d_sub": 2,
+        "omega_within": 2.356,
+        "rogers_optimal": 0.707,
+        "ratio": 3.33
+      },
+      {
+        "r": 3,
+        "d_sub": 3,
+        "omega_within": 2.16,
+        "rogers_optimal": 1.0,
+        "ratio": 2.16
+      },
+      {
+        "r": 4,
+        "d_sub": 4,
+        "omega_within": 2.069,
+        "rogers_optimal": 1.26,
+        "ratio": 1.64
+      },
+      {
+        "r": 5,
+        "d_sub": 5,
+        "omega_within": 1.966,
+        "rogers_optimal": 1.495,
+        "ratio": 1.32
+      },
+      {
+        "r": 6,
+        "d_sub": 6,
+        "omega_within": 1.897,
+        "rogers_optimal": 1.712,
+        "ratio": 1.11
+      },
+      {
+        "r": 7,
+        "d_sub": 7,
+        "omega_within": 1.745,
+        "rogers_optimal": 1.913,
+        "ratio": 0.91
+      },
+      {
+        "r": 8,
+        "d_sub": 8,
+        "omega_within": 1.706,
+        "rogers_optimal": 2.102,
+        "ratio": 0.81
+      },
+      {
+        "r": 9,
+        "d_sub": 9,
+        "omega_within": 1.609,
+        "rogers_optimal": 2.28,
+        "ratio": 0.71
+      },
+      {
+        "r": 10,
+        "d_sub": 10,
+        "omega_within": 1.6,
+        "rogers_optimal": 2.448,
+        "ratio": 0.65
+      },
+      {
+        "r": 11,
+        "d_sub": 11,
+        "omega_within": 1.59,
+        "rogers_optimal": 2.609,
+        "ratio": 0.61
+      },
+      {
+        "r": 12,
+        "d_sub": 12,
+        "omega_within": 1.57,
+        "rogers_optimal": 2.764,
+        "ratio": 0.57
+      }
+    ]
+  },
+  "M3_livebench_ci": {
+    "n_models": 19,
+    "k": 7,
+    "d_eff_point": 4.74,
+    "d_eff_ci95_lo": 3.03,
+    "d_eff_ci95_hi": 4.64,
+    "n_bootstraps": 2000
+  },
+  "M7_concrete_bound": {
+    "R_standardised": 7.304,
+    "omega_empirical": 1.889,
+    "delta_data_dependent_std_units": 27.599,
+    "delta_in_raw_units": 170.27,
+    "delta_as_pct_of_typical_range": 625.0,
+    "interpretation": "On the extended frontier, two models with identical benchmark scores can differ by up to 27.6 standardised score units (approximately 625.0% of the typical benchmark dynamic range)."
+  },
+  "B1_threshold": {
+    "table": [
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.2,
+        "n": 366,
+        "d_eff": 2.18
+      },
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.3,
+        "n": 320,
+        "d_eff": 2.42
+      },
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.4,
+        "n": 275,
+        "d_eff": 2.64
+      },
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.5,
+        "n": 229,
+        "d_eff": 2.86
+      },
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.6,
+        "n": 183,
+        "d_eff": 3.1
+      },
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.7,
+        "n": 138,
+        "d_eff": 3.18
+      },
+      {
+        "leaderboard": "OLLM v2",
+        "frontier_q": 0.8,
+        "n": 92,
+        "d_eff": 3.68
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.2,
+        "n": 236,
+        "d_eff": 3.06
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.3,
+        "n": 206,
+        "d_eff": 3.77
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.4,
+        "n": 177,
+        "d_eff": 4.24
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.5,
+        "n": 148,
+        "d_eff": 4.8
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.6,
+        "n": 118,
+        "d_eff": 4.8
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.7,
+        "n": 89,
+        "d_eff": 4.84
+      },
+      {
+        "leaderboard": "Extended",
+        "frontier_q": 0.8,
+        "n": 59,
+        "d_eff": 4.86
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.2,
+        "n": 29,
+        "d_eff": 4.09
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.3,
+        "n": 26,
+        "d_eff": 4.44
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.4,
+        "n": 22,
+        "d_eff": 4.63
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.5,
+        "n": 19,
+        "d_eff": 4.74
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.6,
+        "n": 15,
+        "d_eff": 4.28
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.7,
+        "n": 11,
+        "d_eff": 3.33
+      },
+      {
+        "leaderboard": "LiveBench",
+        "frontier_q": 0.8,
+        "n": 8,
+        "d_eff": 3.15
+      }
+    ]
+  },
+  "B6_stable_core": {
+    "frequency": {
+      "IFEval": 0.994,
+      "BBH": 0.458,
+      "MATH Lvl 5": 0.564,
+      "GPQA": 0.624,
+      "MUSR": 1.0,
+      "MMLU-PRO": 0.038,
+      "ARC": 0.4,
+      "HellaSwag": 0.604,
+      "MMLU": 0.968,
+      "TruthfulQA": 0.336,
+      "Winogrande": 0.014,
+      "GSM8K": 1.0
+    },
+    "stable_core_at_0.90": [
+      "MUSR",
+      "GSM8K",
+      "IFEval",
+      "MMLU"
+    ]
+  },
+  "B7_normalisation": {
+    "table": [
+      {
+        "method": "pearson",
+        "d_eff": 2.11
+      },
+      {
+        "method": "spearman",
+        "d_eff": 1.89
+      },
+      {
+        "method": "kendall",
+        "d_eff": 2.94
+      },
+      {
+        "method": "quantile",
+        "d_eff": 1.89
+      }
+    ]
+  }
+}

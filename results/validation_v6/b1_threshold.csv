@@ -1,0 +1,22 @@
+leaderboard,frontier_q,n,d_eff
+OLLM v2,0.2,366,2.18
+OLLM v2,0.3,320,2.42
+OLLM v2,0.4,275,2.64
+OLLM v2,0.5,229,2.86
+OLLM v2,0.6,183,3.1
+OLLM v2,0.7,138,3.18
+OLLM v2,0.8,92,3.68
+Extended,0.2,236,3.06
+Extended,0.3,206,3.77
+Extended,0.4,177,4.24
+Extended,0.5,148,4.8
+Extended,0.6,118,4.8
+Extended,0.7,89,4.84
+Extended,0.8,59,4.86
+LiveBench,0.2,29,4.09
+LiveBench,0.3,26,4.44
+LiveBench,0.4,22,4.63
+LiveBench,0.5,19,4.74
+LiveBench,0.6,15,4.28
+LiveBench,0.7,11,3.33
+LiveBench,0.8,8,3.15

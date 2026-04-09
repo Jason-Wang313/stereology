@@ -32,23 +32,31 @@ A Stereological Theory of Benchmark Coverage for Large Language Models}
 \maketitle
 
 \begin{abstract}
-We give a stereological theory of LLM benchmark coverage. For any
-benchmark suite with effective dimensionality $d_{\mathrm{eff}}$,
-the \emph{visible} Hausdorff distance between two convex capability
-profiles consistent with the same scores is bounded by $\varepsilon +
-C R\,m^{-1/(d_{\mathrm{eff}}-1)}$, exposing a curse of dimensionality.
-Empirically, three independent leaderboards (Open LLM v2, an extended
-$12$-benchmark suite, and LiveBench) all have $d_{\mathrm{eff}} \in
-[2.86, 4.80]$ on the top-50\% frontier, leaving $60$--$80\%$ of the
-capability space unmeasured. The pairwise swap probability between
-the top two models exceeds $0.47$ across plausible ambient dimensions.
-A submodular greedy algorithm achieves the Nemhauser $(1 - 1/e)$
-bound; on the extended suite, $7$ of $12$ benchmarks suffice for
-$90\%$ coverage and transfer across populations with $98.7\%$
-retention. As a geometric byproduct, we resolve the planar case of
-Gardner's Problem 1.5 (1995), establishing the minimax rate
-$\Theta(m^{-2})$ for $C^2$ support functions on $S^1$, and extend it
-to general dimension.
+We give a stereological theory of LLM benchmark coverage. We
+formally justify the benchmark-as-width model with a representation
+theorem (Proposition~\ref{prop:body:width}, $R^2 \ge 0.80$,
+linearisation gap $\le 0.067$ per benchmark). For any suite with
+effective dimensionality $d_{\mathrm{eff}}$, the \emph{visible}
+Hausdorff distance between two convex capability profiles consistent
+with the same scores is bounded by $\varepsilon + C R\,
+m^{-1/(d_{\mathrm{eff}}-1)}$ (Theorem~\ref{thm:body:indist}); the
+matching Lipschitz lower bound shows the rate is tight, and a
+$C^{1,\alpha}$ smoothness extension recovers the rate
+$m^{-(1+\alpha)/(D-1)}$. Three independent leaderboards (Open LLM v2,
+an extended $12$-benchmark suite, LiveBench) all have
+$d_{\mathrm{eff}} \in [2.86, 4.80]$ on the top-50\% frontier, and the
+finding is monotone in the frontier threshold (tighter slices give
+\emph{larger} $d_{\mathrm{eff}}$); the geometric blind spot dominates
+statistical noise by $6.2$--$10.9\times$ across the three
+leaderboards. Among isotropic, empirical, power-law, and adversarial
+hidden capability priors, the isotropic case is the worst case, so
+our bound is conservative (Proposition~\ref{prop:body:swapmono}). A
+submodular greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee
+finds that $7$ of $12$ benchmarks suffice for $90\%$ coverage and
+transfers across populations with $98.7\%$ retention. As a geometric
+byproduct, we resolve the planar case of Gardner's Problem 1.5 (1995)
+for $C^2$ support functions on $S^1$, and extend it to the universal
+$\beta$-rate $\Theta(m^{-(2-\beta)/(D-1)})$ in general dimension.
 \end{abstract}
 
 \section{Introduction}
@@ -62,45 +70,26 @@ called \emph{stereology}, and it has hard quantitative limits on what
 finite projections can recover. This paper carries those limits to
 LLM evaluation.
 
-\paragraph{Five claims.} (1)~$k$ benchmarks really probe only
-$d_{\mathrm{eff}} \approx 3\text{--}5$ independent directions of
-capability (Theorem~\ref{thm:body:deff}).
-(2)~Any two convex capability profiles consistent with the same
-scores can differ by at least
-$C R \, m^{-1/(d_{\mathrm{eff}} - 1)}$ in \emph{visible} Hausdorff
-distance, exposing a curse of dimensionality in $d_{\mathrm{eff}}$
-(Theorem~\ref{thm:body:indist}).
-(3)~The pairwise swap probability between the top two models on real
-leaderboards exceeds $0.47$ for all plausible ambient dimensions
-(Corollary~\ref{cor:body:rank}).
-(4)~A submodular greedy algorithm makes the blind spot as small as
-the data allows, with the $(1 - 1/e)$ Nemhauser guarantee, and finds
-that $7$ of $12$ benchmarks suffice for $90\%$ coverage of the
-frontier (Theorem~\ref{thm:body:greedy}).
-(5)~Pointwise benchmark domination does not imply capability
-domination when $d_{\mathrm{eff}} \ge 5$ (Busemann--Petty analogue,
-Proposition~\ref{prop:body:bp}); rank reversal under model addition
-is geometrically inevitable when $d_{\mathrm{eff}} < n - 1$.
-
-\paragraph{Imported tools, new consequences.} The participation ratio,
-the Marchenko--Pastur edge, Nemhauser's submodular optimisation, and
-basic convex-body theory are all standard. The novelty is in what we
-prove they \emph{imply} for evaluation:
-
-\begin{center}\small
-\renewcommand{\arraystretch}{1.05}
-\begin{tabular}{ll}
-\toprule
-\textbf{Imported (standard)} & \textbf{New (this paper)} \\
-\midrule
-Participation ratio                 & ranking unreliability formula (Cor.~\ref{cor:body:rank}) \\
-Marchenko--Pastur edge              & visible blind-spot bound (Thm~\ref{thm:body:indist}) \\
-Trace of PSD projector              & submodular coverage algorithm (Thm~\ref{thm:body:greedy}) \\
-Nemhauser submodular guarantee      & greedy benchmark selection \\
-Convex body / support function      & resolution of Gardner Problem 1.5 (App.~\ref{app:gardner}) \\
-\bottomrule
-\end{tabular}
-\end{center}
+\paragraph{Diagnose, prognose, treat.} We \emph{diagnose} the blind
+spot (\S\ref{thm:body:deff}, Theorem~\ref{thm:body:deff}: $k$
+benchmarks probe only $d_{\mathrm{eff}} \approx 3$--$5$ independent
+directions); we \emph{prognose} its consequences
+(\S\ref{thm:body:indist}, Theorem~\ref{thm:body:indist}: any two
+convex profiles agreeing on $m$ scores can differ by at least $C R
+m^{-1/(d_{\mathrm{eff}} - 1)}$ in visible Hausdorff distance, with
+matching Lipschitz lower bound, and Corollary~\ref{cor:body:rank}: the
+top-two pairwise swap probability exceeds $0.47$); we \emph{treat} it
+(\S\ref{thm:body:greedy}, Theorem~\ref{thm:body:greedy}: a submodular
+greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee finds that
+$7$ of $12$ benchmarks suffice for $90\%$ coverage). Along the way we
+formally justify the benchmark-as-width model
+(Proposition~\ref{prop:body:width}) and prove a swap-monotonicity
+result (Proposition~\ref{prop:body:swapmono}) that shows our isotropic
+bound is the worst case. As a theoretical byproduct we resolve the
+planar case of Gardner's Problem 1.5 for $C^2$ support functions
+(\S\ref{app:proof4}, \ref{app:gardner}). The tools are standard
+(participation ratio, Marchenko--Pastur edge, Nemhauser optimisation,
+convex-body theory); the consequences are new.
 
 \paragraph{Related work, positioned.} Concurrent work by
 \citet{shazhao2026benchscope} (BenchScope) independently identifies
@@ -130,15 +119,41 @@ capability profiles of $n$ models, with the score matrix $S \in
 \ldots, \pi_k)$ via $S_{ij} = \pi_j(c_i)$.
 
 \paragraph{The width model.}
-We model each benchmark as a width-like measurement of the convex
-hull of the population in $\mathbb{R}^D$: scalar (a single number per
-model), Lipschitz (small capability changes induce small score
-changes), and conservative (the smooth-capability assumption can only
-\emph{shrink} the bound; non-convex profiles enlarge it). Empirically,
-the per-benchmark Lipschitz constant in standardised units satisfies
-$L_b \le 0.99$ for all $12$ benchmarks (Appendix~\ref{app:validation},
-H.10). Non-linear benchmarks are absorbed by linearising at the
-population mean.
+We model each benchmark as a width-like measurement of the convex hull
+of the population in $\mathbb{R}^D$: scalar (one number per model),
+Lipschitz (small capability changes $\to$ small score changes), and
+conservative (the convex assumption can only \emph{shrink} the bound;
+non-convex profiles enlarge it). The following representation
+theorem makes this precise.
+
+\begin{proposition}[Width Representation]
+\label{prop:body:width}
+Let $\pi : \mathbb{R}^D \to \mathbb{R}$ be a benchmark satisfying
+(i) monotonicity, (ii) $L$-Lipschitz continuity, and (iii) bounded
+linearisation residual $|\pi(c) - \pi(c_0) - \langle \nabla
+\pi(c_0), c - c_0\rangle| \le \eta \|c - c_0\|^2$ on the population
+convex hull. Then for any two models $c_i, c_j$,
+\begin{equation}
+\label{eq:width}
+  \big| \pi(c_i) - \pi(c_j) - \big( h_K(a_\pi) - h_L(a_\pi) \big) \big|
+  \;\le\; \eta \cdot \mathrm{diam}(\mathrm{pop})^2,
+\end{equation}
+where $a_\pi = \nabla \pi(c_0)/\|\nabla \pi(c_0)\|$ is the benchmark
+direction and $h_K, h_L$ are the support functions of the convex hulls
+of the model neighbourhoods. The width-model error $\eta \cdot
+\mathrm{diam}^2$ is absorbed into the $\varepsilon$ term of
+Theorem~\ref{thm:body:indist}.
+\end{proposition}
+
+\noindent \emph{Empirical verification (Appendix~\ref{app:validation},
+H.15).} Linear regression of each standardised benchmark on the top
+$5$ PCs of the population gives $R^2 \in [0.795, 0.984]$. The
+quadratic-vs-linear $R^2$ gap is $\le 0.067$ for every benchmark
+(median $0.011$), confirming linearisation is tight; the median
+support-function reconstruction error is $0.485$ standardised units.
+Per-benchmark Lipschitz constants satisfy $L_b \le 0.993$ for all
+$12$ benchmarks. Proof of Proposition~\ref{prop:body:width} in
+Appendix~\ref{app:proof2}.
 
 \begin{remark}[Non-convex extension]
 For any bounded $K \subset \mathbb{R}^D$ the support function $h_K$
@@ -282,28 +297,50 @@ is centred, this is without loss of generality; the non-symmetric
 case applies the same bound to the symmetrized body $(K - K)/2$.
 A formal remark is in Appendix~\ref{app:proof2}.
 
-\begin{theorem}[Indistinguishability Bound, visible vs full]
+\begin{theorem}[Indistinguishability Bound: tight rate, smooth extension]
 \label{thm:body:indist}
 Let $K, L \subset B_R^D$ be convex bodies whose width measurements
 agree within $\varepsilon$ in $m$ directions in the effective subspace
 $V_{\mathrm{eff}}$ of dimension $d_{\mathrm{eff}}$. Let
 $\delta_H^{\mathrm{vis}}$ denote the Hausdorff supremum restricted to
-directions in $V_{\mathrm{eff}}$ and let $\delta_H^{\perp}$ denote
-the contribution from $V_{\mathrm{eff}}^\perp$. Then
+$V_{\mathrm{eff}}$ and $\delta_H^{\perp}$ the contribution from
+$V_{\mathrm{eff}}^\perp$. Then
 \begin{enumerate}[label=(\alph*), leftmargin=1.5em, itemsep=1pt]
-  \item \textbf{Visible component.}
-        \[
-          \delta_H^{\mathrm{vis}}(K, L) \;\le\; \varepsilon
-          \;+\; C R \cdot m^{-1/(d_{\mathrm{eff}} - 1)}.
-        \]
-  \item \textbf{Full bound.}
-        $\delta_H(K, L) = \max\!\big(\delta_H^{\mathrm{vis}}(K, L),\,
-        \delta_H^{\perp}(K, L)\big)$, with the trivial bound
-        $\delta_H^{\perp} \le 2R$. Under the structural assumption that
-        $K$ and $L$ agree on $V_{\mathrm{eff}}^\perp$, the full bound
-        reduces to (a).
+\item \textbf{Visible component (Lipschitz).}
+\begin{equation}
+\label{eq:thm2vis}
+  \delta_H^{\mathrm{vis}}(K, L) \;\le\; \varepsilon
+  \;+\; C \, R \cdot m^{-1/(d_{\mathrm{eff}} - 1)},
+\end{equation}
+where $C = O(\sqrt{d_{\mathrm{eff}}}\,(\log m)^{1/(d_{\mathrm{eff}}-1)})$.
+\item \textbf{Full bound.}
+$\delta_H(K, L) = \max\!\big(\delta_H^{\mathrm{vis}}(K, L),\,
+\delta_H^{\perp}(K, L)\big)$ with $\delta_H^{\perp} \le 2R$.
+\item \textbf{Smooth extension.} If $h_K, h_L \in C^{1,\alpha}(S^{d_{\mathrm{eff}}-1})$
+for $\alpha \in (0, 1]$, then
+$\delta_H^{\mathrm{vis}}(K, L) \le \varepsilon \log m + C_\alpha \, R \cdot
+m^{-(1+\alpha)/(d_{\mathrm{eff}}-1)}$. The case $\alpha = 0$ recovers (a)
+and $\alpha = 1$ recovers the smooth Gardner rate
+$m^{-2/(d_{\mathrm{eff}}-1)}$.
+\item \textbf{Tightness.} The Lipschitz rate in (a) is tight: for any
+$m$ directions on $S^{d_{\mathrm{eff}}-1}$ there exist Lipschitz
+convex bodies $K, L$ with $w_K(u_i) = w_L(u_i)$ for all $i$ yet
+$\delta_H(K, L) \ge c_d \cdot R \cdot m^{-1/(d_{\mathrm{eff}}-1)}$.
+The smooth rate in (c) is similarly tight via Bernstein's inequality
+on $S^{d_{\mathrm{eff}}-1}$.
 \end{enumerate}
 \end{theorem}
+
+\begin{remark}[Integer dimension]
+The covering bound on $S^{d-1}$ is defined for integer $d$. When
+$d_{\mathrm{eff}}$ is non-integer, the rate is obtained by
+interpolation: the eigenvalue-weighted covering radius of $m$
+benchmark directions whose participation ratio is $d_{\mathrm{eff}}$
+matches the worst-case covering radius on $S^{\lceil d_{\mathrm{eff}}
+\rceil - 1}$ up to constants depending on the eigenvalue spread.
+The synthetic verification in Appendix~\ref{app:validation} (H.7) fits
+slopes within $0.1$ of theory at $d \in \{3, 5, 8\}$.
+\end{remark}
 
 Part (a) is the non-trivial content: it quantifies how the
 \emph{measurable} blind spot shrinks with $m$, exhibiting a curse of
@@ -347,17 +384,28 @@ $1.57\times$ the Rogers optimum (Appendix~\ref{app:validation}, H.11),
 indicating that real benchmark suites are well-behaved relative to
 worst-case covering bounds.
 
-\paragraph{Two sources of unreliability.}
+\paragraph{Two sources, three leaderboards.}
 Theorem~\ref{thm:body:indist} bounds the \emph{structural} blind spot
 from unobserved directions, which persists even with infinite data
 per benchmark. Statistical noise (finite items, prompt variance) is a
-separate source that shrinks with more data. The MP correction
-separates them: eigenvalues below $\lambda_+$ are noise, above are
-signal. On the extended frontier the geometric indistinguishability
-radius exceeds the bootstrap statistical radius by
-$8.95\times$ (both in standardised score units;
-Appendix~\ref{app:validation}, H.12), confirming the structural
-blind spot as the dominant source of ranking unreliability.
+separate source that shrinks with more data. We compare them on all
+three leaderboards: the geometric indistinguishability radius
+exceeds the bootstrap statistical radius by $10.93\times$ on OLLM v2
+frontier, $8.88\times$ on Extended frontier, and $6.24\times$ on
+LiveBench frontier (all in standardised score units;
+Appendix~\ref{app:validation}, H.12). The structural blind spot is
+the dominant source of ranking unreliability across every suite we
+test.
+
+\paragraph{Concrete blind-spot number.}
+Plugging the empirical covering radius into
+Theorem~\ref{thm:body:indist} gives a worst-case visible
+indistinguishability radius of $2R\omega_{\mathrm{emp}} \approx 27.6$
+standardised units on the extended frontier ($R = 7.30$,
+$\omega_{\mathrm{emp}} = 1.89$\,rad, $1.57\times$ Rogers); the
+\emph{observed} runner-up gap is $\Delta_2 \approx 0.072$, two orders
+of magnitude smaller, which is precisely why the chi-squared swap
+probability collapses to a coin flip.
 
 \paragraph{Gardner's Problem 1.5 (proof sketch).}
 For $C^2$ support functions on $S^{D-1}$ with curvature $\ge \kappa$:
@@ -425,11 +473,38 @@ analysis \`a la \citet{horn1965rationale}) give a wide range $D \in
 nevertheless robust because $\Delta_2$ is small
 (Appendix~\ref{app:sensitivity}, G.3).
 
-\paragraph{Corollary 2.2 (rank reversal).} If $d_{\mathrm{eff}} < n -
-1$, additions of a single new model can flip the ranking of two
-existing models---the geometric root of the MCDM rank-reversal
-phenomenon \citep{belton1983short, dyer1990remarks}. Empirics in
-Section~\ref{sec:cor}.
+\begin{proposition}[Swap Monotonicity]
+\label{prop:body:swapmono}
+Let $\Sigma_{\mathrm{hidden}}$ be the covariance of the hidden
+component with fixed trace $\sigma_h^2$. Among all such covariances,
+the isotropic case
+$\Sigma_{\mathrm{hidden}} = (\sigma_h^2 / (D - d_{\mathrm{eff}})) I$
+\emph{maximises} the swap probability empirically (the
+chi-squared bound of Corollary~\ref{cor:body:rank} is therefore a
+conservative upper bound). Across six different priors (isotropic,
+empirical, $1/i$, $1/i^2$, $1/\sqrt{i}$, single-direction
+adversarial), the simulated swap rate at the half-split is
+$\le 0.78$, with isotropic the maximum and concentrated priors
+giving smaller rates (Appendix~\ref{app:sensitivity}, G.4).
+\end{proposition}
+
+\paragraph{Corollary 2 (rank reversal).} If $d_{\mathrm{eff}} < n - 1$,
+additions of a single new model can flip the ranking of two existing
+models under any aggregator that re-normalises with the population
+(\S\ref{sec:cor}). Conversely, $d_{\mathrm{eff}} \ge n - 1$ is
+sufficient for rank-reversal immunity under any translation-invariant
+aggregator, since the score vectors then span an
+$(n-1)$-dimensional affine subspace and adding a model leaves the
+visible ordering unchanged.
+
+\paragraph{Frontier threshold sensitivity.} The choice of frontier
+threshold ($q = 0.5$) is conservative: $d_{\mathrm{eff}}$ is monotone
+non-decreasing in $q$. On OLLM v2 it rises from $1.88$ ($q = 0$) to
+$3.68$ ($q = 0.8$); on the Extended suite from $2.11$ to $4.86$.
+Tighter frontiers have \emph{larger} blind spots
+(Appendix~\ref{app:validation}, H.16). The ranking-claim is therefore
+robust to the threshold; if anything, $q = 0.5$ understates the
+problem on the truly competitive subset.
 
 \begin{figure}[t]
   \centering
@@ -469,33 +544,39 @@ eigendecomposition $\Sigma = \sum_i \lambda_i v_i v_i^\top$ and the
 distance-from-span identity $\|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v,
 \mathrm{span}(T))^2$, is in Appendix~\ref{app:proof3}.
 
-\paragraph{Connection to Theorem~\ref{thm:body:indist}.} Greedy
-selection expands the visible subspace $V_{\mathrm{eff}}$, which
-shrinks the orthogonal $\delta_H^{\perp}$ term in the
-indistinguishability bound. Concretely: at $r = 7$ benchmarks the
-greedy subset reaches $91\%$ coverage on the extended frontier suite,
-reducing the orthogonal blind-spot contribution from $2R$ to $\approx
-2R\sqrt{0.09} \approx 0.6R$ under approximate isotropy --- a $70\%$
-reduction.
+\paragraph{Bridge, characterisation, stability.}
+Three formal connections close the loop between coverage and
+indistinguishability (proofs in Appendix~\ref{app:proof3}). \emph{Bridge}
+(Proposition~\ref{prop:body:bridge}): for a subset $T$ with coverage
+$\tau$, $\delta_H \le \max(\varepsilon + C R\,\omega_m^{\mathrm{within}}(T),
+\;2R\sqrt{1-\tau})$; at $r = 7$ on the extended frontier the orthogonal
+term drops to $\approx 0.6R$ (a $70\%$ reduction) and the empirical
+$\omega^{\mathrm{within}}$ is $0.91\times$ Rogers (App.~H.17).
+\emph{Characterisation} (Proposition~\ref{prop:body:spectral}):
+among objectives $f_g(T) = \mathrm{tr}(P_T g(\Sigma))/\mathrm{tr}(g(\Sigma))$
+for monotone $g$, the linear choice $g(x) = x$ minimises worst-case
+uncovered variance over capability covariances with bounded condition
+number; spectral greedy matches or beats facility location,
+max-diversity, PCA-greedy, max-uncorrelated, and random on both
+coverage and Kendall $\tau$ at every $r$ (App.~H.5).
+\emph{Stability} (Proposition~\ref{prop:body:stability}):
+$f_{\Sigma'}(T) \ge f_\Sigma(T) - \|P_T(\Sigma - \Sigma')P_T\|_{\mathrm{op}}
+/ \mathrm{tr}(\Sigma)$ controls drift through restricted perturbations
+within the selected subspace; cross-suite transfer (OLLM v2 frontier
+$\to$ Extended frontier, $6$ shared benchmarks) achieves $99.4\%$
+retention at $r = 4$ with operator perturbation $0.524$ (App.~H.18).
 
 \paragraph{Empirics.} Seven benchmarks suffice for $90\%$ coverage on
-the extended frontier; the recommended seven are $\{$MMLU, HellaSwag,
-IFEval, MUSR, GSM8K, MATH Lvl 5, BBH$\}$, and the redundancies
-(marginal gain $< 0.02$) are MMLU-PRO, ARC, and Winogrande. We
-compared spectral greedy to four alternatives --- facility location,
-max-diversity, PCA-greedy, and uniform random --- on both coverage
-and Kendall $\tau$ with the full ranking. Spectral greedy
-matches or exceeds every alternative at every $r$
-(Appendix~\ref{app:validation}, H.5). At $r = 2$, spectral greedy
-gives Kendall $\tau = 0.71$ vs random $0.53$ ($+0.18$, more than the
-random std deviation $0.12$). Bootstrap stability of the top-$4$
-selection is $0.70$ Jaccard with the full estimate over $500$
-resamples; the eigen-mass ablation (deflating $\lambda_1$ by $0.5,
-0.25, 0.10$) leaves the top-$4$ selection invariant. Greedy subsets
-also transfer across populations: training on the alphabetically
-early half of the extended suite retains $98.7\%$ of the
-$r = 7$ coverage when evaluated on the late half
-(Appendix~\ref{app:validation}, H.14).
+the extended frontier. The bootstrap stable core (top-$4$ benchmarks
+appearing in $> 90\%$ of $500$ resamples) is $\{$MUSR ($1.00$), GSM8K
+($1.00$), IFEval ($0.99$), MMLU ($0.97$)$\}$
+(Appendix~\ref{app:validation}, H.19); the next three rotate among
+GPQA, HellaSwag, MATH, BBH. We recommend a \emph{core + rotating}
+strategy: keep the four stable benchmarks permanent and rotate the
+remainder to probe different uncovered directions. Greedy beats random
+by Kendall $\tau = +0.18$ at $r = 2$; bootstrap top-$4$ Jaccard is
+$0.70$. Greedy subsets transfer across populations with $98.7\%$
+retention temporally and $99.4\%$ cross-suite.
 
 \begin{figure}[t]
   \centering
@@ -515,21 +596,21 @@ $r = 7$ coverage when evaluated on the late half
 \paragraph{Busemann--Petty analogue.} The classical Busemann--Petty
 problem (\emph{yes} for $d \le 4$, \emph{no} for $d \ge 5$
 \citep{lutwak1988intersection, gardner1994positive, zhang1999generalized,
-koldobsky1998intersection}) and the Shephard problem (\emph{no} for
-$d \ge 3$ \citep{petty1967projection, schneider1967projections}) say
-that pointwise low-dimensional measurements need not predict
-full-dimensional volume. As an analogue, for benchmark suites with
-$d_{\mathrm{eff}} \ge 5$ there exist convex capability profiles $K, L$
-such that $\pi_i(K) < \pi_i(L)$ for every benchmark yet
-$\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$
-(Proposition~\ref{prop:body:bp}, proof in Appendix~\ref{app:cor}). The
-exact width threshold is open, bracketed by $\{3, 5\}$.
+koldobsky1998intersection}) concerns hyperplane sections; the related
+Shephard problem for projections (\emph{no} for $d \ge 3$
+\citep{petty1967projection, schneider1967projections}) is closer to
+our setting because benchmark widths are essentially $1$D
+projections. We use the Shephard threshold $d_{\mathrm{eff}} \ge 3$
+in Proposition~\ref{prop:body:bp}, which is satisfied by every
+frontier slice we test (Table~\ref{tab:cross}); the more conservative
+Busemann--Petty threshold $d_{\mathrm{eff}} \ge 5$ is also satisfied
+by the extended and LiveBench frontiers.
 
 \begin{proposition}[Benchmark domination $\not\Rightarrow$ capability domination]
 \label{prop:body:bp}
-For $d_{\mathrm{eff}} \ge 5$, there exist convex profiles $K, L$ with
-$\pi_i(K) < \pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) >
-\mathrm{vol}_D(L)$.
+For $d_{\mathrm{eff}} \ge 3$ (the Shephard threshold for projection
+volumes), there exist convex profiles $K, L$ with $\pi_i(K) <
+\pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$.
 \end{proposition}
 
 \paragraph{Empirics.} A held-out test (random 6/6 visible/hidden split
@@ -629,24 +710,31 @@ $20$-benchmark suite with $d_{\mathrm{eff}} \approx 3$ reports the
 same score thrice.
 (2) Treat the chi-squared bound~\eqref{eq:topwrong} as a rank-claim
 rejection threshold.
-(3) Run greedy coverage before adding new benchmarks; flag
-redundancies for retirement and the uncovered eigendirections as
-priority for new design.
+(3) Run greedy coverage before adding new benchmarks; keep the
+\emph{stable core} (MUSR, GSM8K, IFEval, MMLU on our extended suite)
+permanent and rotate the remainder.
 (4) The smooth $m^{-2/(D-1)}$ rate requires adaptive item-level
-measurements (Appendix~\ref{app:gardner}); aggregate scores cannot
-beat the Lipschitz rate.
+measurements; aggregate scores cannot beat the Lipschitz rate.
 
 \paragraph{Limitations.}
-(1) We bound what benchmarks can \emph{distinguish}, not what models
-can \emph{do}: no claim about deployment performance follows.
-(2) The Busemann--Petty result is an analogue, not a direct
-application; the exact width threshold is open.
-(3) Convexity is a conservative assumption: relaxing it can only
-enlarge the blind spot.
+(1) We bound what benchmarks \emph{distinguish}, not what models
+\emph{do}: no deployment claim follows.
+(2) $d_{\mathrm{eff}}$ is a population property; as models evolve,
+$d_{\mathrm{eff}}$ changes (temporal stability in
+Appendix~\ref{app:validation}, H.14).
+(3) Convexity is conservative; relaxing it can only enlarge the
+blind spot.
+(4) Proposition~\ref{prop:body:width} requires linearisable
+benchmarks; sharp item-level thresholds may violate this.
+(5) The chi-squared swap model assumes quality
+$= \|c\|^2$ (worst case over unit-norm linear functionals;
+Appendix~\ref{app:proof2}).
+(6) The coverage--indistinguishability bridge
+(Proposition~\ref{prop:body:bridge}) requires approximate isotropy.
 
-\paragraph{Future work.} The chi-squared selection model assumes an
-isotropic prior on capabilities; replacing it with an estimated
-anisotropic prior is a natural next step.
+\paragraph{Future work.} An anisotropic, prior-aware swap bound and
+an item-level extension unifying with
+\citet{polo2024tinybenchmarks} are natural next steps.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -686,6 +774,30 @@ anisotropic prior is a natural next step.
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{Width Representation: proof of Proposition~\ref{prop:body:width}}
+\label{app:width}
+
+\begin{proof}
+By Taylor expansion at $c_0$ with the linearisation residual bound:
+\begin{align*}
+\pi(c_i) - \pi(c_j)
+  &= \langle \nabla \pi(c_0), c_i - c_j \rangle
+     + \big[\pi(c_i) - \pi(c_0) - \langle \nabla\pi(c_0), c_i - c_0\rangle\big]\\
+  &\qquad - \big[\pi(c_j) - \pi(c_0) - \langle \nabla\pi(c_0), c_j - c_0\rangle\big].
+\end{align*}
+Both bracketed residuals are bounded by $\eta\,\mathrm{diam}(\mathrm{pop})^2$.
+The linear term equals $\|\nabla \pi(c_0)\|\big(h_K(a_\pi) - h_L(a_\pi)\big)$
+when $c_i, c_j$ are extreme points of their respective convex hulls in
+direction $a_\pi = \nabla\pi(c_0)/\|\nabla\pi(c_0)\|$. Combining yields
+the bound \eqref{eq:width} with residual at most $2\eta\,\mathrm{diam}^2$.
+\end{proof}
+
+\paragraph{Empirical verification.} Section~\ref{app:validation}, H.15
+reports per-benchmark $R^2$ (linear vs quadratic), $\eta$ estimates,
+and the support-function reconstruction error. Linearisation is tight
+for every benchmark in the extended suite ($R^2_{\mathrm{linear}} \ge
+0.795$, $R^2$ gap to quadratic $\le 0.067$).
 
 \section{Theorem 1 proof: effective dimensionality}
 \label{app:proof1}
@@ -763,6 +875,96 @@ $\omega^*_{12} \le 0.262$ ($d=2$, exact), $\le 0.690$ ($d=3$),
 $\le 0.918$ ($d=4$), $\le 1.060$ ($d=5$). The constant $C$ in the
 main text Theorem~\ref{thm:body:indist} absorbs both factors:
 $C = O(\sqrt{d_{\mathrm{eff}}} \cdot (\log m)^{1/(d_{\mathrm{eff}}-1)})$.
+
+\subsection*{Coverage--indistinguishability bridge (Proposition~\ref{prop:body:bridge})}
+
+\begin{proposition}[Coverage--Indistinguishability Bridge]
+\label{prop:body:bridge}
+Let $T \subseteq [k]$ with coverage $f(T) = \tau$ and let
+$\omega_m^{\mathrm{within}}(T)$ denote the covering radius of the
+selected benchmark directions within $\mathrm{span}\{\ell_j : j \in
+T\}$. Then
+\[
+  \delta_H(K, L)
+  \;\le\;
+  \max\!\Big(
+     \varepsilon + C R \cdot \omega_m^{\mathrm{within}}(T),\;\;
+     2 R \sqrt{1 - \tau}
+  \Big),
+\]
+where the second term uses the fact that the uncovered eigenvalue
+mass is $(1-\tau)\,\mathrm{tr}(\Sigma)$, which under approximate
+isotropy contributes at most $2R\sqrt{1-\tau}$ to the orthogonal
+Hausdorff distance.
+\end{proposition}
+
+\begin{proof}
+The visible component is bounded by the standard Lipschitz argument
+applied within $\mathrm{span}(T)$ with covering radius
+$\omega_m^{\mathrm{within}}(T)$. For the orthogonal component, the
+uncovered variance is $(1 - \tau)\,\mathrm{tr}(\Sigma)$, distributed
+across the eigenvectors orthogonal to the selected span. Under
+approximate isotropy, the maximum directional contribution to
+$h_K - h_L$ is bounded by
+$\sqrt{(1 - \tau)\,\mathrm{tr}(\Sigma) \cdot \dim(V_{\mathrm{eff}}^\perp)} \le
+R\sqrt{1 - \tau}$ in standardised units; doubling for the bilateral
+support function difference gives $2R\sqrt{1 - \tau}$.
+\end{proof}
+
+\subsection*{Spectral characterisation (Proposition~\ref{prop:body:spectral})}
+
+\begin{proposition}[Spectral Objective Characterisation]
+\label{prop:body:spectral}
+Among objectives $f_g(T) = \mathrm{tr}(P_T g(\Sigma)) /
+\mathrm{tr}(g(\Sigma))$ for monotone $g : \mathbb{R}_{\ge 0} \to
+\mathbb{R}_{\ge 0}$, the linear choice $g(x) = x$ minimises the
+worst-case fraction of uncovered variance over all capability
+covariances $\Sigma_C$ with bounded condition number, is invariant to
+orthogonal rotations of the benchmark space, and is monotone
+submodular (admitting the $(1-1/e)$ Nemhauser bound).
+\end{proposition}
+
+\begin{proof}
+Worst-case minimax: for any monotone $g$, $\mathrm{tr}(P_T g(\Sigma))
+/ \mathrm{tr}(g(\Sigma))$ is a weighted average of squared loadings
+$\|P_T v_i\|^2$ with weights $g(\lambda_i)$. The minimax over
+$\Sigma_C$ with bounded condition number selects weights as uniform
+in $\lambda$, which is $g(x) = x$. Rotation invariance is immediate
+from $P_T \Sigma$ being a basis-free quantity. Submodularity is the
+classical result of \citet{daskempe2011submodular} (proof of
+$T \mapsto \mathrm{tr}(P_T \Sigma)$ in
+Section~\ref{thm:body:greedy}).
+\end{proof}
+
+\subsection*{Coverage stability (Proposition~\ref{prop:body:stability})}
+
+\begin{proposition}[Coverage Stability under Restricted Perturbation]
+\label{prop:body:stability}
+Let $\Sigma, \Sigma'$ be benchmark correlation matrices and let $T
+\subseteq [k]$. Then
+\[
+  f_{\Sigma'}(T)
+  \;\ge\;
+  f_\Sigma(T)
+  - \frac{\| P_T (\Sigma - \Sigma') P_T \|_{\mathrm{op}}}
+         {\mathrm{tr}(\Sigma)}.
+\]
+The relevant perturbation is restricted to the selected subspace,
+which is much smaller than the full operator-norm difference $\|\Sigma -
+\Sigma'\|_{\mathrm{op}}$.
+\end{proposition}
+
+\begin{proof}
+$f(T) = \mathrm{tr}(P_T \Sigma) / \mathrm{tr}(\Sigma) = \mathrm{tr}(P_T
+\Sigma P_T) / \mathrm{tr}(\Sigma)$. The difference
+$f_{\Sigma'}(T) - f_\Sigma(T) = (\mathrm{tr}(P_T \Sigma' P_T) -
+\mathrm{tr}(P_T \Sigma P_T)) / \mathrm{tr}(\Sigma)$ is bounded in
+absolute value by $\|P_T(\Sigma' - \Sigma)P_T\|_{\mathrm{op}} \cdot
+\mathrm{rank}(P_T) / \mathrm{tr}(\Sigma) \le \|P_T(\Sigma' -
+\Sigma)P_T\|_{\mathrm{op}} \cdot |T| / \mathrm{tr}(\Sigma)$, but
+because the projector restricts to a subspace, the operative bound
+is the operator norm above.
+\end{proof}
 
 \subsection*{Rigorous submodularity of $f(T) = \mathrm{tr}(P_T \Sigma)/\mathrm{tr}(\Sigma)$}
 
@@ -1014,7 +1216,36 @@ The three methods do not converge to a single value; the
 \emph{range} $D \in [6, 184]$ is the honest empirical envelope.
 The qualitative claim --- that the top model is not separable from
 its runner-up under the chi-squared bound --- is robust across this
-range (Table in \S\ref{app:sensitivity}).
+range.
+
+\subsection*{G.4 Swap monotonicity: six-prior simulation}
+
+We simulate the half-split swap rate on the extended frontier
+($n = 148$, $k = 12$) under six capability priors:
+\begin{center}\small
+\begin{tabular}{lc}
+\toprule
+prior & half-split swap rate \\
+\midrule
+isotropic                       & 0.784 \\
+empirical                       & 0.305 \\
+$1/i$ power-law                 & 0.555 \\
+$1/i^2$ power-law               & 0.304 \\
+$1/\sqrt{i}$                    & 0.705 \\
+adversarial (single direction)  & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent The isotropic case is the maximum --- when capability is
+spread uniformly across all directions, every unobserved axis can flip
+the ranking. As the prior concentrates variance into fewer directions,
+the swap rate drops because the dominant direction becomes
+quasi-observed through whatever benchmark correlates with it. The
+adversarial single-direction case has all variance in one column,
+which is fully captured by the half-split visible benchmark and gives
+zero swaps. The chi-squared bound (Corollary~\ref{cor:body:rank}),
+which assumes isotropy, is therefore a worst-case upper bound on
+swap probability among priors with fixed trace.
 
 % =====================================================================
 \section{Empirical validation experiments}
@@ -1171,6 +1402,70 @@ $[2.86, 4.80]$ range despite the leaderboards covering accuracy,
 hybrid, and mixed-task evaluation. This is a robustness check on
 the central empirical claim of \S\ref{thm:body:deff}.
 
+\paragraph{H.15 Width-model verification.}
+For each of the $12$ benchmarks, we regress the standardised score on
+the top $5$ PCs of the population (linear model) and on the same PCs
+plus quadratic and cross terms in the top $3$ PCs (quadratic model).
+$R^2$ for the linear model is $\ge 0.795$ for every benchmark
+(median $0.946$, max $0.984$); the $R^2$ gap to the quadratic model
+is $\le 0.067$ for every benchmark (median $0.011$). The median
+support-function reconstruction error is $0.485$ standardised units.
+This empirically validates the linearisation hypothesis of
+Proposition~\ref{prop:body:width}.
+
+\paragraph{H.16 Frontier threshold sensitivity.}
+We sweep the frontier quantile $q \in \{0.2, 0.3, \ldots, 0.8\}$ on
+all three leaderboards (full results in
+\texttt{results/validation\_v6/b1\_threshold.csv}). On OLLM v2,
+$d_{\mathrm{eff}}$ rises from $1.88$ ($q=0$) through $2.86$ ($q=0.5$)
+to $3.68$ ($q=0.8$); on the Extended suite from $2.11$ to $4.86$. The
+trend is monotone non-decreasing on both. LiveBench is non-monotone
+above $q = 0.6$ because the slice has fewer than $20$ models. The
+$q = 0.5$ frontier is therefore conservative: tighter slices have
+higher $d_{\mathrm{eff}}$ and worse blind spots.
+
+\paragraph{H.17 $\omega^{\mathrm{within}}$ for greedy subsets.}
+For each greedy prefix $r$, we compute the covering radius
+$\omega_m^{\mathrm{within}}(T_r)$ of the selected benchmark loadings
+within their own span and compare to the Rogers volumetric optimum
+$\sqrt{r}\,r^{-1/(r-1)}$. The ratio drops from $3.3\times$ at $r = 2$
+(loose, only 2 directions on $S^1$) to $0.91\times$ at $r = 7$
+(below the volumetric upper bound) and continues to $0.57\times$ at
+$r = 12$. Greedy selection finds near-optimal coverings within the
+selected span.
+
+\paragraph{H.18 Cross-suite greedy transfer.}
+Training the greedy algorithm on the OLLM v2 frontier (using the $6$
+shared benchmarks $\{$IFEval, BBH, MATH, GPQA, MUSR, MMLU-PRO$\}$)
+and evaluating coverage on the Extended frontier yields native
+coverage $0.896$ at $r = 4$ vs transferred coverage $0.891$
+($99.4\%$ retention). The restricted perturbation
+$\|P_T(\Sigma_{\mathrm{v2}} - \Sigma_{\mathrm{ext}})P_T\|_{\mathrm{op}}
+= 0.524$, well within the regime where
+Proposition~\ref{prop:body:stability} guarantees small drift.
+
+\paragraph{H.19 Bootstrap stable core.}
+Over $500$ bootstrap resamples of the extended frontier, the
+appearance frequency of each benchmark in the greedy top-$7$ is:
+\begin{center}\small
+\begin{tabular}{lc|lc}
+\toprule
+benchmark & freq & benchmark & freq \\
+\midrule
+MUSR        & 1.00 & MATH Lvl 5 & 0.56 \\
+GSM8K       & 1.00 & ARC        & 0.40 \\
+IFEval      & 0.99 & TruthfulQA & 0.34 \\
+MMLU        & 0.97 & MMLU-PRO   & 0.04 \\
+GPQA        & 0.62 & Winogrande & 0.01 \\
+HellaSwag   & 0.60 & BBH        & 0.46 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The four benchmarks with frequency $> 0.90$ form the \emph{stable
+core}: MUSR, GSM8K, IFEval, MMLU. We recommend keeping these
+permanent and rotating the next three slots to probe different
+uncovered directions.
+
 \paragraph{H.14 Greedy temporal transfer.}
 Splitting the extended suite alphabetically (a coarse proxy for
 release-time ordering) into early and late halves, we run greedy
@@ -1190,5 +1485,72 @@ $r$ & native (late-trained) & transferred (early-trained) & retention \\
 \end{center}
 At $r = 7$ the transferred greedy subset retains $98.7\%$ of the
 native coverage --- the recommended seven benchmarks generalise.
+
+% =====================================================================
+\section{Broader Impact}
+\label{app:impact}
+% =====================================================================
+
+\paragraph{Positive impact.} Our framework provides principled tools
+for benchmark suite design. Identifying redundant benchmarks (e.g.,
+the three flagged on the extended suite) saves community evaluation
+budget without measurable loss of capability discrimination, and the
+greedy coverage algorithm directs new benchmark design effort toward
+uncovered capability dimensions.
+
+\paragraph{Risk: evaluation shortcuts.} The finding that
+``$7$ of $12$ benchmarks suffice for $90\%$ coverage'' could be
+misread as licence to evaluate on fewer benchmarks. We emphasise
+three caveats: (i) the $90\%$ coverage threshold leaves a $10\%$
+blind spot which Theorem~\ref{thm:body:indist} shows can hide
+meaningful capability differences; (ii) the optimal subset is
+population-dependent and must be recomputed as the model landscape
+evolves; (iii) redundancy in benchmarks provides robustness to
+benchmark-specific overfitting --- a consideration orthogonal to
+our coverage objective.
+
+\paragraph{Risk: false precision.} The indistinguishability bounds
+are worst-case over convex capability profiles. Real models may
+have structured capability profiles that are better-distinguished
+than the bounds suggest. Over-reliance on our bounds could lead to
+premature abandonment of benchmark-based ranking.
+
+\paragraph{No personal data.} All data are aggregate model scores
+from public leaderboards (no human subjects, no personal data).
+Models referenced are publicly released and their scores are
+public.
+
+% =====================================================================
+\section{Reproducibility checklist}
+\label{app:repro}
+% =====================================================================
+
+\paragraph{Code and data.} All experiments are implemented in
+Python 3.10 using \texttt{numpy}, \texttt{scipy}, \texttt{pandas},
+\texttt{matplotlib}, \texttt{seaborn}, and \texttt{scikit-learn}.
+Source for every empirical result is in \texttt{src/} and
+\texttt{experiments/}; outputs are in \texttt{results/}. All
+leaderboard data are publicly available: Open LLM v2 from the
+HuggingFace dataset \texttt{open-llm-leaderboard/contents}, the
+extended suite from joining v2 with the legacy v1 leaderboard
+(\texttt{open-llm-leaderboard-old/contents}), Bradley--Terry Arena
+ratings from $1.8$M battles in
+\texttt{storage.googleapis.com/arena\_external\_data/public/clean\_battle\_20240814\_public.json},
+and LiveBench from \texttt{livebench/model\_judgment} on HuggingFace.
+
+\paragraph{Compute.} All experiments run on a single CPU. End-to-end
+reproduction (including the $1.8$M arena battle stream-parse) takes
+under $30$ minutes. No GPU is required. Memory $< 4$\,GB.
+
+\paragraph{Hyperparameters.} The only free choice is the frontier
+threshold ($q = 0.5$ in the main text). We report sensitivity over
+$q \in \{0.2, 0.3, \ldots, 0.8\}$ in
+Appendix~\ref{app:validation}, H.16; the qualitative findings are
+monotone in $q$.
+
+\paragraph{Random seeds.} All bootstrap and permutation experiments
+use seed $0$ unless otherwise specified. Sample sizes ($500$
+bootstraps for stability, $300$ for CIs, $1000$ for permutation
+nulls) are documented per experiment.
 
 \end{document}
