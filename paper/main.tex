@@ -32,28 +32,28 @@ A Stereological Theory of Benchmark Coverage for Large Language Models}
 \maketitle
 
 \begin{abstract}
-The top-ranked model on every major LLM leaderboard has at least a
-$47\%$ chance of not being the best. We prove this by developing a
-stereological theory of benchmark coverage. For any suite with
-effective dimensionality $d_{\mathrm{eff}}$, the \emph{visible}
-Hausdorff distance between two convex capability profiles consistent
-with the same scores is bounded by $\varepsilon + C R\,
-m^{-1/(d_{\mathrm{eff}}-1)}$---a rate we prove is minimax tight
-(Theorem~\ref{thm:body:indist}). On the extended $12$-benchmark
-frontier suite the indistinguishability radius in the actual
-aggregate-score direction is $\approx 197\times$ the observed
-runner-up gap---nearly two orders of magnitude---and the structural
-blind spot dominates statistical noise by $6$--$11\times$ across all
-three leaderboards we test (Open LLM v2, an extended $12$-benchmark
-suite, LiveBench), each with $d_{\mathrm{eff}} \in [2.86, 4.80]$ on
-its competitive frontier. The isotropic swap bound
-(Corollary~\ref{cor:body:rank}) is the \emph{optimistic} case: any
-anisotropy in hidden capabilities strictly increases ranking
-unreliability (Proposition~\ref{prop:body:swapmono}, via
-Schur-convexity). A submodular greedy algorithm with the Nemhauser
-$(1 - 1/e)$ guarantee identifies a stable core of $4$ benchmarks,
-finds that $7$ of $12$ suffice for $90\%$ coverage, and transfers
-across populations with $98.7\%$ retention. As a second main
+We give a stereological theory of LLM benchmark coverage. For any
+suite with effective dimensionality $d_{\mathrm{eff}}$, the
+\emph{visible} Hausdorff distance between two convex capability
+profiles consistent with the same scores is bounded by $\varepsilon
++ C R\,m^{-1/(d_{\mathrm{eff}}-1)}$, with matching Lipschitz lower
+bound (Theorem~\ref{thm:body:indist}). Empirically, three independent
+leaderboards (Open LLM v2, an extended $12$-benchmark suite,
+LiveBench) all have $d_{\mathrm{eff}} \in [2.86, 4.80]$ on their
+competitive frontier; the structural blind spot exceeds the observed
+runner-up score gap by $200$--$4000\times$ depending on
+standardisation, and dominates statistical noise by $6$--$11\times$.
+Under a chi-squared projection model, the isotropic prior is the
+\emph{optimistic} case (Proposition~\ref{prop:body:swapmono}, via
+Schur-convexity); across six hidden-capability priors and four
+ambient dimensions the simulated half-split swap rate of the top
+two models stays in $[0.38, 0.49]$, and a $500$-trial random
+visible/held-out split shows that $92\%$ of trials swap the top-1
+ranking with on average $2.83$ of $5$ top-5 models changing. A
+submodular greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee
+finds a stable core of $4$ benchmarks; $7$ of $12$ suffice for
+$90\%$ coverage, and the trained subset transfers across temporal
+quarters with $93$--$97\%$ retention. As a second main theoretical
 contribution we resolve Gardner's Problem 1.5 (1995) for $C^2$
 support functions, establishing the minimax rate
 $\Theta(R/(\kappa m^{2/(D-1)}))$ in general dimension via optimal
@@ -63,40 +63,37 @@ recovery theory on $S^{D-1}$.
 \section{Introduction}
 
 \paragraph{Benchmarks are slices.} Public LLM leaderboards report
-scalar scores, each a one-dimensional projection of a model's
-capability profile --- the way an X-ray is a 1D projection of a 3D
-body. How much can these slices miss?
-
-Almost everything. We prove that the structural blind spot --- the
-capability variation invisible to the entire benchmark suite ---
-exceeds the observed score gap between the \#1 and \#2 models by
-nearly two orders of magnitude on the competitive frontier. The
-pairwise swap probability between the top two models exceeds $47\%$
-across all plausible capability dimensions. These are not
-statistical artefacts of finite data; they are geometric
-inevitabilities of low-dimensional measurement, persisting even
-with infinite items per benchmark. The mathematical framework that
-makes this precise is \emph{stereology} --- the study of what finite
-projections can and cannot recover.
+scalar scores: an instruction-following accuracy, a math accuracy,
+a code accuracy. Each score is a one-dimensional projection of
+whatever it is that makes a model good --- the way an X-ray is a
+1D projection of a 3D body. The mathematical study of exactly this
+question is called \emph{stereology}, and it has hard quantitative
+limits on what finite projections can recover. This paper carries
+those limits to LLM evaluation, and shows that on real public
+leaderboards the geometric blind spot from low-dimensional
+measurement dominates statistical noise by an order of magnitude.
 
 \paragraph{Diagnose, prognose, treat.} We \emph{diagnose} the blind
 spot (Theorem~\ref{thm:body:deff}: $k$ benchmarks probe only
-$d_{\mathrm{eff}} \approx 3$--$5$ independent directions), \emph{prognose}
-its consequences (Theorem~\ref{thm:body:indist}: the visible
-indistinguishability bound is $\varepsilon + C R\,m^{-1/(d_{\mathrm{eff}}-1)}$,
-tight via matching Lipschitz lower bound; Corollary~\ref{cor:body:rank}:
-the top-two swap probability exceeds $0.47$), and \emph{treat} it
+$d_{\mathrm{eff}} \approx 3$--$5$ independent directions),
+\emph{prognose} its consequences
+(Theorem~\ref{thm:body:indist}: the visible indistinguishability
+bound is $\varepsilon + C R m^{-1/(d_{\mathrm{eff}}-1)}$, tight via
+matching Lipschitz lower bound;
+Corollary~\ref{cor:body:rank} and Table~\ref{tab:sensitivity}: the
+top-two swap probability lies in $[0.38, 0.49]$ across six priors
+and four ambient dimensions), and \emph{treat} it
 (Theorem~\ref{thm:body:greedy}: a submodular greedy algorithm with
-the $(1-1/e)$ guarantee finds that $7$ of $12$ benchmarks suffice
-for $90\%$ coverage, with a stable core of $4$ and $98.7\%$
-cross-population transfer). Proposition~\ref{prop:body:width}
-formally justifies the benchmark-as-width model;
-Proposition~\ref{prop:body:swapmono} proves our swap bound is the
-\emph{optimistic} case via Schur-convexity. As a second main
-theoretical contribution, we resolve Gardner's Problem 1.5 (1995)
-for $C^2$ support functions, establishing the minimax rate in
-general dimension (Theorem~\ref{thm:body:gardner}). The tools are
-standard (participation ratio, Marchenko--Pastur edge, Nemhauser
+the $(1-1/e)$ guarantee, $7$ of $12$ benchmarks for $90\%$ coverage,
+with a stable core of $4$ and $93$--$97\%$ cross-temporal transfer).
+Proposition~\ref{prop:body:width} formally justifies the
+benchmark-as-width model;
+Proposition~\ref{prop:body:swapmono} proves the isotropic chi-squared
+bound is the \emph{optimistic} case via Schur-convexity. As a second
+main theoretical contribution, we resolve Gardner's Problem 1.5
+(1995) for $C^2$ support functions
+(Theorem~\ref{thm:body:gardner}). The tools are standard
+(participation ratio, Marchenko--Pastur edge, Nemhauser
 optimisation, convex-body theory); the consequences are new.
 
 \paragraph{Related work, positioned.} Concurrent work by
@@ -399,31 +396,32 @@ worst-case covering bounds.
 Theorem~\ref{thm:body:indist} bounds the \emph{structural} blind spot
 from unobserved directions, which persists even with infinite data
 per benchmark. Statistical noise (finite items, prompt variance) is a
-separate source that shrinks with more data. We compare them on all
-three leaderboards: the geometric indistinguishability radius
-exceeds the bootstrap statistical radius by $10.93\times$ on OLLM v2
-frontier, $8.88\times$ on Extended frontier, and $6.24\times$ on
-LiveBench frontier (all in standardised score units;
-Appendix~\ref{app:validation}, H.12). The structural blind spot is
+separate source that shrinks with more data. The geometric
+indistinguishability radius exceeds the bootstrap statistical radius
+by $10.93\times$ on OLLM v2 frontier, $8.88\times$ on Extended
+frontier, and $6.24\times$ on LiveBench frontier
+(Appendix~\ref{app:validation}, H.12). The structural blind spot is
 the dominant source of ranking unreliability across every suite we
-test.
+test, and the qualitative finding holds when the bootstrap statistical
+radius is replaced by the maximum item-level binomial standard error
+across the $12$ benchmarks ($122\times$ smaller than the bootstrap
+radius; App.~H.D).
 
-\paragraph{Concrete blind-spot number.}
-Instantiating Theorem~\ref{thm:body:indist} on the extended frontier:
-$R = 7.30$ (the maximum standardised row norm). The \emph{worst-case}
-single-direction indistinguishability radius is $\delta_H^{\mathrm{worst}}
-= 2R\omega_{\mathrm{emp}} \approx 22.9$ standardised score units,
-where $\omega_{\mathrm{emp}} = 1.57\,\mathrm{rad}$ is the empirical
-covering radius (App.~\ref{app:validation}, H.11). The more practically
-relevant number is the radius in the \emph{aggregate-score direction}
-$w = (1/\sqrt{k}) \mathbf{1}$: the angle from $w$ to the nearest
-benchmark loading is $0.97$\,rad, yielding
-$\delta_H^{\mathrm{agg}} \approx 14.2$ standardised units. The
-observed runner-up gap is $\Delta_2 \approx 0.072$, so the
-structural blind spot in the aggregate direction is
-$\approx 197\times$ the observed gap --- two orders of magnitude
-larger. This is why the chi-squared swap probability collapses to
-a coin flip.
+A direct empirical half-split test (500 random 6/6 visible/held-out
+splits) shows the top-$1$ ranking changes in $92\%$ of trials and
+at least one of the top-$5$ changes in \emph{every} trial (mean
+$2.83$ of $5$ top-$5$ swaps; App.~\ref{app:validation}, H.21).
+
+\paragraph{Concrete blind spot, with sensitivity.}
+Instantiating Theorem~\ref{thm:body:indist} on the extended frontier
+gives a worst-case single-direction radius
+$\delta_H^{\mathrm{vis}} = 2R\omega_{\mathrm{emp}}$ that, depending
+on the standardisation scheme, is $200$--$4000\times$ the observed
+runner-up gap ($z$-score $386\times$, min-max $628\times$, rank-$z$
+$3988\times$, raw $1995\times$;
+App.~\ref{app:validation}, H.23). The qualitative finding --- that
+the structural blind spot dominates the observed score difference
+by orders of magnitude --- is robust across all four standardisations.
 
 \begin{theorem}[Resolution of Gardner's Problem 1.5 for $C^2$ bodies]
 \label{thm:body:gardner}
@@ -435,18 +433,31 @@ achieve the same minimax rate (Appendix~\ref{app:gardner}, Theorem~18),
 this resolves Problem 1.5 as Gardner stated it.
 \end{theorem}
 
-\noindent \emph{Proof sketch.} (i) Jackson's inequality gives degree-$L$
-polynomial approximation error $O(L^{-2} \|h\|_{C^2})$ with $L \sim
-m^{1/(D-1)}$ \citep{ragozin1970polynomial}; (ii) interpolation at $m$
-directions recovers the polynomial with Lebesgue constant $O(\log m)$;
-(iii) combining gives $\delta_H \le O(\varepsilon \log m + R/(\kappa
-m^{2/(D-1)}))$; (iv) matching lower bound from Bernstein's inequality
-on $S^{D-1}$ \citep{dai2013approximation}. The technical novelty is
-(a) constructing convex-body perturbations in the polynomial null
-space that preserve the curvature bound $\kappa_{\min} \ge \kappa$,
-and (b) extending from Fourier series on $S^1$ to general dimension
-via Kolmogorov $n$-widths and optimal recovery on $S^{D-1}$
-\citep{magaril2006optimal}.
+\noindent \emph{Proof outline.} \emph{Upper bound:}
+(i) Jackson's inequality on $S^{D-1}$ gives degree-$L$ polynomial
+approximation error $O(L^{-2}\|h\|_{C^2})$ with $L \sim
+m^{1/(D-1)}$ basis functions \citep{ragozin1970polynomial}.
+(ii) At $m$ quasi-uniform sample points the polynomial is determined
+up to a null-space component; the Lebesgue constant for spherical
+interpolation is $O(\log m)$ \citep{dai2013approximation}.
+(iii) Combining: $\|h_K - h_L\|_\infty \le O(\varepsilon \log m +
+R/(\kappa m^{2/(D-1)}))$. \emph{Lower bound:}
+(iv) The space of spherical polynomials of degree $\le 2L$ has
+dimension $\sim L^{D-1} \sim m$; imposing $m$ zero conditions
+$g(u_i) = 0$ leaves a non-trivial null space.
+(v) Choose $g$ in this null space with $\|g\|_{C^2} \le C R / \kappa$
+and $\|g\|_\infty \ge c R / (\kappa m^{2/(D-1)})$ via the Bernstein
+inequality. The perturbed body $K'$ with $h_{K'} = h_K + g$ has
+curvature $\ge \kappa - \|g\|_{C^2} > 0$ for $m$ large enough,
+is width-indistinguishable from $K$ at all $m$ directions, and
+$\delta_H(K, K') = \|g\|_\infty \ge c R / (\kappa m^{2/(D-1)})$.
+\emph{Novelty:} (a) constructing convex-body perturbations in the
+polynomial null space that preserve the curvature bound
+$\kappa_{\min} \ge \kappa$, and (b) extending from Fourier series on
+$S^1$ to general dimension via Kolmogorov $n$-widths and optimal
+recovery on $S^{D-1}$ \citep{magaril2006optimal}. The rate matches
+known bounds for $D = 2$; for $D \ge 5$ no prior rate was
+established for width measurements.
 
 \begin{corollary}[Ranking unreliability via chi-squared selection]
 \label{cor:body:rank}
@@ -475,25 +486,34 @@ to the choice of ambient dimension $D$ (with
 $\sigma_{\mathrm{hidden}}$ rescaled to the observed standardised
 score scale):
 
-\begin{center}\small
-\renewcommand{\arraystretch}{1.05}
-\begin{tabular}{ccccc}
+\begin{table}[h]
+\small\centering
+\caption{Sensitivity of the top-$2$ swap probability to the hidden
+capability prior and ambient dimension $D$, under the chi-squared
+projection model on the extended frontier ($d_{\mathrm{eff}} = 4.80$,
+$\Delta_2 = 0.072$).}
+\label{tab:sensitivity}
+\begin{tabular}{lcccc}
 \toprule
-$D$ & 10 & 20 & 50 & 100 \\
-$\rho = \sqrt{d_{\mathrm{eff}}/D}$ & 0.69 & 0.49 & 0.31 & 0.22 \\
-$P(\text{swap})$ & 0.476 & 0.486 & 0.492 & 0.494 \\
+prior & $D=10$ & $D=20$ & $D=50$ & $D=100$ \\
+\midrule
+isotropic   & 0.472 & 0.451 & 0.416 & 0.378 \\
+empirical   & 0.475 & 0.473 & 0.473 & 0.473 \\
+$1/i$       & 0.476 & 0.467 & 0.456 & 0.449 \\
+$1/i^2$     & 0.482 & 0.481 & 0.480 & 0.480 \\
+Pareto(1.5) & 0.473 & 0.478 & 0.431 & 0.415 \\
+adversarial & 0.487 & 0.487 & 0.487 & 0.487 \\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 
-\paragraph{Calibration.}
+\noindent The swap probability lies in $[0.38, 0.49]$ across all six
+priors and four ambient dimensions: the top-ranked model is at most
+weakly separable from its runner-up under any plausible hidden
+covariance. The calibration is
 $\sigma_{\mathrm{hidden}} = \sigma_{\mathrm{obs}} \sqrt{(D -
-d_{\mathrm{eff}}) / d_{\mathrm{eff}}}$, where
-$\sigma_{\mathrm{obs}}$ is the standard deviation of the observed
-aggregate score on the frontier ($= 1.0$ by standardisation). This
-partitions total variance as $d_{\mathrm{eff}} : (D - d_{\mathrm{eff}})$
-between observed and hidden components, consistent with the
-chi-squared model of Corollary~\ref{cor:body:rank}.
+d_{\mathrm{eff}})/d_{\mathrm{eff}}}$, partitioning total variance as
+$d_{\mathrm{eff}} : (D - d_{\mathrm{eff}})$.
 
 \noindent For all plausible $D \ge 10$, $P(\text{swap}) > 0.47$: the
 top-ranked model is not reliably separable from its closest
@@ -630,13 +650,23 @@ retention at $r = 4$ with operator perturbation $0.524$ (App.~H.18).
 the extended frontier. The bootstrap stable core (top-$4$ benchmarks
 appearing in $> 90\%$ of $500$ resamples) is $\{$MUSR ($1.00$), GSM8K
 ($1.00$), IFEval ($0.99$), MMLU ($0.97$)$\}$
-(Appendix~\ref{app:validation}, H.19); the next three rotate among
-GPQA, HellaSwag, MATH, BBH. We recommend a \emph{core + rotating}
-strategy: keep the four stable benchmarks permanent and rotate the
-remainder to probe different uncovered directions. Greedy beats random
-by Kendall $\tau = +0.18$ at $r = 2$; bootstrap top-$4$ Jaccard is
-$0.70$. Greedy subsets transfer across populations with $98.7\%$
-retention temporally and $99.4\%$ cross-suite.
+(App.~\ref{app:validation}, H.19); the next three slots rotate. We
+recommend a \emph{core + rotating} strategy.
+
+\paragraph{Temporal stability.}
+A quarterly retention experiment splits the extended suite into four
+chronologically-ordered quarters and runs greedy on each, then
+evaluates the resulting subset's coverage on every other quarter.
+The $4 \times 4$ retention matrix has off-diagonal entries in
+$[0.928, 0.973]$ (App.~\ref{app:validation}, H.22), showing that
+greedy subsets transfer across temporal slices with $\ge 93\%$
+coverage retention. At $r = 7$, the early-quarter greedy subset
+preserves $8$ of the late-quarter top-$10$ models (Kendall
+$\tau = 0.876$), comparable to a random $7$-subset baseline
+($\tau = 0.887 \pm 0.018$, $7.7$ of $10$ shared). The greedy
+advantage shows at small $r$ ($\tau = 0.71$ vs random $0.53$ at
+$r = 2$, App.~H.4), not at $r = 7$ where coverage is already near
+saturation.
 
 \begin{figure}[t]
   \centering
@@ -695,73 +725,44 @@ because adding a model does not rescale a model's own statistic.
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Benchmark dimensionality.}
 Concurrent work by \citet{shazhao2026benchscope} (BenchScope)
 independently identifies low effective dimensionality via the
 participation ratio; we share the diagnostic and contribute the
 indistinguishability bound, greedy algorithm, and minimax-rate theory.
-\citet{hypospace2025} formalises underdetermination in enumerable
-hypothesis spaces; our geometric approach handles continuous capability
-spaces with convergence rates.
-
-\paragraph{Psychometrics, MP dependence, saturation.}
-Latent-factor models (CFA, IRT) frame benchmark dimensionality via
-latent traits with posterior uncertainty \citep{burnell2024revealing};
-our participation ratio and stereological bounds are
-distribution-free complements. The MP edge assumes independent
-columns; dependent-coordinate extensions \citep{elkaroui2009concentration,
-bai2010spectral} give MP-like behaviour under bounded dependence, and
-our permutation null (App.~H.1) empirically agrees with the MP edge.
-As frontier models saturate, eigenvalue contributions collapse and
-$d_{\mathrm{eff}}$ drops \citep{kiela2021dynabench}: saturated
-benchmarks shrink the measured space and enlarge the blind spot.
-
-\paragraph{Geometric tomography rates.}
-\citet{guntuboyina2011minimax} provides minimax lower bounds for
-convex body recovery under Gaussian noise via $\chi^2$-entropy; our
-noiseless directional-discretisation rates complement those results,
-and the smooth rate follows from Jackson--Bernstein theory
-\citep{ragozin1970polynomial, dai2013approximation} and Kolmogorov
-$n$-widths \citep{magaril2006optimal}.
-
-\paragraph{Benchmark efficiency.}
-\citet{polo2024tinybenchmarks} optimises item selection within a
-benchmark via item response theory; we optimise benchmark selection
-across benchmarks. The two are complementary, operating at different
-granularities.
+Latent-factor / IRT models \citep{burnell2024revealing,
+polo2024tinybenchmarks} are complementary at the item level;
+$\chi^2$-entropy lower bounds for convex recovery
+\citep{guntuboyina2011minimax} treat the noisy case while we treat
+noiseless directional discretisation; the smooth rate follows from
+Jackson--Bernstein theory \citep{ragozin1970polynomial,
+dai2013approximation} and Kolmogorov $n$-widths
+\citep{magaril2006optimal}. The MP edge assumes independent columns;
+dependent-coordinate extensions \citep{elkaroui2009concentration,
+bai2010spectral} give MP-like behaviour under bounded dependence,
+matching our permutation null (App.~H.1). As benchmarks saturate
+\citep{kiela2021dynabench}, eigenvalue mass collapses and the blind
+spot enlarges --- the dynamic
+Theorem~\ref{thm:body:indist} predicts.
 
 \section{Discussion}
 
-\paragraph{Takeaways.}
-(1) Treat $d_{\mathrm{eff}}$ as a leaderboard-design diagnostic: a
-$20$-benchmark suite with $d_{\mathrm{eff}} \approx 3$ reports the
-same score thrice.
-(2) Treat the chi-squared bound~\eqref{eq:topwrong} as a rank-claim
-rejection threshold.
-(3) Run greedy coverage before adding new benchmarks; keep the
-\emph{stable core} (MUSR, GSM8K, IFEval, MMLU on our extended suite)
-permanent and rotate the remainder.
-(4) The smooth $m^{-2/(D-1)}$ rate requires adaptive item-level
-measurements; aggregate scores cannot beat the Lipschitz rate.
-
-\paragraph{Limitations.}
-(1) We bound what benchmarks \emph{distinguish}, not what models
-\emph{do}: no deployment claim follows.
-(2) $d_{\mathrm{eff}}$ is a population property; as models evolve,
-$d_{\mathrm{eff}}$ changes (temporal stability in
-Appendix~\ref{app:validation}, H.14).
-(3) Convexity is conservative; relaxing it can only enlarge the
-blind spot.
-(4) Proposition~\ref{prop:body:width} requires linearisable
-benchmarks; sharp item-level thresholds may violate this.
-(5) The chi-squared swap model assumes quality
-$= \|c\|^2$ (worst case over unit-norm linear functionals;
-Appendix~\ref{app:proof2}).
-(6) The coverage--indistinguishability bridge
-(Proposition~\ref{prop:body:bridge}) requires approximate isotropy.
-Combining benchmark-level greedy coverage with adaptive item-level
-selection \citep{polo2024tinybenchmarks} is an open direction; code
-and data released on acceptance (App.~\ref{app:repro}).
+\paragraph{Takeaways and limitations.}
+Treat $d_{\mathrm{eff}}$ as a leaderboard-design diagnostic and the
+chi-squared bound~\eqref{eq:topwrong} as a rank-claim rejection
+threshold; run greedy coverage before adding new benchmarks, keeping
+the stable core (MUSR, GSM8K, IFEval, MMLU on the extended suite)
+permanent and rotating the remainder; the smooth $m^{-2/(D-1)}$ rate
+requires adaptive item-level measurements. We bound what benchmarks
+\emph{distinguish}, not what models \emph{do} (no deployment claim
+follows); $d_{\mathrm{eff}}$ is a population property
+(App.~\ref{app:validation}, H.14); convexity is conservative;
+Proposition~\ref{prop:body:width} requires linearisable benchmarks;
+the chi-squared swap model assumes quality $= \|c\|^2$
+(Appendix~\ref{app:proof2}); the coverage--indistinguishability
+bridge requires approximate isotropy. Combining greedy coverage
+with adaptive item-level selection
+\citep{polo2024tinybenchmarks} is an open direction; code and data
+released on acceptance (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -1531,6 +1532,81 @@ The four benchmarks with frequency $> 0.90$ form the \emph{stable
 core}: MUSR, GSM8K, IFEval, MMLU. We recommend keeping these
 permanent and rotating the next three slots to probe different
 uncovered directions.
+
+\paragraph{H.21 Empirical half-split swap counts.}
+$500$ random visible/held-out splits ($6$/$6$) on the extended
+frontier suite. Top-$1$ swap rate $0.924$, mean top-$5$ swaps $2.83
+\pm 1.4$, fraction of trials with $\ge 1$ top-$5$ swap is $1.000$.
+
+\paragraph{H.22 Quarterly coverage retention matrix.}
+Splitting the extended suite chronologically into $4$ quarters and
+running greedy on each, the resulting subset's $r=7$ coverage when
+evaluated on every other quarter:
+\begin{center}\small
+\begin{tabular}{lcccc}
+\toprule
+trained $\backslash$ evaluated & Q1 & Q2 & Q3 & Q4 \\
+\midrule
+Q1 & 0.966 & 0.956 & 0.932 & 0.933 \\
+Q2 & 0.959 & 0.967 & 0.928 & 0.941 \\
+Q3 & 0.972 & 0.959 & 0.960 & 0.956 \\
+Q4 & 0.973 & 0.964 & 0.963 & 0.958 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Off-diagonal entries are in $[0.928, 0.973]$, showing $\ge 93\%$
+retention across temporal splits.
+
+\paragraph{H.23 Standardisation sensitivity for the indistinguishability
+ratio.}
+Worst-case single-direction radius $\delta_H^{\mathrm{vis}} = 2 R
+\omega_{\mathrm{emp}}$ vs runner-up gap $\Delta_2$ on the extended
+frontier:
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+method & $R$ & $\omega_{\mathrm{emp}}$ & $\delta_H^{\mathrm{vis}}$ &
+$\Delta_2$ & ratio \\
+\midrule
+$z$-score    &   7.30 & 1.90 &  27.71 & 0.072 &  386$\times$ \\
+min-max      &   2.87 & 1.81 &  10.40 & 0.017 &  628$\times$ \\
+rank-$z$     &   5.20 & 1.87 &  19.44 & 0.005 & 3988$\times$ \\
+raw          & 221.95 & 1.90 & 844.43 & 0.423 & 1995$\times$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{H.24 Quality-functional sensitivity.}
+Under the chi-squared projection model with $D = 20$, the simulated
+top-$1$ swap rate under five quality functionals: $\|c\|^2 \to 0.961$,
+$(1/\sqrt D) \mathbf{1}^\top c \to 0.905$, $e_1^\top c \to 0.926$,
+random $w^\top c \to 0.978$, $\min_j c_j \to 0.981$. Quality
+functionals not aligned with the observed direction give swap rates
+$> 0.9$, much higher than the $\|c\|^2$ baseline.
+
+\paragraph{H.25 MMLU width-model walkthrough.}
+Linearising MMLU on the top-$5$ PCs of the score matrix excluding
+MMLU gives $R^2 = 0.898$. The width-model prediction
+$\|\nabla\pi\| \cdot (h_K(a_{\mathrm{MMLU}}) - h_L(a_{\mathrm{MMLU}}))$
+correlates with the actual score difference at $r = 0.95$ over
+random model pairs (mean absolute residual $0.34$, max $1.99$
+standardised units).
+
+\paragraph{H.26 Pass/fail counterexample.}
+A synthetic binary pass/fail benchmark $\pi(c) = \mathbb{1}[w^\top c
+> \tau]$ with random $w$ has linear $R^2 = 0.649$ on the extended
+suite (vs $\ge 0.795$ for every actual benchmark), with maximum
+residual $0.738$. Sharp item-level thresholds widen the
+linearisation error $\eta$, which enters the $\varepsilon$ term of
+Theorem~\ref{thm:body:indist}.
+
+\paragraph{H.27 Adversarial direction injection.}
+Adding a synthetic benchmark aligned with the smallest, $2$nd, or
+$3$rd smallest eigendirection of the standardised score matrix
+changes $0$, $2$, and $2$ of the top-$10$ models respectively
+(Kendall $\tau \in [0.965, 0.978]$). Single-direction adversarial
+additions perturb the top-$10$ ranking only modestly --- consistent
+with the high $\omega^{\mathrm{within}}$ ratio reported in H.17.
 
 \paragraph{H.14 Greedy temporal transfer.}
 Splitting the extended suite alphabetically (a coarse proxy for

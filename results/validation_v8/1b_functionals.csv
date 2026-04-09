@@ -1,0 +1,6 @@
+quality_functional,P_swap_D20
+||c||^2 (current),0.961
+(1/sqrt(D)) sum c,0.905
+e_1 . c (single),0.926
+random w . c,0.978
+min_j c_j,0.981

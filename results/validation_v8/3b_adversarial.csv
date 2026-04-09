@@ -1,0 +1,4 @@
+rank,n_top10_changed,kendall_tau_top
+1,0,0.976
+2,2,0.978
+3,2,0.965

@@ -1,0 +1,231 @@
+{
+  "exp1a": {
+    "table": [
+      {
+        "prior": "isotropic",
+        "D=10": 0.472,
+        "D=20": 0.451,
+        "D=50": 0.416,
+        "D=100": 0.378
+      },
+      {
+        "prior": "empirical",
+        "D=10": 0.475,
+        "D=20": 0.473,
+        "D=50": 0.473,
+        "D=100": 0.473
+      },
+      {
+        "prior": "1/i",
+        "D=10": 0.476,
+        "D=20": 0.467,
+        "D=50": 0.456,
+        "D=100": 0.449
+      },
+      {
+        "prior": "1/i^2",
+        "D=10": 0.482,
+        "D=20": 0.481,
+        "D=50": 0.48,
+        "D=100": 0.48
+      },
+      {
+        "prior": "Pareto(1.5)",
+        "D=10": 0.473,
+        "D=20": 0.478,
+        "D=50": 0.431,
+        "D=100": 0.415
+      },
+      {
+        "prior": "adversarial",
+        "D=10": 0.487,
+        "D=20": 0.487,
+        "D=50": 0.487,
+        "D=100": 0.487
+      }
+    ]
+  },
+  "exp1b": {
+    "table": [
+      {
+        "quality_functional": "||c||^2 (current)",
+        "P_swap_D20": 0.961
+      },
+      {
+        "quality_functional": "(1/sqrt(D)) sum c",
+        "P_swap_D20": 0.905
+      },
+      {
+        "quality_functional": "e_1 . c (single)",
+        "P_swap_D20": 0.926
+      },
+      {
+        "quality_functional": "random w . c",
+        "P_swap_D20": 0.978
+      },
+      {
+        "quality_functional": "min_j c_j",
+        "P_swap_D20": 0.981
+      }
+    ]
+  },
+  "exp1c": {
+    "table": [
+      {
+        "method": "zscore",
+        "R": 7.3,
+        "omega_emp": 1.9,
+        "delta_vis": 27.71,
+        "delta2": 0.0718,
+        "ratio": 386.2
+      },
+      {
+        "method": "min_max",
+        "R": 2.87,
+        "omega_emp": 1.81,
+        "delta_vis": 10.4,
+        "delta2": 0.0165,
+        "ratio": 628.2
+      },
+      {
+        "method": "rank_zscore",
+        "R": 5.2,
+        "omega_emp": 1.87,
+        "delta_vis": 19.44,
+        "delta2": 0.0049,
+        "ratio": 3987.5
+      },
+      {
+        "method": "raw",
+        "R": 221.95,
+        "omega_emp": 1.9,
+        "delta_vis": 844.43,
+        "delta2": 0.4233,
+        "ratio": 1994.7
+      }
+    ]
+  },
+  "exp2a": {
+    "r2_linear": 0.898,
+    "correlation_actual_predicted": 0.95,
+    "mean_abs_residual": 0.337,
+    "max_residual": 1.991
+  },
+  "exp2b": {
+    "synthetic_r2_linear": 0.649,
+    "max_residual": 0.738,
+    "interpretation": "Sharp pass/fail benchmark has low linear R^2 because the response is binary; linearisation residual eta is large, widening epsilon in Theorem 2."
+  },
+  "exp3a": {
+    "n_trials": 500,
+    "top1_swap_rate": 0.924,
+    "mean_top5_changes": 2.83,
+    "fraction_top5_with_change": 1.0
+  },
+  "exp3b": {
+    "table": [
+      {
+        "rank": 1,
+        "n_top10_changed": 0,
+        "kendall_tau_top": 0.976
+      },
+      {
+        "rank": 2,
+        "n_top10_changed": 2,
+        "kendall_tau_top": 0.978
+      },
+      {
+        "rank": 3,
+        "n_top10_changed": 2,
+        "kendall_tau_top": 0.965
+      }
+    ]
+  },
+  "exp3c": {
+    "binned": [
+      {
+        "delta_0_bin": 2.0,
+        "n": 50,
+        "empirical_swap_rate": 0.28
+      },
+      {
+        "delta_0_bin": 2.5,
+        "n": 100,
+        "empirical_swap_rate": 0.38
+      },
+      {
+        "delta_0_bin": 3.0,
+        "n": 50,
+        "empirical_swap_rate": 0.2
+      },
+      {
+        "delta_0_bin": 3.5,
+        "n": 50,
+        "empirical_swap_rate": 0.24
+      },
+      {
+        "delta_0_bin": 4.0,
+        "n": 50,
+        "empirical_swap_rate": 0.36
+      },
+      {
+        "delta_0_bin": 4.5,
+        "n": 50,
+        "empirical_swap_rate": 0.28
+      },
+      {
+        "delta_0_bin": 5.5,
+        "n": 50,
+        "empirical_swap_rate": 0.26
+      },
+      {
+        "delta_0_bin": 7.5,
+        "n": 50,
+        "empirical_swap_rate": 0.22
+      },
+      {
+        "delta_0_bin": 11.5,
+        "n": 50,
+        "empirical_swap_rate": 0.46
+      }
+    ],
+    "correlation": 0.053
+  },
+  "exp4a": {
+    "matrix": [
+      [
+        0.966,
+        0.956,
+        0.932,
+        0.933
+      ],
+      [
+        0.959,
+        0.967,
+        0.928,
+        0.941
+      ],
+      [
+        0.972,
+        0.959,
+        0.96,
+        0.956
+      ],
+      [
+        0.973,
+        0.964,
+        0.963,
+        0.958
+      ]
+    ],
+    "min_off_diagonal": 0.928,
+    "max_off_diagonal": 0.973
+  },
+  "exp4b": {
+    "greedy_early_kendall_tau_late": 0.876,
+    "random_kendall_tau_late_mean": 0.887,
+    "random_kendall_tau_late_std": 0.018,
+    "greedy_top10_shared": 8,
+    "random_top10_shared_mean": 7.71
+  }
+}
