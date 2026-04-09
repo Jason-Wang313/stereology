@@ -1,0 +1,5 @@
+loser,winner,reversing_benches
+BEE-spoke-data/smol_llama-220M-GQA,0-hero/Matter-0.2-7B-DPO,MUSR
+Corianas/Quokka_2.7b,0-hero/Matter-0.2-7B-DPO,MUSR
+TinyLlama/TinyLlama-1.1B-Chat-v0.6,0-hero/Matter-0.2-7B-DPO,MATH Lvl 5
+VAGOsolutions/SauerkrautLM-Gemma-2b,0-hero/Matter-0.2-7B-DPO,"MATH Lvl 5, MMLU-PRO"

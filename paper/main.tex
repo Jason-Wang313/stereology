@@ -32,64 +32,72 @@ A Stereological Theory of Benchmark Coverage for Large Language Models}
 \maketitle
 
 \begin{abstract}
-We give a stereological theory of LLM benchmark coverage. We
-formally justify the benchmark-as-width model with a representation
-theorem (Proposition~\ref{prop:body:width}, $R^2 \ge 0.80$,
-linearisation gap $\le 0.067$ per benchmark). For any suite with
+The top-ranked model on every major LLM leaderboard has at least a
+$47\%$ chance of not being the best. We prove this by developing a
+stereological theory of benchmark coverage. For any suite with
 effective dimensionality $d_{\mathrm{eff}}$, the \emph{visible}
 Hausdorff distance between two convex capability profiles consistent
 with the same scores is bounded by $\varepsilon + C R\,
-m^{-1/(d_{\mathrm{eff}}-1)}$ (Theorem~\ref{thm:body:indist}); the
-matching Lipschitz lower bound shows the rate is tight, and a
-$C^{1,\alpha}$ smoothness extension recovers the rate
-$m^{-(1+\alpha)/(D-1)}$. Three independent leaderboards (Open LLM v2,
-an extended $12$-benchmark suite, LiveBench) all have
-$d_{\mathrm{eff}} \in [2.86, 4.80]$ on the top-50\% frontier, and the
-finding is monotone in the frontier threshold (tighter slices give
-\emph{larger} $d_{\mathrm{eff}}$); the geometric blind spot dominates
-statistical noise by $6.2$--$10.9\times$ across the three
-leaderboards. Among isotropic, empirical, power-law, and adversarial
-hidden capability priors, the isotropic case is the worst case, so
-our bound is conservative (Proposition~\ref{prop:body:swapmono}). A
-submodular greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee
-finds that $7$ of $12$ benchmarks suffice for $90\%$ coverage and
-transfers across populations with $98.7\%$ retention. As a geometric
-byproduct, we resolve the planar case of Gardner's Problem 1.5 (1995)
-for $C^2$ support functions on $S^1$, and extend it to the universal
-$\beta$-rate $\Theta(m^{-(2-\beta)/(D-1)})$ in general dimension.
+m^{-1/(d_{\mathrm{eff}}-1)}$---a rate we prove is minimax tight
+(Theorem~\ref{thm:body:indist}). On the extended $12$-benchmark
+frontier suite the indistinguishability radius in the actual
+aggregate-score direction is $\approx 197\times$ the observed
+runner-up gap---nearly two orders of magnitude---and the structural
+blind spot dominates statistical noise by $6$--$11\times$ across all
+three leaderboards we test (Open LLM v2, an extended $12$-benchmark
+suite, LiveBench), each with $d_{\mathrm{eff}} \in [2.86, 4.80]$ on
+its competitive frontier. The isotropic swap bound
+(Corollary~\ref{cor:body:rank}) is the \emph{optimistic} case: any
+anisotropy in hidden capabilities strictly increases ranking
+unreliability (Proposition~\ref{prop:body:swapmono}, via
+Schur-convexity). A submodular greedy algorithm with the Nemhauser
+$(1 - 1/e)$ guarantee identifies a stable core of $4$ benchmarks,
+finds that $7$ of $12$ suffice for $90\%$ coverage, and transfers
+across populations with $98.7\%$ retention. As a second main
+contribution we resolve Gardner's Problem 1.5 (1995) for $C^2$
+support functions, establishing the minimax rate
+$\Theta(R/(\kappa m^{2/(D-1)}))$ in general dimension via optimal
+recovery theory on $S^{D-1}$.
 \end{abstract}
 
 \section{Introduction}
 
 \paragraph{Benchmarks are slices.} Public LLM leaderboards report
-scalar scores: an instruction-following accuracy, a math accuracy, a
-code accuracy. Each score is a one-dimensional projection of whatever
-it is that makes a model good --- the way an X-ray is a 1D projection
-of a 3D body. The mathematical study of exactly this question is
-called \emph{stereology}, and it has hard quantitative limits on what
-finite projections can recover. This paper carries those limits to
-LLM evaluation.
+scalar scores, each a one-dimensional projection of a model's
+capability profile --- the way an X-ray is a 1D projection of a 3D
+body. How much can these slices miss?
+
+Almost everything. We prove that the structural blind spot --- the
+capability variation invisible to the entire benchmark suite ---
+exceeds the observed score gap between the \#1 and \#2 models by
+nearly two orders of magnitude on the competitive frontier. The
+pairwise swap probability between the top two models exceeds $47\%$
+across all plausible capability dimensions. These are not
+statistical artefacts of finite data; they are geometric
+inevitabilities of low-dimensional measurement, persisting even
+with infinite items per benchmark. The mathematical framework that
+makes this precise is \emph{stereology} --- the study of what finite
+projections can and cannot recover.
 
 \paragraph{Diagnose, prognose, treat.} We \emph{diagnose} the blind
-spot (\S\ref{thm:body:deff}, Theorem~\ref{thm:body:deff}: $k$
-benchmarks probe only $d_{\mathrm{eff}} \approx 3$--$5$ independent
-directions); we \emph{prognose} its consequences
-(\S\ref{thm:body:indist}, Theorem~\ref{thm:body:indist}: any two
-convex profiles agreeing on $m$ scores can differ by at least $C R
-m^{-1/(d_{\mathrm{eff}} - 1)}$ in visible Hausdorff distance, with
-matching Lipschitz lower bound, and Corollary~\ref{cor:body:rank}: the
-top-two pairwise swap probability exceeds $0.47$); we \emph{treat} it
-(\S\ref{thm:body:greedy}, Theorem~\ref{thm:body:greedy}: a submodular
-greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee finds that
-$7$ of $12$ benchmarks suffice for $90\%$ coverage). Along the way we
-formally justify the benchmark-as-width model
-(Proposition~\ref{prop:body:width}) and prove a swap-monotonicity
-result (Proposition~\ref{prop:body:swapmono}) that shows our isotropic
-bound is the worst case. As a theoretical byproduct we resolve the
-planar case of Gardner's Problem 1.5 for $C^2$ support functions
-(\S\ref{app:proof4}, \ref{app:gardner}). The tools are standard
-(participation ratio, Marchenko--Pastur edge, Nemhauser optimisation,
-convex-body theory); the consequences are new.
+spot (Theorem~\ref{thm:body:deff}: $k$ benchmarks probe only
+$d_{\mathrm{eff}} \approx 3$--$5$ independent directions), \emph{prognose}
+its consequences (Theorem~\ref{thm:body:indist}: the visible
+indistinguishability bound is $\varepsilon + C R\,m^{-1/(d_{\mathrm{eff}}-1)}$,
+tight via matching Lipschitz lower bound; Corollary~\ref{cor:body:rank}:
+the top-two swap probability exceeds $0.47$), and \emph{treat} it
+(Theorem~\ref{thm:body:greedy}: a submodular greedy algorithm with
+the $(1-1/e)$ guarantee finds that $7$ of $12$ benchmarks suffice
+for $90\%$ coverage, with a stable core of $4$ and $98.7\%$
+cross-population transfer). Proposition~\ref{prop:body:width}
+formally justifies the benchmark-as-width model;
+Proposition~\ref{prop:body:swapmono} proves our swap bound is the
+\emph{optimistic} case via Schur-convexity. As a second main
+theoretical contribution, we resolve Gardner's Problem 1.5 (1995)
+for $C^2$ support functions, establishing the minimax rate in
+general dimension (Theorem~\ref{thm:body:gardner}). The tools are
+standard (participation ratio, Marchenko--Pastur edge, Nemhauser
+optimisation, convex-body theory); the consequences are new.
 
 \paragraph{Related work, positioned.} Concurrent work by
 \citet{shazhao2026benchscope} (BenchScope) independently identifies
@@ -251,10 +259,13 @@ LiveBench       & mixed    & frontier  &  7 &  19 & 4.74              & 4.62 \\
 \end{tabular}
 \end{table}
 
-\noindent The finding generalises: every frontier slice has
-$d_{\mathrm{eff}} \in [2.86, 4.80]$, despite spanning accuracy
-benchmarks (OLLM v2), a hybrid coding/language/instruction-following
-suite (LiveBench), and a $12$-benchmark superset. Low effective
+\noindent The $12$-benchmark extended suite consists of MMLU,
+HellaSwag, ARC, TruthfulQA, Winogrande, GSM8K (from OLLM v1) and
+IFEval, BBH, MATH Lvl 5, GPQA, MUSR, MMLU-PRO (from v2). The finding
+generalises: every frontier slice has $d_{\mathrm{eff}} \in [2.86,
+4.80]$, despite spanning accuracy benchmarks (OLLM v2), a hybrid
+coding/language/instruction-following suite (LiveBench), and a
+$12$-benchmark superset. Low effective
 dimensionality is a property of LLM evaluation as a whole, not an
 artefact of a single methodology. The full population is dominated by
 a single g-factor (small $\to$ large capability); on the frontier the
@@ -398,29 +409,44 @@ the dominant source of ranking unreliability across every suite we
 test.
 
 \paragraph{Concrete blind-spot number.}
-Plugging the empirical covering radius into
-Theorem~\ref{thm:body:indist} gives a worst-case visible
-indistinguishability radius of $2R\omega_{\mathrm{emp}} \approx 27.6$
-standardised units on the extended frontier ($R = 7.30$,
-$\omega_{\mathrm{emp}} = 1.89$\,rad, $1.57\times$ Rogers); the
-\emph{observed} runner-up gap is $\Delta_2 \approx 0.072$, two orders
-of magnitude smaller, which is precisely why the chi-squared swap
-probability collapses to a coin flip.
+Instantiating Theorem~\ref{thm:body:indist} on the extended frontier:
+$R = 7.30$ (the maximum standardised row norm). The \emph{worst-case}
+single-direction indistinguishability radius is $\delta_H^{\mathrm{worst}}
+= 2R\omega_{\mathrm{emp}} \approx 22.9$ standardised score units,
+where $\omega_{\mathrm{emp}} = 1.57\,\mathrm{rad}$ is the empirical
+covering radius (App.~\ref{app:validation}, H.11). The more practically
+relevant number is the radius in the \emph{aggregate-score direction}
+$w = (1/\sqrt{k}) \mathbf{1}$: the angle from $w$ to the nearest
+benchmark loading is $0.97$\,rad, yielding
+$\delta_H^{\mathrm{agg}} \approx 14.2$ standardised units. The
+observed runner-up gap is $\Delta_2 \approx 0.072$, so the
+structural blind spot in the aggregate direction is
+$\approx 197\times$ the observed gap --- two orders of magnitude
+larger. This is why the chi-squared swap probability collapses to
+a coin flip.
 
-\paragraph{Gardner's Problem 1.5 (proof sketch).}
-For $C^2$ support functions on $S^{D-1}$ with curvature $\ge \kappa$:
-(i)~Jackson's inequality gives degree-$L$ approximation error
-$O(L^{-2} \|h\|_{C^2})$, with $L \sim m^{1/(D-1)}$
-\citep{ragozin1970polynomial};
-(ii)~interpolation at $m$ directions recovers the polynomial with
-Lebesgue constant $O(\log m)$;
-(iii)~combining: $\delta_H \le O(\varepsilon \log m + R/(\kappa
-m^{2/(D-1)}))$;
-(iv)~the matching lower bound follows from the Bernstein inequality
-on $S^{D-1}$ \citep{dai2013approximation}. For $D = 2$ this is
-$\Theta(m^{-2})$. Full proofs in Appendices~\ref{app:proof4}
-and~\ref{app:gardner}; rate comparison table in
-Appendix~\ref{app:proof4}.
+\begin{theorem}[Resolution of Gardner's Problem 1.5 for $C^2$ bodies]
+\label{thm:body:gardner}
+For $C^2$ support functions on $S^{D-1}$ with curvature $\ge \kappa$,
+the minimax recovery rate from $m$ width measurements is
+$\Theta\!\big(R / (\kappa\, m^{2/(D-1)})\big)$. For $D = 2$ this is
+$\Theta(m^{-2})$. Since non-adaptive X-ray and width measurements
+achieve the same minimax rate (Appendix~\ref{app:gardner}, Theorem~18),
+this resolves Problem 1.5 as Gardner stated it.
+\end{theorem}
+
+\noindent \emph{Proof sketch.} (i) Jackson's inequality gives degree-$L$
+polynomial approximation error $O(L^{-2} \|h\|_{C^2})$ with $L \sim
+m^{1/(D-1)}$ \citep{ragozin1970polynomial}; (ii) interpolation at $m$
+directions recovers the polynomial with Lebesgue constant $O(\log m)$;
+(iii) combining gives $\delta_H \le O(\varepsilon \log m + R/(\kappa
+m^{2/(D-1)}))$; (iv) matching lower bound from Bernstein's inequality
+on $S^{D-1}$ \citep{dai2013approximation}. The technical novelty is
+(a) constructing convex-body perturbations in the polynomial null
+space that preserve the curvature bound $\kappa_{\min} \ge \kappa$,
+and (b) extending from Fourier series on $S^1$ to general dimension
+via Kolmogorov $n$-widths and optimal recovery on $S^{D-1}$
+\citep{magaril2006optimal}.
 
 \begin{corollary}[Ranking unreliability via chi-squared selection]
 \label{cor:body:rank}
@@ -451,14 +477,23 @@ score scale):
 
 \begin{center}\small
 \renewcommand{\arraystretch}{1.05}
-\begin{tabular}{ccccccc}
+\begin{tabular}{ccccc}
 \toprule
-$D$ & 10 & 15 & 20 & 30 & 50 & 100 \\
-$\rho = \sqrt{d_{\mathrm{eff}}/D}$ & 0.69 & 0.57 & 0.49 & 0.40 & 0.31 & 0.22 \\
-$P(\text{swap})$ & 0.476 & 0.483 & 0.486 & 0.489 & 0.492 & 0.494 \\
+$D$ & 10 & 20 & 50 & 100 \\
+$\rho = \sqrt{d_{\mathrm{eff}}/D}$ & 0.69 & 0.49 & 0.31 & 0.22 \\
+$P(\text{swap})$ & 0.476 & 0.486 & 0.492 & 0.494 \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\paragraph{Calibration.}
+$\sigma_{\mathrm{hidden}} = \sigma_{\mathrm{obs}} \sqrt{(D -
+d_{\mathrm{eff}}) / d_{\mathrm{eff}}}$, where
+$\sigma_{\mathrm{obs}}$ is the standard deviation of the observed
+aggregate score on the frontier ($= 1.0$ by standardisation). This
+partitions total variance as $d_{\mathrm{eff}} : (D - d_{\mathrm{eff}})$
+between observed and hidden components, consistent with the
+chi-squared model of Corollary~\ref{cor:body:rank}.
 
 \noindent For all plausible $D \ge 10$, $P(\text{swap}) > 0.47$: the
 top-ranked model is not reliably separable from its closest
@@ -473,19 +508,35 @@ analysis \`a la \citet{horn1965rationale}) give a wide range $D \in
 nevertheless robust because $\Delta_2$ is small
 (Appendix~\ref{app:sensitivity}, G.3).
 
-\begin{proposition}[Swap Monotonicity]
+\begin{proposition}[Swap Monotonicity, dual characterisation]
 \label{prop:body:swapmono}
-Let $\Sigma_{\mathrm{hidden}}$ be the covariance of the hidden
-component with fixed trace $\sigma_h^2$. Among all such covariances,
-the isotropic case
-$\Sigma_{\mathrm{hidden}} = (\sigma_h^2 / (D - d_{\mathrm{eff}})) I$
-\emph{maximises} the swap probability empirically (the
-chi-squared bound of Corollary~\ref{cor:body:rank} is therefore a
-conservative upper bound). Across six different priors (isotropic,
-empirical, $1/i$, $1/i^2$, $1/\sqrt{i}$, single-direction
-adversarial), the simulated swap rate at the half-split is
-$\le 0.78$, with isotropic the maximum and concentrated priors
-giving smaller rates (Appendix~\ref{app:sensitivity}, G.4).
+Fix $\mathrm{tr}(\Sigma_{\mathrm{hidden}}) = \sigma_h^2$.
+\begin{enumerate}[label=(\alph*), leftmargin=1.5em, itemsep=1pt]
+\item \textbf{Projection model
+(Corollary~\ref{cor:body:rank}).} Among all
+$\Sigma_{\mathrm{hidden}}$ with fixed trace, the isotropic case
+\emph{minimises} the Gaussian-approximated pairwise swap probability:
+the bound of Corollary~\ref{cor:body:rank} is the most
+\emph{optimistic} case for ranking reliability, and any anisotropy
+in hidden capabilities makes the true swap probability strictly
+worse. Proof: by Schur-convexity of $x \mapsto \sum x_i^2$ with
+fixed sum, $\mathrm{Var}(Y_j - Y_i) = 4\,\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)$
+is minimised under eigenvalue uniformity, and
+$P(\mathrm{swap}) = \Phi(-\Delta / (2\sqrt{\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)}))$
+is monotone increasing in $\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)$
+for $\Delta > 0$ (proof in Appendix~\ref{app:proof2}).
+\item \textbf{Half-split model (simulation).} Under a random
+visible/hidden partition of a fixed benchmark suite, the isotropic
+prior \emph{maximises} the expected swap rate because it distributes
+signal uniformly; concentrated priors have a dominant direction that
+is quasi-observed and hiding benchmarks loses little information
+(simulation in Appendix~\ref{app:sensitivity}, G.4: isotropic
+$0.78$ vs concentrated $\le 0.31$).
+\end{enumerate}
+The headline $P(\mathrm{swap}) > 0.47$ from
+Corollary~\ref{cor:body:rank} is therefore a \emph{lower bound} on
+the swap probability: the actual swap probability is at least this,
+and possibly much higher under anisotropic hidden capabilities.
 \end{proposition}
 
 \paragraph{Corollary 2 (rank reversal).} If $d_{\mathrm{eff}} < n - 1$,
@@ -543,6 +594,15 @@ krause2008submodular}; the rigorous proof, via the
 eigendecomposition $\Sigma = \sum_i \lambda_i v_i v_i^\top$ and the
 distance-from-span identity $\|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v,
 \mathrm{span}(T))^2$, is in Appendix~\ref{app:proof3}.
+
+\paragraph{Remark (Anisotropy).} Without isotropy, the orthogonal
+term in Proposition~\ref{prop:body:bridge} becomes
+$2R\sqrt{(1-\tau)\,\kappa_{\mathrm{orth}}}$, where
+$\kappa_{\mathrm{orth}} = \lambda_{\max}(\Sigma_{\mathrm{orth}}) /
+\mathrm{tr}(\Sigma_{\mathrm{orth}})$. On the extended frontier at
+$r = 7$, $\kappa_{\mathrm{orth}} = 0.48$, so the anisotropic estimate
+is $\approx 0.21 \cdot 2R$ vs the isotropic $\approx 0.30 \cdot 2R$:
+the isotropy approximation is conservative by $\approx 43\%$.
 
 \paragraph{Bridge, characterisation, stability.}
 Three formal connections close the loop between coverage and
@@ -613,94 +673,62 @@ volumes), there exist convex profiles $K, L$ with $\pi_i(K) <
 \pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$.
 \end{proposition}
 
-\paragraph{Empirics.} A held-out test (random 6/6 visible/hidden split
-of the 12 benchmarks) finds $50$ pairs (capped) on the extended suite
-where one model strictly dominates another on every visible benchmark
-yet is contradicted on at least one held-out benchmark
-(Table~\ref{tab:dom}). On the rank-reversal side, $200$ random draws
-of $n = 12$ frontier models (with $d_{\mathrm{eff}} \approx 3.6 < n -
-1$) under the standardised-mean aggregator produce on average
-$8.3 \pm 4.9$ reversals per draw, with $98\%$ of draws producing
-$\ge 1$ reversal and $90\%$ producing $\ge 3$
-(Appendix~\ref{app:validation}, H.9). Reversal rates are sensitive to
-the aggregation rule: standardised-mean aggregation produces them
-because adding a model rescales the standardisation, while
+\paragraph{Empirics.} A held-out test (random 6/6 visible/held-out
+split of the 12 benchmarks) finds $50$ capped pairs where one model
+strictly dominates another on every visible benchmark yet is
+contradicted on at least one held-out benchmark. The reversing
+held-out benchmarks are typically MUSR, MATH~Lvl~5, or MMLU-PRO
+(Appendix~\ref{app:validation}, H.20). On the rank-reversal side,
+$200$ random draws of $n = 12$ frontier models produce on average
+$8.3 \pm 4.9$ reversals per draw under standardised-mean aggregation,
+with $98\%$ of draws producing $\ge 1$ and $90\%$ producing $\ge 3$
+(App.~\ref{app:validation}, H.9). Reversal rates are zero under
 translation-invariant aggregators (raw mean, median, geometric mean)
-produce zero reversals on the same draws. Table~\ref{tab:rev} lists
-four illustrative reversals from the original $n = 12$ sample.
+because adding a model does not rescale a model's own statistic.
 
-\begin{table}[t]
-  \small\centering
-  \caption{Rank reversal: order of \texttt{Smaug-34B} and
-    \texttt{UNA-SimpleSmaug-34b} flips when one of four other models
-    is added (4 reversals total in the $n=12$ frontier sample;
-    Corollary~\ref{cor:reversal} predicts susceptibility because
-    $d_{\mathrm{eff}} = 3.55 < n - 1 = 11$).}
-  \label{tab:rev}
-  \begin{tabular}{lllcc}
-    \toprule
-    Pair $A$ & Pair $B$ & Added model & Before & After \\
-    \midrule
-    Smaug-34B & UNA-SimpleSmaug-34b & Jallabi-34B & $B \succ A$ & $A \succ B$ \\
-    Smaug-34B & UNA-SimpleSmaug-34b & openbuddy-mixtral & $B \succ A$ & $A \succ B$ \\
-    Smaug-34B & UNA-SimpleSmaug-34b & dolphin-2.9.1-yi & $B \succ A$ & $A \succ B$ \\
-    Smaug-34B & UNA-SimpleSmaug-34b & SOLAR-10.7B-Instruct & $B \succ A$ & $A \succ B$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{table}[t]
-  \small\centering
-  \caption{Benchmark-domination violations under random 6/6
-    visible/held-out splits (extended suite, full violation list in
-    \texttt{results/exp4\_table2\_domination.csv}).}
-  \label{tab:dom}
-  \begin{tabular}{llcc}
-    \toprule
-    Loser (visible) & Winner (visible) & Visible-dominated & Held-out reversal \\
-    \midrule
-    pythia-160m & Matter-0.2-7B-DPO & 6/6 & yes \\
-    Quokka\_2.7b & Matter-0.2-7B-DPO & 6/6 & yes \\
-    TinyLlama-1.1B-Chat-v0.6 & Matter-0.2-7B-DPO & 6/6 & yes \\
-    SauerkrautLM-Gemma-2b & Matter-0.2-7B-DPO & 6/6 & yes \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+% Representative rank-reversal and domination examples: Tables in App. H.
+% Representative reversing benchmarks (Table 3 moved to appendix):
+% smol_llama-220M-GQA -> Matter-0.2-7B-DPO reversed by MUSR; TinyLlama
+% reversed by MATH Lvl 5; SauerkrautLM-Gemma-2b reversed by MATH Lvl 5
+% and MMLU-PRO (App. H.20).
 
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Benchmark dimensionality (BenchScope).}
-Concurrent work by \citet{shazhao2026benchscope} independently
-identifies low effective dimensionality in LLM benchmark suites using
-the participation ratio with MP correction. We share the
-Theorem~\ref{thm:body:deff} diagnostic but contribute three results
-absent from BenchScope: the indistinguishability bound
-(Theorem~\ref{thm:body:indist}), the submodular greedy algorithm with
-the $(1 - 1/e)$ guarantee (Theorem~\ref{thm:body:greedy}), and the
-minimax-rate theory (Appendix~\ref{app:gardner}). BenchScope's
-empirical workflows (reliability analysis, population-conditional ED)
-are complementary.
-
-\paragraph{Underdetermination (HypoSpace).}
+\paragraph{Benchmark dimensionality.}
+Concurrent work by \citet{shazhao2026benchscope} (BenchScope)
+independently identifies low effective dimensionality via the
+participation ratio; we share the diagnostic and contribute the
+indistinguishability bound, greedy algorithm, and minimax-rate theory.
 \citet{hypospace2025} formalises underdetermination in enumerable
-hypothesis spaces. Our geometric approach handles continuous
-capability spaces, yielding quantitative convergence rates; the
-conceptual alignment is strong.
+hypothesis spaces; our geometric approach handles continuous capability
+spaces with convergence rates.
 
-\paragraph{Geometric tomography rates (Guntuboyina, Ragozin).}
+\paragraph{Psychometrics, MP dependence, saturation.}
+Latent-factor models (CFA, IRT) frame benchmark dimensionality via
+latent traits with posterior uncertainty \citep{burnell2024revealing};
+our participation ratio and stereological bounds are
+distribution-free complements. The MP edge assumes independent
+columns; dependent-coordinate extensions \citep{elkaroui2009concentration,
+bai2010spectral} give MP-like behaviour under bounded dependence, and
+our permutation null (App.~H.1) empirically agrees with the MP edge.
+As frontier models saturate, eigenvalue contributions collapse and
+$d_{\mathrm{eff}}$ drops \citep{kiela2021dynabench}: saturated
+benchmarks shrink the measured space and enlarge the blind spot.
+
+\paragraph{Geometric tomography rates.}
 \citet{guntuboyina2011minimax} provides minimax lower bounds for
-convex body recovery under Gaussian noise via $\chi^2$-entropy. Our
-noiseless directional-discretisation rates complement those results;
-the smooth rate $m^{-2/(D-1)}$ follows from Jackson--Bernstein theory
+convex body recovery under Gaussian noise via $\chi^2$-entropy; our
+noiseless directional-discretisation rates complement those results,
+and the smooth rate follows from Jackson--Bernstein theory
 \citep{ragozin1970polynomial, dai2013approximation} and Kolmogorov
 $n$-widths \citep{magaril2006optimal}.
 
-\paragraph{Benchmark efficiency (TinyBenchmarks).}
+\paragraph{Benchmark efficiency.}
 \citet{polo2024tinybenchmarks} optimises item selection within a
 benchmark via item response theory; we optimise benchmark selection
-across benchmarks via submodular coverage. The two approaches operate
-at different granularities and are complementary.
+across benchmarks. The two are complementary, operating at different
+granularities.
 
 \section{Discussion}
 
@@ -731,10 +759,9 @@ $= \|c\|^2$ (worst case over unit-norm linear functionals;
 Appendix~\ref{app:proof2}).
 (6) The coverage--indistinguishability bridge
 (Proposition~\ref{prop:body:bridge}) requires approximate isotropy.
-
-\paragraph{Future work.} An anisotropic, prior-aware swap bound and
-an item-level extension unifying with
-\citet{polo2024tinybenchmarks} are natural next steps.
+Combining benchmark-level greedy coverage with adaptive item-level
+selection \citep{polo2024tinybenchmarks} is an open direction; code
+and data released on acceptance (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -875,6 +902,45 @@ $\omega^*_{12} \le 0.262$ ($d=2$, exact), $\le 0.690$ ($d=3$),
 $\le 0.918$ ($d=4$), $\le 1.060$ ($d=5$). The constant $C$ in the
 main text Theorem~\ref{thm:body:indist} absorbs both factors:
 $C = O(\sqrt{d_{\mathrm{eff}}} \cdot (\log m)^{1/(d_{\mathrm{eff}}-1)})$.
+
+\subsection*{Swap Monotonicity: Schur-convexity proof (Proposition~\ref{prop:body:swapmono})}
+
+\begin{proof}
+Under the projection model of Corollary~\ref{cor:body:rank}, the
+hidden quality is $Y_i = \|v_i\|^2$ where $v_i \sim
+\mathcal{N}(0, \Sigma_{\mathrm{hidden}})$. The variance of the
+pairwise difference $Y_j - Y_i$ is $\mathrm{Var}(Y_j - Y_i) = 2 \cdot
+2\,\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2) = 4 \sum_{\ell} \lambda_\ell^2$
+where $\{\lambda_\ell\}$ are the eigenvalues of
+$\Sigma_{\mathrm{hidden}}$. Under the constraint $\sum_\ell
+\lambda_\ell = \sigma_h^2$ (fixed trace), the function $\lambda \mapsto
+\sum_\ell \lambda_\ell^2$ is Schur-convex; it is minimised when the
+eigenvalues are equal (the uniform vector is majorised by every
+other vector with the same sum), i.e., under the isotropic case
+$\lambda_\ell = \sigma_h^2 / (D - d_{\mathrm{eff}})$. Hence the
+isotropic choice minimises $\mathrm{Var}(Y_j - Y_i)$.
+
+For the Gaussian approximation with observed gap $\Delta > 0$,
+$P(\text{swap}) = \Phi(-\Delta / (2\sqrt{\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)}))$
+is monotone increasing in $\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)$
+(the denominator grows, so the argument increases toward zero and
+$\Phi$ decreases toward $0.5$). Therefore the isotropic case
+minimises $P(\text{swap})$, and any anisotropy increases the swap
+probability.
+\end{proof}
+
+\noindent The half-split model (Appendix~\ref{app:sensitivity}, G.4)
+addresses a different question: given a fixed suite of benchmarks and
+a random visible/hidden partition, which prior maximises the swap
+rate? Under random partition, isotropic priors distribute signal
+uniformly across benchmarks and maximise the chance that randomly
+hiding a column loses meaningful information, while concentrated
+priors put most signal into a single direction that is quasi-observed
+by the dominant benchmark column and lose less to random hiding. The
+two results are complementary: (a) says the bound we report is
+optimistic in the \emph{prior-over-hidden-covariance} sense, and (b)
+says the simulated half-split swap rate is maximised at isotropy in
+the \emph{random-partition} sense.
 
 \subsection*{Coverage--indistinguishability bridge (Proposition~\ref{prop:body:bridge})}
 

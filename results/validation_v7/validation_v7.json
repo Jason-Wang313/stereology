@@ -1,0 +1,147 @@
+{
+  "F4_normalisation": {
+    "table": [
+      {
+        "method": "pearson",
+        "d_eff": 2.11
+      },
+      {
+        "method": "spearman",
+        "d_eff": 1.89
+      },
+      {
+        "method": "kendall",
+        "d_eff": 2.94
+      },
+      {
+        "method": "quantile",
+        "d_eff": 1.89
+      }
+    ],
+    "range": [
+      1.89,
+      2.94
+    ]
+  },
+  "D4_noise_model": {
+    "table": [
+      {
+        "benchmark": "IFEval",
+        "n_items": 541,
+        "binomial_se_raw": 0.0215,
+        "binomial_se_std_units": 0.0015
+      },
+      {
+        "benchmark": "BBH",
+        "n_items": 6511,
+        "binomial_se_raw": 0.0062,
+        "binomial_se_std_units": 0.0007
+      },
+      {
+        "benchmark": "MATH Lvl 5",
+        "n_items": 1324,
+        "binomial_se_raw": 0.0137,
+        "binomial_se_std_units": 0.0021
+      },
+      {
+        "benchmark": "GPQA",
+        "n_items": 448,
+        "binomial_se_raw": 0.0236,
+        "binomial_se_std_units": 0.0063
+      },
+      {
+        "benchmark": "MUSR",
+        "n_items": 756,
+        "binomial_se_raw": 0.0182,
+        "binomial_se_std_units": 0.0044
+      },
+      {
+        "benchmark": "MMLU-PRO",
+        "n_items": 12032,
+        "binomial_se_raw": 0.0046,
+        "binomial_se_std_units": 0.0005
+      },
+      {
+        "benchmark": "ARC",
+        "n_items": 1172,
+        "binomial_se_raw": 0.0146,
+        "binomial_se_std_units": 0.0028
+      },
+      {
+        "benchmark": "HellaSwag",
+        "n_items": 10042,
+        "binomial_se_raw": 0.005,
+        "binomial_se_std_units": 0.0015
+      },
+      {
+        "benchmark": "MMLU",
+        "n_items": 14042,
+        "binomial_se_raw": 0.0042,
+        "binomial_se_std_units": 0.0007
+      },
+      {
+        "benchmark": "TruthfulQA",
+        "n_items": 817,
+        "binomial_se_raw": 0.0175,
+        "binomial_se_std_units": 0.002
+      },
+      {
+        "benchmark": "Winogrande",
+        "n_items": 1267,
+        "binomial_se_raw": 0.014,
+        "binomial_se_std_units": 0.0035
+      },
+      {
+        "benchmark": "GSM8K",
+        "n_items": 1319,
+        "binomial_se_raw": 0.0138,
+        "binomial_se_std_units": 0.0011
+      }
+    ],
+    "median_item_se_std_units": 0.0018,
+    "bootstrap_statistical_radius": 0.214,
+    "ratio": 122.29
+  },
+  "G4_table3": {
+    "table": [
+      {
+        "loser": "BEE-spoke-data/smol_llama-220M-GQA",
+        "winner": "0-hero/Matter-0.2-7B-DPO",
+        "reversing_benches": "MUSR"
+      },
+      {
+        "loser": "Corianas/Quokka_2.7b",
+        "winner": "0-hero/Matter-0.2-7B-DPO",
+        "reversing_benches": "MUSR"
+      },
+      {
+        "loser": "TinyLlama/TinyLlama-1.1B-Chat-v0.6",
+        "winner": "0-hero/Matter-0.2-7B-DPO",
+        "reversing_benches": "MATH Lvl 5"
+      },
+      {
+        "loser": "VAGOsolutions/SauerkrautLM-Gemma-2b",
+        "winner": "0-hero/Matter-0.2-7B-DPO",
+        "reversing_benches": "MATH Lvl 5, MMLU-PRO"
+      }
+    ]
+  },
+  "I4_aggregate_dir": {
+    "R": 7.3,
+    "angle_w_to_nearest_loading_rad": 0.969,
+    "worst_case_covering_radius_rad": 1.569,
+    "delta_vis_aggregate_direction": 14.153,
+    "delta_vis_worst_case": 22.921,
+    "delta2_observed": 0.0718,
+    "ratio_aggregate_to_delta2": 197.2,
+    "ratio_worst_to_delta2": 319.4
+  },
+  "E5_livebench_ci": {
+    "n_models": 19,
+    "k": 7,
+    "d_eff_point": 4.74,
+    "d_eff_ci95_lo": 3.05,
+    "d_eff_ci95_hi": 4.65,
+    "ci_width": 1.6
+  }
+}
