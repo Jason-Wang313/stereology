@@ -35,21 +35,25 @@ def panel(ax, S, title):
     eigs = r.eigenvalues
     idx = np.arange(1, len(eigs) + 1)
     ax.bar(idx, eigs, width=0.6, alpha=0.75, color="C0")
-    ax.axhline(r.mp_threshold, color="C3", linestyle="--", lw=1,
-               label=f"$\\lambda_+ = {r.mp_threshold:.2f}$")
-    ax.axhline(1.0, color="grey", linestyle=":", lw=0.7,
-               label="Kaiser ($\\lambda=1$)")
-    ax.set_xlabel("eigenvalue index")
-    ax.set_ylabel(r"$\lambda_i$")
+    ax.axhline(r.mp_threshold, color="C3", linestyle="--", lw=1)
+    ax.axhline(1.0, color="grey", linestyle=":", lw=0.7)
+    ax.set_xlabel("eigenvalue index", fontsize=9)
+    ax.set_ylabel(r"$\lambda_i$", fontsize=9)
     ax.set_title(title, fontsize=9)
-    ax.text(
-        0.97, 0.85,
-        f"$d_{{\\mathrm{{eff}}}} = {r.d_eff:.2f}$\nsignal eigs: {r.n_signal_eigs}",
-        transform=ax.transAxes, ha="right", va="top",
-        fontsize=8,
-        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="grey", lw=0.5),
+    # All annotations in a single text box at upper-right to avoid overlap
+    info = (
+        f"MP $\\lambda_+ = {r.mp_threshold:.2f}$ (---)\n"
+        f"Kaiser $\\lambda = 1$ (...)\n"
+        f"$d_{{\\mathrm{{eff}}}} = {r.d_eff:.2f}$, "
+        f"signal: {r.n_signal_eigs}"
     )
-    ax.legend(loc="upper right", frameon=False, fontsize=7)
+    ax.text(
+        0.97, 0.95, info,
+        transform=ax.transAxes, ha="right", va="top",
+        fontsize=7, linespacing=1.4,
+        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="grey",
+                  lw=0.5, alpha=0.9),
+    )
 
 
 def fig1_scree_2x2():
@@ -122,6 +126,86 @@ def fig4_gap_over_delta0():
     print("wrote figures/fig4_ranking.{pdf,png}")
 
 
+def fig_greedy_combined():
+    """Combined 3-panel figure: coverage curve + blind spot before/after.
+
+    Replaces the separate fig5_exttop_curve + fig6_exttop_blindspot with a
+    single figure that has proper width ratios so the right panels are legible.
+    """
+    setup_matplotlib()
+    from src.theorem3 import coverage_function, greedy_select, uncovered_directions
+
+    df_ext = load_extended()
+    avg = df_ext[EXTENDED_BENCHES].mean(axis=1)
+    df_top = df_ext[avg >= avg.quantile(0.5)].reset_index(drop=True)
+    S = score_matrix(df_top, EXTENDED_BENCHES)
+    Sigma = np.corrcoef(S, rowvar=False)
+    k = Sigma.shape[0]
+
+    g = greedy_select(Sigma, target=0.9, eta_redundant=0.02)
+    rng = np.random.default_rng(0)
+    rand_curve = np.zeros(k)
+    for _ in range(200):
+        order = rng.permutation(k)
+        for i in range(1, k + 1):
+            rand_curve[i - 1] += coverage_function(Sigma, order[:i])
+    rand_curve /= 200
+
+    eigvals_full = np.linalg.eigvalsh(Sigma)[::-1]
+    eigvals_full = np.clip(eigvals_full, 0, None)
+    bs_empty = uncovered_directions(Sigma, [])
+    bs_greedy = uncovered_directions(Sigma, g.minimum_subset)
+
+    fig, axes = plt.subplots(
+        1, 3, figsize=(14, 3.8),
+        gridspec_kw={"width_ratios": [2.2, 1, 1]},
+    )
+
+    # Panel 1: coverage curve
+    ax = axes[0]
+    x = np.arange(1, k + 1)
+    ax.plot(x, g.cumulative_coverage, marker="o", color="C0", label="greedy")
+    ax.plot(x, rand_curve, marker="s", color="C1", lw=1, ms=4,
+            label="random (mean of 200)")
+    ax.axhline(0.9, color="grey", linestyle="--", lw=0.7, label=r"$\tau = 0.9$")
+    ax.set_xlabel("number of benchmarks selected")
+    ax.set_ylabel(r"coverage $f(T)$")
+    ax.set_title("Greedy coverage (extended frontier)")
+    ax.set_ylim(0, 1.05)
+    ax.legend(frameon=False, fontsize=8)
+
+    # Panels 2-3: blind spot before / after
+    ymax = max(eigvals_full.max() * 1.05, 0.1)
+    for ax, title_label, vals in [
+        (axes[1], "before: 0 benchmarks", bs_empty.uncovered_eigenvalues),
+        (axes[2], f"after: {len(g.minimum_subset)} greedy",
+         bs_greedy.uncovered_eigenvalues),
+    ]:
+        idx = np.arange(1, len(vals) + 1)
+        ax.bar(idx, vals, color="C3", alpha=0.7)
+        ax.set_xlabel("uncovered direction", fontsize=9)
+        ax.set_ylabel("eigen-mass", fontsize=9)
+        ax.set_title(title_label, fontsize=9)
+        ax.set_ylim(0, ymax)
+        ax.text(
+            0.95, 0.90,
+            f"total: {vals.sum():.2f}\nfrac: {vals.sum() / eigvals_full.sum():.1%}",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8,
+            bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="grey", lw=0.5),
+        )
+
+    fig.tight_layout()
+    # Save as BOTH the old filenames so the LaTeX references work
+    save_fig(fig, "fig5_exttop_curve")
+    # Also save as standalone fig6 for backward compat
+    save_fig(fig, "fig_greedy_combined")
+    plt.close(fig)
+    print("wrote figures/fig5_exttop_curve.{pdf,png} (combined 3-panel)")
+    print("wrote figures/fig_greedy_combined.{pdf,png}")
+
+
 if __name__ == "__main__":
     fig1_scree_2x2()
     fig4_gap_over_delta0()
+    fig_greedy_combined()
