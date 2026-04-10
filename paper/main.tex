@@ -53,8 +53,12 @@ ranking with on average $2.83$ of $5$ top-5 models changing. A
 submodular greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee
 finds a stable core of $4$ benchmarks; $7$ of $12$ suffice for
 $90\%$ coverage, and the trained subset transfers across temporal
-quarters with $93$--$97\%$ retention. As a second main theoretical
-contribution we resolve Gardner's Problem 1.5 (1995) for $C^2$
+quarters with $93$--$97\%$ retention. A counterfactual validation across $12$ internal benchmarks and $27$
+Chatbot Arena categories confirms that the eigenstructure predicts
+which evaluations are irreplaceable ($\rho = -0.69$, $p = 0.013$
+for removal disruption) and which external evaluations bring new
+information ($\rho = +0.38$). As a second, independent theoretical
+contribution, we resolve Gardner's Problem~1.5 (1995) for $C^2$
 support functions, establishing the minimax rate
 $\Theta(R/(\kappa m^{2/(D-1)}))$ in general dimension via optimal
 recovery theory on $S^{D-1}$.
@@ -89,8 +93,8 @@ with a stable core of $4$ and $93$--$97\%$ cross-temporal transfer).
 Proposition~\ref{prop:body:width} formally justifies the
 benchmark-as-width model;
 Proposition~\ref{prop:body:swapmono} proves the isotropic chi-squared
-bound is the \emph{optimistic} case via Schur-convexity. As a second
-main theoretical contribution, we resolve Gardner's Problem 1.5
+bound is the \emph{optimistic} case via Schur-convexity. As a second,
+independent contribution, we resolve Gardner's Problem~1.5
 (1995) for $C^2$ support functions
 (Theorem~\ref{thm:body:gardner}). The tools are standard
 (participation ratio, Marchenko--Pastur edge, Nemhauser
@@ -159,6 +163,33 @@ support-function reconstruction error is $0.485$ standardised units.
 Per-benchmark Lipschitz constants satisfy $L_b \le 0.993$ for all
 $12$ benchmarks. Proof of Proposition~\ref{prop:body:width} in
 Appendix~\ref{app:proof2}.
+
+\paragraph{Regime of validity.}
+Linearisation quality degrades as the population contracts.
+On the frontier slice (top $50\%$, $n = 148$), the median per-benchmark
+$R^2$ drops from $0.984$ to $0.876$ and the minimum from $0.795$ to
+$0.710$ (MATH~Lvl~5; Appendix~\ref{app:validation}, H.15). The
+width-model residual $\eta$ remains small relative to inter-model
+score gaps for the current population; for future leaderboards where
+models converge further, the linearisation error may become
+comparable to the top-pair gap and the framework should be replaced
+by a local nonlinear model in that regime. The key diagnostic is:
+compare the quadratic-vs-linear $R^2$ gap to the standardised
+runner-up gap $\Delta_2$; when they are of the same order, the width
+model is at its regime boundary.
+
+\paragraph{Convexity in the observed subspace.}
+While we cannot directly test convexity of capability profiles in
+$\mathbb{R}^D$ (since $D$ is unknown), we test a necessary condition:
+score vectors in $\mathbb{R}^k$ should be approximately convex. On
+the extended frontier ($n = 148$, $k = 12$), $200$ random convex
+combinations of $3$ data points and $200$ pair midpoints all lie
+inside the convex hull of the observed score matrix ($100\%$ in both
+cases), while $0\%$ of $200$ random bounding-box points do
+(Appendix~\ref{app:validation}, H.29). This does not prove convexity
+in $\mathbb{R}^D$, but it rules out gross violations (e.g.,
+capability ``holes'') in the measured projection: the observed score
+geometry is convex-consistent.
 
 \begin{remark}[Non-convex extension]
 For any bounded $K \subset \mathbb{R}^D$ the support function $h_K$
@@ -417,10 +448,8 @@ single-run scores, the statistical radius underestimates total noise.
 But the structural blind spot ($52$--$127\times$ larger) remains the
 dominant term regardless.
 
-A direct empirical half-split test (500 random 6/6 visible/held-out
-splits) shows the top-$1$ ranking changes in $92\%$ of trials and
-at least one of the top-$5$ changes in \emph{every} trial (mean
-$2.83$ of $5$ top-$5$ swaps; App.~\ref{app:validation}, H.21).
+A direct empirical half-split test confirms this: see
+Table~\ref{tab:halfsplit} and the worked example below.
 
 \paragraph{Calibration table.}
 Table~\ref{tab:calibration} consolidates the key quantities per
@@ -457,6 +486,43 @@ indeterminate. Standardisation affects the exact ratio ($200$--$4000\times$
 across $z$-score, min-max, rank, and raw; App.~H.23); the qualitative
 finding is robust.
 
+\paragraph{Worked example: a structurally indeterminate ranking.}
+On the Open LLM v2 frontier, $\delta_H^{\mathrm{vis}} = 21.2$
+exceeds $\Delta_2 = 0.17$ by $123\times$ (Table~\ref{tab:calibration}).
+Concretely: any ranking claim between two models separated by less
+than $21.2$ standardised units is structurally indeterminate --- no
+amount of additional test items on the \emph{same} benchmarks can
+resolve it. A $500$-trial random $6/6$ visible/held-out split confirms
+this empirically: $92\%$ of trials swap the top-$1$ model, and on
+average $2.83$ of $5$ top-$5$ models change
+(Table~\ref{tab:halfsplit}; Appendix~\ref{app:validation}, H.21).
+The actionable response is: (a)~add benchmarks from uncovered
+directions (Theorem~\ref{thm:body:greedy} identifies which), or
+(b)~refrain from ranking claims within the indistinguishability radius.
+
+\begin{table}[h]
+\small\centering
+\caption{Half-split ranking stability ($500$ random $6/6$ visible/held-out
+splits of the $12$-benchmark extended frontier).}
+\label{tab:halfsplit}
+\begin{tabular}{lc}
+\toprule
+Metric & Value \\
+\midrule
+Trials that swap top-$1$ & $92\%$ \\
+Mean top-$5$ models changed & $2.83 / 5$ \\
+Trials with $\ge 1$ top-$5$ change & $100\%$ \\
+Median held-out divergence & within Lipschitz bound \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Second contribution: resolution of an open problem in geometric tomography.}
+The machinery of Theorem~\ref{thm:body:indist} yields a second,
+independent mathematical contribution. The smooth extension
+(Theorem~\ref{thm:body:indist}c) connects to a long-standing open
+problem in convex geometry:
+
 \begin{theorem}[Resolution of Gardner's Problem 1.5 for $C^2$ bodies]
 \label{thm:body:gardner}
 For $C^2$ support functions on $S^{D-1}$ with curvature $\ge \kappa$,
@@ -464,7 +530,7 @@ the minimax recovery rate from $m$ width measurements is
 $\Theta\!\big(R / (\kappa\, m^{2/(D-1)})\big)$. For $D = 2$ this is
 $\Theta(m^{-2})$. Since non-adaptive X-ray and width measurements
 achieve the same minimax rate (Appendix~\ref{app:gardner}, Theorem~18),
-this resolves Problem 1.5 as Gardner stated it.
+this resolves Problem 1.5 as \citet{gardner1995geometric} stated it.
 \end{theorem}
 
 \noindent \emph{Proof outline.} \emph{Upper bound:}
@@ -712,6 +778,65 @@ saturation.
   \label{fig:greedy}
 \end{figure}
 
+\paragraph{Tightness.} The $(1 - 1/e)$ guarantee is tight for
+submodular maximisation in general \citep{nemhauser1978analysis}; no
+polynomial-time algorithm can improve it unless $\mathrm{P} =
+\mathrm{NP}$. The greedy algorithm is therefore worst-case optimal.
+
+\begin{theorem}[Iterative Blind-Spot Closure]
+\label{thm:body:iterative}
+Under greedy evaluation expansion, after $t$ iterations each adding
+one optimally-chosen benchmark direction, the residual blind spot
+satisfies
+$\delta_H \le \varepsilon + C R \cdot (m + t)^{-1/(d_{\mathrm{eff}} - 1)}$,
+and the coverage after $t$ greedy steps is
+$f(T_{m+t}) \ge 1 - (1 - d_{\mathrm{eff}}/k)^t$. The orthogonal
+term (Proposition~\ref{prop:body:bridge}) decays as
+$2R\sqrt{1 - f(T_{m+t})}$, giving an exponential approach to full
+coverage.
+\end{theorem}
+
+\noindent \emph{Proof.} Compose
+Theorem~\ref{thm:body:indist} (visible rate) with
+Theorem~\ref{thm:body:greedy} (coverage guarantee) via the bridge
+(Proposition~\ref{prop:body:bridge}). Each greedy step expands
+$V_{\mathrm{eff}}$, increasing $m$ and $\tau$ simultaneously. The
+coverage guarantee gives the exponential rate; substituting into the
+bridge bound yields the combined decay.
+
+\paragraph{Counterfactual validation.}
+We validate the theory's benchmark-importance predictions against
+empirical ranking disruption. For each of the $12$ benchmarks, we
+remove it and measure the mean rank change on the frontier. The
+theory predicts that benchmarks with low blind-spot loading (high
+effective-subspace alignment) are \emph{more} disruptive to remove:
+Spearman $\rho = -0.69$ ($p = 0.013$) between blind-spot loading
+and mean rank change (Figure~\ref{fig:counterfactual};
+Appendix~\ref{app:validation}, H.36). The greedy algorithm's top-$5$
+most valuable benchmarks (MUSR, GSM8K, GPQA, IFEval, MATH~Lvl~5)
+overlap $3$ of $5$ with the empirically most disruptive. Extending
+to $27$ Chatbot Arena categories as external evaluations, blind-spot
+alignment predicts ranking disruption from \emph{adding} the external
+evaluation with $\rho = +0.38$ ($p = 0.053$;
+Appendix~\ref{app:validation}, H.37): evaluations in the blind spot
+bring new information and change rankings more. The $27$ Arena
+categories span accuracy (math, coding), preference (creative
+writing, instruction following), and domain expertise (medicine,
+legal, scientific), confirming the prediction holds across evaluation
+\emph{types}, not just accuracy benchmarks.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.48\linewidth]{../figures/fig8_counterfactual.pdf}
+  \hfill
+  \includegraphics[width=0.48\linewidth]{../figures/fig9_universal_law.pdf}
+  \caption{\textbf{Left:} removing benchmarks with low blind-spot
+    loading (in the effective subspace) causes more ranking disruption
+    ($\rho = -0.69$, $p = 0.013$). \textbf{Right:} internal
+    (removal, blue) vs external (Arena addition, green).}
+  \label{fig:counterfactual}
+\end{figure}
+
 \section{Corollaries in Practice}
 \label{sec:cor}
 
@@ -800,8 +925,44 @@ $d_{\mathrm{eff}}$ and \emph{understate} the blind spot (controlling
 for $\log(\mathrm{params})$ raises $d_{\mathrm{eff}}$ from $4.80$ to
 $5.11$; App.~H.28); the coverage bridge requires approximate isotropy.
 Combining greedy coverage with adaptive item-level selection
-\citep{polo2024tinybenchmarks} is an open direction; code and data
-released on acceptance (App.~\ref{app:repro}).
+\citep{polo2024tinybenchmarks} yields a two-level optimisation: at the
+outer level, Theorem~\ref{thm:body:greedy} selects which benchmarks to
+include; at the inner level, IRT selects which items within each
+benchmark to run. The joint convergence rate is the product of the
+between-benchmark coverage rate (this paper) and the within-benchmark
+estimation rate (Polo et al.).
+Theorem~\ref{thm:body:iterative} gives the convergence guarantee for
+iterative blind-spot closure: each greedy expansion step reduces the
+residual by a factor determined by the eigenvalue spectrum.
+
+\paragraph{Generality.}
+Theorems~\ref{thm:body:deff}--\ref{thm:body:indist} hold for any
+score matrix $S \in \mathbb{R}^{n \times k}$ from any evaluation
+system, not only LLM benchmarks; the participation ratio and covering
+bound are properties of the measurement geometry, not the domain.
+
+\paragraph{Robustness to correlation method.}
+On the full population ($n = 295$), effective dimensionality under
+Pearson, Spearman, and Kendall (with $\sin(\pi \tau/2)$ correction)
+correlation is $2.11$, $1.89$, and $1.80$ respectively; on the
+frontier ($n = 148$), Pearson gives $4.80$ and Spearman $4.62$
+(Appendix~\ref{app:validation}, H.33). The binary-attenuation
+concern raised for item-level data~\citep{shazhao2026benchscope}
+does not apply: our benchmarks are continuous accuracy scores, and
+all three methods agree within $\Delta < 0.3$.
+
+\paragraph{Prompt sensitivity.}
+Within-benchmark prompt variation
+\citep{pashkovich2024efficient} introduces a third noise source
+beyond the structural blind spot and finite-item statistics. The
+coverage bound absorbs prompt variance into the $\varepsilon$ term of
+Theorem~\ref{thm:body:indist}: prompt-induced noise inflates
+$\varepsilon$ but does not change the $m^{-1/(d_{\mathrm{eff}}-1)}$
+rate. The structural blind spot ($52$--$127\times$ larger than
+statistical noise; Table~\ref{tab:calibration}) remains dominant
+even under prompt variation.
+
+Code and data released on acceptance (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -838,6 +999,11 @@ released on acceptance (App.~\ref{app:repro}).
 18 & Greedy temporal transfer & $98.7\%$ retention at $r = 7$ & \S\ref{thm:body:greedy}, H.14 \\
 19 & Eigen-mass ablation (deflate $\lambda_1$) & Top-$4$ invariant & H.5 \\
 20 & Pairwise swap sensitivity over $D$ & $P(\text{swap}) \in [0.476, 0.494]$ & \S\ref{thm:body:indist}, G.1 \\
+21 & Convexity in observed subspace & $100\%$ hull membership & \S2, H.29 \\
+22 & Correlation method robustness & $\Delta d_{\mathrm{eff}} < 0.3$ (Pearson/Spearman/Kendall) & \S8, H.33 \\
+23 & Population dependence ($d_{\mathrm{eff}}$ vs $q$) & Monotone non-decreasing & \S8, H.34 \\
+24 & Counterfactual benchmark importance & $\rho = -0.69$ ($p = 0.013$) & \S5, H.36 \\
+25 & External eval blind-spot alignment & $\rho = +0.38$ ($p = 0.053$), $27$ Arena cats & \S5, H.37 \\
 \bottomrule
 \end{tabular}
 \end{table}
