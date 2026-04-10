@@ -184,10 +184,16 @@ $m$ & number of \emph{visible} benchmarks (when $\le k$) \\
 $D$ & ambient capability dimension \\
 $d_{\mathrm{eff}}$ & effective dimensionality (participation ratio) \\
 $R$ & population radius (max standardised row norm) \\
+$\varepsilon$ & measurement tolerance / linearisation residual \\
 $\kappa$ & curvature lower bound on $\partial K$ (when applicable) \\
 $\beta$ & curvature vanishing exponent (Appendix~\ref{app:gardner}) \\
 \end{tabular}
 \end{center}
+\noindent On the extended frontier: $R = 7.30$,
+$\varepsilon \le 0.067$ (linearisation residual,
+Proposition~\ref{prop:body:width}), and $\kappa$ enters only the
+smooth rate (Theorem~\ref{thm:body:indist}c,
+Theorem~\ref{thm:body:gardner}).
 
 \section{Theorem 1: Effective Dimensionality}
 
@@ -394,34 +400,62 @@ worst-case covering bounds.
 
 \paragraph{Two sources, three leaderboards.}
 Theorem~\ref{thm:body:indist} bounds the \emph{structural} blind spot
-from unobserved directions, which persists even with infinite data
-per benchmark. Statistical noise (finite items, prompt variance) is a
-separate source that shrinks with more data. The geometric
-indistinguishability radius exceeds the bootstrap statistical radius
-by $10.93\times$ on OLLM v2 frontier, $8.88\times$ on Extended
-frontier, and $6.24\times$ on LiveBench frontier
-(Appendix~\ref{app:validation}, H.12). The structural blind spot is
-the dominant source of ranking unreliability across every suite we
-test, and the qualitative finding holds when the bootstrap statistical
-radius is replaced by the maximum item-level binomial standard error
-across the $12$ benchmarks ($122\times$ smaller than the bootstrap
-radius; App.~H.D).
+from unobserved directions, which persists with infinite data per
+benchmark. Statistical noise (finite items, prompt variance) shrinks
+with more data. The geometric radius exceeds the bootstrap
+statistical radius by $86.6\times$ (OLLM v2), $127.2\times$
+(Extended), and $51.6\times$ (LiveBench) on the frontier
+(Table~\ref{tab:calibration}; App.~H.12). The structural blind
+spot is the dominant source across every suite.
+
+\paragraph{A third source: decoding non-determinism.}
+Stochastic decoding (temperature $> 0$, nucleus sampling, best-of-$N$
+selection) introduces within-model variance that is distinct from
+both the structural blind spot and statistical noise. Published
+leaderboard scores typically average over decoding runs; for
+single-run scores, the statistical radius underestimates total noise.
+But the structural blind spot ($52$--$127\times$ larger) remains the
+dominant term regardless.
 
 A direct empirical half-split test (500 random 6/6 visible/held-out
 splits) shows the top-$1$ ranking changes in $92\%$ of trials and
 at least one of the top-$5$ changes in \emph{every} trial (mean
 $2.83$ of $5$ top-$5$ swaps; App.~\ref{app:validation}, H.21).
 
-\paragraph{Concrete blind spot, with sensitivity.}
-Instantiating Theorem~\ref{thm:body:indist} on the extended frontier
-gives a worst-case single-direction radius
-$\delta_H^{\mathrm{vis}} = 2R\omega_{\mathrm{emp}}$ that, depending
-on the standardisation scheme, is $200$--$4000\times$ the observed
-runner-up gap ($z$-score $386\times$, min-max $628\times$, rank-$z$
-$3988\times$, raw $1995\times$;
-App.~\ref{app:validation}, H.23). The qualitative finding --- that
-the structural blind spot dominates the observed score difference
-by orders of magnitude --- is robust across all four standardisations.
+\paragraph{Calibration table.}
+Table~\ref{tab:calibration} consolidates the key quantities per
+suite so a practitioner can look up the blind-spot size for a
+specific leaderboard.
+
+\begin{table}[h]
+\small\centering
+\caption{Visible indistinguishability radius per suite (frontier
+slices, $z$-score standardisation).}
+\label{tab:calibration}
+\begin{tabular}{lccccccc}
+\toprule
+Suite & $k$ & $n$ & $d_{\mathrm{eff}}$ & $R$ &
+  $\omega_{\mathrm{emp}}$ & $\delta_H^{\mathrm{vis}}$ &
+  $\delta_H^{\mathrm{vis}} / \Delta_2$ \\
+\midrule
+OLLM v2   &  6 & 229 & 2.86 & 5.05 & 2.10 & 21.2 &  $123\times$ \\
+Extended  & 12 & 148 & 4.80 & 7.30 & 1.89 & 27.6 &  $385\times$ \\
+LiveBench &  7 &  19 & 4.74 & 4.30 & 1.88 & 16.1 &   $26\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \textbf{Practitioner formula.} For any new leaderboard:
+(1)~compute $\Sigma = \mathrm{Corr}(S)$ and $d_{\mathrm{eff}}$;
+(2)~project the $k$ benchmark loadings onto $S^{d_{\mathrm{eff}}-1}$
+and measure the covering radius $\omega_{\mathrm{emp}}$;
+(3)~estimate $R$ from the score matrix;
+(4)~the visible indistinguishability radius is
+$\delta_H^{\mathrm{vis}} = 2R\omega_{\mathrm{emp}}$.
+If this exceeds the top-pair score gap, the ranking is structurally
+indeterminate. Standardisation affects the exact ratio ($200$--$4000\times$
+across $z$-score, min-max, rank, and raw; App.~H.23); the qualitative
+finding is robust.
 
 \begin{theorem}[Resolution of Gardner's Problem 1.5 for $C^2$ bodies]
 \label{thm:body:gardner}
@@ -729,6 +763,12 @@ Concurrent work by \citet{shazhao2026benchscope} (BenchScope)
 independently identifies low effective dimensionality via the
 participation ratio; we share the diagnostic and contribute the
 indistinguishability bound, greedy algorithm, and minimax-rate theory.
+\citet{hypospace2025} formalises underdetermination in discrete
+hypothesis spaces as the volume of the admissible set; our
+stereological framework provides the continuous analogue, quantifying
+underdetermination via the Hausdorff diameter of the
+indistinguishability class, with convergence rates tied to the covering
+geometry of $S^{d_{\mathrm{eff}}-1}$.
 Latent-factor / IRT models \citep{burnell2024revealing,
 polo2024tinybenchmarks} are complementary at the item level;
 $\chi^2$-entropy lower bounds for convex recovery
@@ -756,11 +796,12 @@ requires adaptive item-level measurements. We bound what benchmarks
 \emph{distinguish}, not what models \emph{do} (no deployment claim
 follows); $d_{\mathrm{eff}}$ is a population property
 (App.~\ref{app:validation}, H.14); convexity is conservative;
-Proposition~\ref{prop:body:width} requires linearisable benchmarks;
-the chi-squared swap model assumes quality $= \|c\|^2$
-(Appendix~\ref{app:proof2}); the coverage--indistinguishability
-bridge requires approximate isotropy. Combining greedy coverage
-with adaptive item-level selection
+Proposition~\ref{prop:body:width} requires linearisable benchmarks
+(App.~H.26); shared items between benchmarks deflate
+$d_{\mathrm{eff}}$ and \emph{understate} the blind spot (controlling
+for $\log(\mathrm{params})$ raises $d_{\mathrm{eff}}$ from $4.80$ to
+$5.11$; App.~H.28); the coverage bridge requires approximate isotropy.
+Combining greedy coverage with adaptive item-level selection
 \citep{polo2024tinybenchmarks} is an open direction; code and data
 released on acceptance (App.~\ref{app:repro}).
 
@@ -1599,6 +1640,15 @@ suite (vs $\ge 0.795$ for every actual benchmark), with maximum
 residual $0.738$. Sharp item-level thresholds widen the
 linearisation error $\eta$, which enters the $\varepsilon$ term of
 Theorem~\ref{thm:body:indist}.
+
+\paragraph{H.28 Partial correlations controlling for model scale.}
+After residualising each benchmark on $\log(\mathrm{params\_b})$,
+$d_{\mathrm{eff}}$ on the extended frontier rises from $4.80$ to
+$5.11$, confirming that shared model lineage and scale partially
+deflate the apparent dimensionality. The blind-spot estimates in the
+main text are therefore conservative: deconfounding for model
+characteristics increases $d_{\mathrm{eff}}$ and enlarges the
+structural blind spot.
 
 \paragraph{H.27 Adversarial direction injection.}
 Adding a synthetic benchmark aligned with the smallest, $2$nd, or
