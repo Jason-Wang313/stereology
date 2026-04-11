@@ -84,7 +84,7 @@ $d_{\mathrm{eff}} \approx 3$--$5$ independent directions),
 (Theorem~\ref{thm:body:indist}: the visible indistinguishability
 bound is $\varepsilon + C R m^{-1/(d_{\mathrm{eff}}-1)}$, tight via
 matching Lipschitz lower bound;
-Corollary~\ref{cor:body:rank} and Table~\ref{tab:sensitivity}: the
+Corollary~\ref{cor:body:rank}: the
 top-two swap probability lies in $[0.38, 0.49]$ across six priors
 and four ambient dimensions), and \emph{treat} it
 (Theorem~\ref{thm:body:greedy}: a submodular greedy algorithm with
@@ -448,7 +448,7 @@ But the structural blind spot ($52$--$127\times$ larger) remains the
 dominant term regardless.
 
 A direct empirical half-split test confirms this: see
-Table~\ref{tab:halfsplit} and the worked example below.
+the worked example below.
 
 \paragraph{Calibration table.}
 Table~\ref{tab:calibration} consolidates the key quantities per
@@ -501,7 +501,7 @@ amount of additional test items on the \emph{same} benchmarks can
 resolve it. A $500$-trial random $6/6$ visible/held-out split confirms
 this empirically: $92\%$ of trials swap the top-$1$ model, and on
 average $2.83$ of $5$ top-$5$ models change
-(Table~\ref{tab:halfsplit}; Appendix~\ref{app:validation}, H.21).
+(Appendix~\ref{app:validation}, H.21).
 The actionable response is: (a)~add benchmarks from uncovered
 directions (Theorem~\ref{thm:body:greedy} identifies which), or
 (b)~replace point rankings with \emph{rank equivalence classes}.
@@ -512,23 +512,6 @@ frontier models partition into just $2$ equivalence classes of $10$
 models each (App.~H.47): practitioners should report ``these $10$
 models are in the top class (structurally indistinguishable)'' rather
 than ``Model A is \#1.''
-
-\begin{table}[h]
-\small\centering
-\caption{Half-split ranking stability ($500$ random $6/6$ visible/held-out
-splits of the $12$-benchmark extended frontier).}
-\label{tab:halfsplit}
-\begin{tabular}{lc}
-\toprule
-Metric & Value \\
-\midrule
-Trials that swap top-$1$ & $92\%$ \\
-Mean top-$5$ models changed & $2.83 / 5$ \\
-Trials with $\ge 1$ top-$5$ change & $100\%$ \\
-Median held-out divergence & within Lipschitz bound \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \paragraph{Second contribution: resolution of an open problem in geometric tomography.}
 The machinery of Theorem~\ref{thm:body:indist} yields a second,
@@ -743,7 +726,7 @@ remove it and measure the mean rank change on the frontier. The
 theory predicts that benchmarks with low blind-spot loading (high
 effective-subspace alignment) are \emph{more} disruptive to remove:
 Spearman $\rho = -0.69$ ($p = 0.013$) between blind-spot loading
-and mean rank change (Figure~\ref{fig:counterfactual};
+and mean rank change (
 Appendix~\ref{app:validation}, H.36). The greedy algorithm's top-$5$
 most valuable benchmarks (MUSR, GSM8K, GPQA, IFEval, MATH~Lvl~5)
 overlap $3$ of $5$ with the empirically most disruptive. Extending
@@ -757,18 +740,8 @@ Epoch~AI cross-domain data spanning coding, math, reasoning,
 knowledge, and multimodal domains
 (App.~\ref{app:validation}, H.37).
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.48\linewidth]{../figures/fig8_counterfactual.pdf}
-  \hfill
-  \includegraphics[width=0.48\linewidth]{../figures/fig9_universal_law.pdf}
-  \caption{\textbf{Left:} ranking disruption when each benchmark is
-    removed; benchmarks in the effective subspace (blue) are more
-    disruptive than those in the blind spot (orange).
-    \textbf{Right:} blind-spot loading vs rank change
-    ($\rho = -0.69$, $p = 0.013$); labels placed by manual offset.}
-  \label{fig:counterfactual}
-\end{figure}
+% Figure 4 (counterfactual bar chart + scatter) moved to Appendix H.36
+% for page-limit compliance. Key result stated in text above.
 
 \section{Corollaries in Practice}
 \label{sec:cor}
@@ -841,28 +814,7 @@ designs (e.g., COMPASS for code, which separates correctness,
 efficiency, and quality) corroborate the existence of independent
 axes but do not quantify coverage bounds; Bayesian rank models
 provide posterior uncertainty on composite scores but not on the
-geometric blind spot. Table~\ref{tab:comparison} summarises the
-positioning.
-
-\begin{table}[h]
-\small\centering
-\caption{Comparison with related evaluation methodology.
-$\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).}
-\label{tab:comparison}
-\begin{tabular}{lccccc}
-\toprule
- & Tight & Converg. & Cross- & Item & Valid. \\
- & bounds & guarantee & suite & level & expts \\
-\midrule
-BenchScope & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
-Metritocracy & $\checkmark$ & -- & -- & -- & ${\sim}3$ \\
-Zhang et al. & -- & -- & -- & $\checkmark$ & ${\sim}15$ \\
-tinyBenchmarks & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
-PromptEval & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
-\textbf{This work} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark^*$ & $\mathbf{30+}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+geometric blind spot.
 
 \section{Discussion}
 \label{sec:discuss}
@@ -928,31 +880,9 @@ Theorems~\ref{thm:body:deff}--\ref{thm:body:greedy} provide the
 theoretical guarantees that item-selection methods
 \citep{polo2024tinybenchmarks} currently lack.
 
-\paragraph{Falsification criteria.}
-Table~\ref{tab:falsify} lists the conditions under which each main
-result would be refuted.
-
-\begin{table}[h]
-\small\centering
-\caption{Falsification criteria.}
-\label{tab:falsify}
-\begin{tabular}{lp{3.0cm}p{3.5cm}}
-\toprule
-Result & Prediction & Falsified if \\
-\midrule
-Thm~\ref{thm:body:deff} & $d_{\mathrm{eff}}$ method-invariant & Pearson/Spearman $|\Delta| > 0.5$ \\
-Thm~\ref{thm:body:indist} & $\delta_H$ bounds pair gap & ${>}5\%$ of pairs exceed bound \\
-Thm~\ref{thm:body:greedy} & Greedy $\tau >$ random & Random $\tau >$ greedy at $r \le k/2$ \\
-Thm~\ref{thm:body:iterative} & Blind spot shrinks & Non-monotone at any $r$ \\
-Cor~\ref{cor:body:rank} & $\chi^2$ swap calibrated & Top-$2$ dev ${>}15$\,pp (App.~G.2) \\
-Prop~\ref{prop:body:width} & Linearisation tight & $R^2$ gap ${>}0.15$ on any benchmark \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\noindent Code: \texttt{pip install -e .} from the supplementary
-repository; \texttt{reproduce.py} regenerates all experiments and
-figures (App.~\ref{app:repro}).
+\noindent Code: \texttt{pip install -e .}; \texttt{reproduce.py}
+regenerates all experiments. Per-theorem falsification criteria in
+App.~\ref{app:repro}.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
