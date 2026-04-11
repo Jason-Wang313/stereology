@@ -797,9 +797,20 @@ reversal (App.~\ref{app:validation}, H.9, H.20).
 \section{Related Work}
 \label{sec:related}
 
+Factor analysis of LLM score matrices reveals low-dimensional
+structure: \citet{burnell2024revealing} find three factors on HELM;
+metabench~\citep{kipnis2025metabench} finds a single dominant factor
+across $5{,}000+$ models at ICLR 2025; General
+Scales~\citep{hernandezorallo2026nature} provides demand-based ability
+profiles in Nature. We formalise what this structure \emph{implies}:
+Hausdorff bounds on indistinguishability, minimax recovery rates, and
+greedy convergence guarantees that none of these works provide.
 Concurrent BenchScope~\citep{shazhao2026benchscope} independently
 identifies low $d_{\mathrm{eff}}$; we add the indistinguishability
 bound, greedy algorithm, and minimax rate.
+Active evaluation acquisition \citep{li2025active} uses RL for subset
+selection; our submodular greedy provides the $(1-1/e)$ guarantee
+that RL lacks.
 HypoSpace~\citep{hypospace2025} treats discrete underdetermination;
 ours is the continuous analogue with convergence rates.
 Social-choice-theoretic subset selection (Metritocracy) optimises
