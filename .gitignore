@@ -19,3 +19,4 @@ Thumbs.db
 
 # Local data caches (raw downloads)
 data/_*
+neurips_scraper/checkpoints/nhop_neurips_reviews.jsonl
