@@ -533,31 +533,15 @@ achieve the same minimax rate (Appendix~\ref{app:gardner}, Theorem~18),
 this resolves Problem 1.5 as \citet{gardner1995geometric} stated it.
 \end{theorem}
 
-\noindent \emph{Proof outline.} \emph{Upper bound:}
-(i) Jackson's inequality on $S^{D-1}$ gives degree-$L$ polynomial
-approximation error $O(L^{-2}\|h\|_{C^2})$ with $L \sim
-m^{1/(D-1)}$ basis functions \citep{ragozin1970polynomial}.
-(ii) At $m$ quasi-uniform sample points the polynomial is determined
-up to a null-space component; the Lebesgue constant for spherical
-interpolation is $O(\log m)$ \citep{dai2013approximation}.
-(iii) Combining: $\|h_K - h_L\|_\infty \le O(\varepsilon \log m +
-R/(\kappa m^{2/(D-1)}))$. \emph{Lower bound:}
-(iv) The space of spherical polynomials of degree $\le 2L$ has
-dimension $\sim L^{D-1} \sim m$; imposing $m$ zero conditions
-$g(u_i) = 0$ leaves a non-trivial null space.
-(v) Choose $g$ in this null space with $\|g\|_{C^2} \le C R / \kappa$
-and $\|g\|_\infty \ge c R / (\kappa m^{2/(D-1)})$ via the Bernstein
-inequality. The perturbed body $K'$ with $h_{K'} = h_K + g$ has
-curvature $\ge \kappa - \|g\|_{C^2} > 0$ for $m$ large enough,
-is width-indistinguishable from $K$ at all $m$ directions, and
-$\delta_H(K, K') = \|g\|_\infty \ge c R / (\kappa m^{2/(D-1)})$.
-\emph{Novelty:} (a) constructing convex-body perturbations in the
-polynomial null space that preserve the curvature bound
-$\kappa_{\min} \ge \kappa$, and (b) extending from Fourier series on
-$S^1$ to general dimension via Kolmogorov $n$-widths and optimal
-recovery on $S^{D-1}$ \citep{magaril2006optimal}. The rate matches
-known bounds for $D = 2$; for $D \ge 5$ no prior rate was
-established for width measurements.
+\noindent \emph{Proof sketch.} Upper bound via Jackson's inequality
+on $S^{D-1}$ \citep{ragozin1970polynomial} with spherical
+interpolation \citep{dai2013approximation}; lower bound via a
+Bernstein-inequality construction that places a non-trivial
+perturbation in the null space of $m$ width constraints while
+preserving curvature $\ge \kappa$. Novelty: extending from $S^1$ to
+general $S^{D-1}$ via Kolmogorov $n$-widths and optimal recovery
+\citep{magaril2006optimal}. Full proof in
+Appendix~\ref{app:gardner}.
 
 \begin{corollary}[Ranking unreliability via chi-squared selection]
 \label{cor:body:rank}
@@ -577,86 +561,26 @@ and the signal-to-noise correlation is $\rho = \sqrt{d_{\mathrm{eff}}
 / D}$ (proof and FKG product variant in Appendix~\ref{app:proof2}).
 \end{corollary}
 
-\paragraph{Empirical headline (sensitivity-aware).}
-On the extended frontier suite ($n = 148$, $d_{\mathrm{eff}} = 4.80$),
-the standardised score gap to the runner-up is $\Delta_2 \approx
-0.072$. The pairwise swap probability $P(\text{\#2 truly beats \#1}) =
-\Phi(-\Delta_2 / (2\sigma_{\mathrm{hidden}}))$ is largely insensitive
-to the choice of ambient dimension $D$ (with
-$\sigma_{\mathrm{hidden}}$ rescaled to the observed standardised
-score scale):
+\paragraph{Empirical headline.}
+On the extended frontier ($n = 148$, $d_{\mathrm{eff}} = 4.80$,
+$\Delta_2 \approx 0.072$), the top-$2$ swap probability lies in
+$[0.38, 0.49]$ across six hidden-capability priors (isotropic,
+empirical, $1/i$, $1/i^2$, Pareto, adversarial) and four ambient
+dimensions $D \in \{10, 20, 50, 100\}$
+(Appendix~\ref{app:sensitivity}, Table~G.1). The $\chi^2$ prediction
+agrees with empirical half-split swap rates within $1$--$8$\,pp for
+$r \ge 5$ (App.~G.2). Three independent estimators of $D$ give a
+wide range $[6, 184]$; the swap probability is robust because
+$\Delta_2$ is small (App.~G.3).
 
-\begin{table}[h]
-\small\centering
-\caption{Sensitivity of the top-$2$ swap probability to the hidden
-capability prior and ambient dimension $D$, under the chi-squared
-projection model on the extended frontier ($d_{\mathrm{eff}} = 4.80$,
-$\Delta_2 = 0.072$).}
-\label{tab:sensitivity}
-\begin{tabular}{lcccc}
-\toprule
-prior & $D=10$ & $D=20$ & $D=50$ & $D=100$ \\
-\midrule
-isotropic   & 0.472 & 0.451 & 0.416 & 0.378 \\
-empirical   & 0.475 & 0.473 & 0.473 & 0.473 \\
-$1/i$       & 0.476 & 0.467 & 0.456 & 0.449 \\
-$1/i^2$     & 0.482 & 0.481 & 0.480 & 0.480 \\
-Pareto(1.5) & 0.473 & 0.478 & 0.431 & 0.415 \\
-adversarial & 0.487 & 0.487 & 0.487 & 0.487 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\noindent The swap probability lies in $[0.38, 0.49]$ across all six
-priors and four ambient dimensions: the top-ranked model is at most
-weakly separable from its runner-up under any plausible hidden
-covariance. The calibration is
-$\sigma_{\mathrm{hidden}} = \sigma_{\mathrm{obs}} \sqrt{(D -
-d_{\mathrm{eff}})/d_{\mathrm{eff}}}$, partitioning total variance as
-$d_{\mathrm{eff}} : (D - d_{\mathrm{eff}})$.
-
-\noindent For all plausible $D \ge 10$, $P(\text{swap}) > 0.47$: the
-top-ranked model is not reliably separable from its closest
-competitor. The $\chi^2$ prediction agrees with empirical half-split
-swap rates within $1$--$8$ percentage points for visible-benchmark
-counts $r \ge 5$ (worst case $r = 4$: $17$\,pp gap;
-Appendix~\ref{app:sensitivity}, G.2). Three independent estimators of
-the ambient dimension $D$ (eigenvalue power-law extrapolation,
-cross-validation against the empirical half-split swap, and parallel
-analysis \`a la \citet{horn1965rationale}) give a wide range $D \in
-[6, 184]$ on the extended frontier; the swap probability is
-nevertheless robust because $\Delta_2$ is small
-(Appendix~\ref{app:sensitivity}, G.3).
-
-\begin{proposition}[Swap Monotonicity, dual characterisation]
+\begin{proposition}[Swap Monotonicity]
 \label{prop:body:swapmono}
-Fix $\mathrm{tr}(\Sigma_{\mathrm{hidden}}) = \sigma_h^2$.
-\begin{enumerate}[label=(\alph*), leftmargin=1.5em, itemsep=1pt]
-\item \textbf{Projection model
-(Corollary~\ref{cor:body:rank}).} Among all
-$\Sigma_{\mathrm{hidden}}$ with fixed trace, the isotropic case
-\emph{minimises} the Gaussian-approximated pairwise swap probability:
-the bound of Corollary~\ref{cor:body:rank} is the most
-\emph{optimistic} case for ranking reliability, and any anisotropy
-in hidden capabilities makes the true swap probability strictly
-worse. Proof: by Schur-convexity of $x \mapsto \sum x_i^2$ with
-fixed sum, $\mathrm{Var}(Y_j - Y_i) = 4\,\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)$
-is minimised under eigenvalue uniformity, and
-$P(\mathrm{swap}) = \Phi(-\Delta / (2\sqrt{\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)}))$
-is monotone increasing in $\mathrm{tr}(\Sigma_{\mathrm{hidden}}^2)$
-for $\Delta > 0$ (proof in Appendix~\ref{app:proof2}).
-\item \textbf{Half-split model (simulation).} Under a random
-visible/hidden partition of a fixed benchmark suite, the isotropic
-prior \emph{maximises} the expected swap rate because it distributes
-signal uniformly; concentrated priors have a dominant direction that
-is quasi-observed and hiding benchmarks loses little information
-(simulation in Appendix~\ref{app:sensitivity}, G.4: isotropic
-$0.78$ vs concentrated $\le 0.31$).
-\end{enumerate}
-The headline $P(\mathrm{swap}) > 0.47$ from
-Corollary~\ref{cor:body:rank} is therefore a \emph{lower bound} on
-the swap probability: the actual swap probability is at least this,
-and possibly much higher under anisotropic hidden capabilities.
+Among all $\Sigma_{\mathrm{hidden}}$ with fixed trace, the isotropic
+case \emph{minimises} the swap probability (by Schur-convexity of
+$\mathrm{tr}(\Sigma^2)$). Thus the $P(\mathrm{swap}) \in [0.38, 0.49]$
+headline is a \emph{lower bound}: any anisotropy in hidden capabilities
+makes rankings strictly less reliable. Proof and half-split simulation
+in Appendix~\ref{app:proof2} and~\ref{app:sensitivity}, G.4.
 \end{proposition}
 
 \paragraph{Corollary 2 (rank reversal).} If $d_{\mathrm{eff}} < n - 1$,
@@ -668,28 +592,13 @@ aggregator, since the score vectors then span an
 $(n-1)$-dimensional affine subspace and adding a model leaves the
 visible ordering unchanged.
 
-\paragraph{Frontier threshold sensitivity.} The choice of frontier
-threshold ($q = 0.5$) is conservative: $d_{\mathrm{eff}}$ is monotone
-non-decreasing in $q$. On OLLM v2 it rises from $1.88$ ($q = 0$) to
-$3.68$ ($q = 0.8$); on the Extended suite from $2.11$ to $4.86$.
-Tighter frontiers have \emph{larger} blind spots
-(Appendix~\ref{app:validation}, H.16). The ranking-claim is therefore
-robust to the threshold; if anything, $q = 0.5$ understates the
-problem on the truly competitive subset.
+\paragraph{Frontier threshold.} $d_{\mathrm{eff}}$ is monotone
+non-decreasing in the frontier threshold $q$; tighter frontiers have
+\emph{larger} blind spots. The $q = 0.5$ choice is conservative
+(App.~\ref{app:validation}, H.16).
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.48\linewidth]{../figures/fig3_divergence.pdf}
-  \hfill
-  \includegraphics[width=0.48\linewidth]{../figures/fig4_ranking.pdf}
-  \caption{\textbf{Left:} median pair gap on the held-out benchmark
-    half vs the visible half, over $300$ random splits of the extended
-    frontier suite; observed divergence is well within the Lipschitz
-    bound. \textbf{Right:} fraction of model pairs whose aggregate gap
-    falls within the indistinguishability radius as a function of $m$;
-    the empirical curve tracks $\propto m^{-1/(d_{\mathrm{eff}} - 1)}$.}
-  \label{fig:bs}
-\end{figure}
+% Figure 3 (divergence/ranking validation) moved to Appendix H.12
+% for page-limit compliance. Key result stated in text above.
 
 \section{Theorem 3: Greedy Coverage}
 
@@ -860,52 +769,24 @@ volumes), there exist convex profiles $K, L$ with $\pi_i(K) <
 \pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$.
 \end{proposition}
 
-\paragraph{Empirics.} A held-out test (random 6/6 visible/held-out
-split of the 12 benchmarks) finds $50$ capped pairs where one model
-strictly dominates another on every visible benchmark yet is
-contradicted on at least one held-out benchmark. The reversing
-held-out benchmarks are typically MUSR, MATH~Lvl~5, or MMLU-PRO
-(Appendix~\ref{app:validation}, H.20). On the rank-reversal side,
-$200$ random draws of $n = 12$ frontier models produce on average
-$8.3 \pm 4.9$ reversals per draw under standardised-mean aggregation,
-with $98\%$ of draws producing $\ge 1$ and $90\%$ producing $\ge 3$
-(App.~\ref{app:validation}, H.9). Reversal rates are zero under
-translation-invariant aggregators (raw mean, median, geometric mean)
-because adding a model does not rescale a model's own statistic.
-
-% Representative rank-reversal and domination examples: Tables in App. H.
-% Representative reversing benchmarks (Table 3 moved to appendix):
-% smol_llama-220M-GQA -> Matter-0.2-7B-DPO reversed by MUSR; TinyLlama
-% reversed by MATH Lvl 5; SauerkrautLM-Gemma-2b reversed by MATH Lvl 5
-% and MMLU-PRO (App. H.20).
+\noindent \emph{Empirics.} $50$ domination-contradiction pairs found on
+random $6/6$ splits; $98\%$ of $n = 12$ draws produce $\ge 1$ rank
+reversal (App.~\ref{app:validation}, H.9, H.20).
 
 \section{Related Work}
 \label{sec:related}
 
-Concurrent work by \citet{shazhao2026benchscope} (BenchScope)
-independently identifies low effective dimensionality via the
-participation ratio; we share the diagnostic and contribute the
-indistinguishability bound, greedy algorithm, and minimax-rate theory.
-\citet{hypospace2025} formalises underdetermination in discrete
-hypothesis spaces as the volume of the admissible set; our
-stereological framework provides the continuous analogue, quantifying
-underdetermination via the Hausdorff diameter of the
-indistinguishability class, with convergence rates tied to the covering
-geometry of $S^{d_{\mathrm{eff}}-1}$.
-Latent-factor / IRT models \citep{burnell2024revealing,
-polo2024tinybenchmarks} are complementary at the item level;
-$\chi^2$-entropy lower bounds for convex recovery
-\citep{guntuboyina2011minimax} treat the noisy case while we treat
-noiseless directional discretisation; the smooth rate follows from
-Jackson--Bernstein theory \citep{ragozin1970polynomial,
+Concurrent BenchScope~\citep{shazhao2026benchscope} independently
+identifies low $d_{\mathrm{eff}}$; we add the indistinguishability
+bound, greedy algorithm, and minimax rate.
+HypoSpace~\citep{hypospace2025} treats discrete underdetermination;
+ours is the continuous analogue with convergence rates.
+IRT models \citep{burnell2024revealing, polo2024tinybenchmarks}
+operate at item level (complementary); convex recovery lower bounds
+\citep{guntuboyina2011minimax} treat the noisy case. The smooth rate
+uses Jackson--Bernstein theory \citep{ragozin1970polynomial,
 dai2013approximation} and Kolmogorov $n$-widths
-\citep{magaril2006optimal}. The MP edge assumes independent columns;
-dependent-coordinate extensions \citep{elkaroui2009concentration,
-bai2010spectral} give MP-like behaviour under bounded dependence,
-matching our permutation null (App.~H.1). As benchmarks saturate
-\citep{kiela2021dynabench}, eigenvalue mass collapses and the blind
-spot enlarges --- the dynamic
-Theorem~\ref{thm:body:indist} predicts.
+\citep{magaril2006optimal}.
 
 \section{Discussion}
 
@@ -935,33 +816,15 @@ Theorem~\ref{thm:body:iterative} gives the convergence guarantee for
 iterative blind-spot closure: each greedy expansion step reduces the
 residual by a factor determined by the eigenvalue spectrum.
 
-\paragraph{Generality.}
+\paragraph{Generality and robustness.}
 Theorems~\ref{thm:body:deff}--\ref{thm:body:indist} hold for any
-score matrix $S \in \mathbb{R}^{n \times k}$ from any evaluation
-system, not only LLM benchmarks; the participation ratio and covering
-bound are properties of the measurement geometry, not the domain.
-
-\paragraph{Robustness to correlation method.}
-On the full population ($n = 295$), effective dimensionality under
-Pearson, Spearman, and Kendall (with $\sin(\pi \tau/2)$ correction)
-correlation is $2.11$, $1.89$, and $1.80$ respectively; on the
-frontier ($n = 148$), Pearson gives $4.80$ and Spearman $4.62$
-(Appendix~\ref{app:validation}, H.33). The binary-attenuation
-concern raised for item-level data~\citep{shazhao2026benchscope}
-does not apply: our benchmarks are continuous accuracy scores, and
-all three methods agree within $\Delta < 0.3$.
-
-\paragraph{Prompt sensitivity.}
-Within-benchmark prompt variation
-\citep{pashkovich2024efficient} introduces a third noise source
-beyond the structural blind spot and finite-item statistics. The
-coverage bound absorbs prompt variance into the $\varepsilon$ term of
-Theorem~\ref{thm:body:indist}: prompt-induced noise inflates
-$\varepsilon$ but does not change the $m^{-1/(d_{\mathrm{eff}}-1)}$
-rate. The structural blind spot ($52$--$127\times$ larger than
-statistical noise; Table~\ref{tab:calibration}) remains dominant
-even under prompt variation.
-
+score matrix, not only LLM benchmarks. Pearson, Spearman, and
+Kendall correlations agree within $\Delta d_{\mathrm{eff}} < 0.3$
+(App.~H.33); binary attenuation~\citep{shazhao2026benchscope}
+does not apply to our continuous scores. Prompt
+variation~\citep{pashkovich2024efficient} is absorbed into the
+$\varepsilon$ term; the structural blind spot ($52$--$127\times$
+larger) remains dominant.
 Code and data released on acceptance (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
