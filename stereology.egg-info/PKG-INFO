@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: stereology
+Version: 0.1.0
+Summary: Stereological theory of LLM benchmark coverage
+Requires-Python: >=3.9
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Requires-Dist: scikit-learn

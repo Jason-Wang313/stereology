@@ -310,7 +310,11 @@ a single g-factor (small $\to$ large capability); on the frontier the
 residual dimensions become visible. Results are robust to choice of
 correlation method (Spearman vs Pearson, see column above), and to MP,
 Kaiser, and permutation eigenvalue thresholds
-(Appendix~\ref{app:validation}, H.1, H.6).
+(Appendix~\ref{app:validation}, H.1, H.6). On the full OLLM~v2 population ($n = 4{,}576$),
+$d_{\mathrm{eff}}$ ranges from $1.78$ (all models) to $3.94$ (top
+$10\%$), increasing monotonically with frontier stringency; our $n =
+229$ estimate of $2.86$ is consistent with the top $15$--$20\%$
+(App.~H.44).
 
 \begin{figure}[t]
   \centering
@@ -806,9 +810,31 @@ noiseless directional-discretisation regime dominates in modern
 large-item benchmarks because each aggregates $O(10^3)$ items,
 reducing statistical noise to negligible levels; the noisy
 $f$-divergence regime \citep{guntuboyina2011minimax} would re-emerge
-for single-item or few-item evaluations.
+for single-item or few-item evaluations. Table~\ref{tab:comparison}
+summarises the positioning.
+
+\begin{table}[h]
+\small\centering
+\caption{Comparison with related evaluation methodology.
+$\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).}
+\label{tab:comparison}
+\begin{tabular}{lccccc}
+\toprule
+ & Tight & Converg. & Cross- & Item & Valid. \\
+ & bounds & guarantee & suite & level & expts \\
+\midrule
+BenchScope & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
+Metritocracy & $\checkmark$ & -- & -- & -- & ${\sim}3$ \\
+Zhang et al. & -- & -- & -- & $\checkmark$ & ${\sim}15$ \\
+tinyBenchmarks & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
+PromptEval & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
+\textbf{This work} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark^*$ & $\mathbf{30+}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Discussion}
+\label{sec:discuss}
 
 \paragraph{Takeaways and limitations.}
 Treat $d_{\mathrm{eff}}$ as a leaderboard-design diagnostic and the
@@ -846,20 +872,53 @@ variation~\citep{pashkovich2024efficient} is absorbed into the
 $\varepsilon$ term; the structural blind spot ($52$--$127\times$
 larger) remains dominant.
 \paragraph{Evaluation monoculture.}
-Cross-suite PC alignment between OLLM v2 and the Extended suite
-(in their shared $6$-benchmark subspace) yields cosine similarity
-$0.986$ for PC1, $0.910$--$0.970$ for PCs~$2$--$5$ (bootstrap
-$95\%$ CI for PC1: $[0.939, 0.995]$; null: $0.343$,
-$p < 10^{-6}$; App.~\ref{app:validation}, H.42). The two suites
-measure \emph{nearly identical} capability dimensions. This implies
-a \emph{shared} blind spot: the directions unmeasured by one suite
-are unmeasured by all, creating correlated vulnerabilities across
-models optimised for any of them.
+Even between suites sharing \emph{no} benchmarks, the dominant
+capability dimension transfers: model PC1 scores on the $6$ OLLM~v2
+benchmarks correlate at $r = 0.27$ ($p = 0.001$) with PC1 scores on
+the $6$ disjoint v1 benchmarks, and the best-match alignment reaches
+$r = 0.65$ (v2~PC1 $\leftrightarrow$ v1~PC2;
+App.~\ref{app:validation}, H.42). The g-factor is partially shared
+across independently-designed suites, implying a common component of
+the blind spot: capability dimensions orthogonal to the shared
+g-factor are unmeasured by \emph{all} suites simultaneously.
 Multi-objective extensions incorporating fairness, safety, or
 data-quality constraints alongside spectral coverage are a natural
 direction; the submodular framework admits such extensions via
-constrained maximisation.
-Code and data released on acceptance (App.~\ref{app:repro}).
+constrained maximisation. The framework is granularity-agnostic:
+applied to LiveBench's $7$ sub-tasks as items, $d_{\mathrm{eff}} =
+2.63$ and $4$ of $7$ suffice for $90\%$ coverage; the greedy subset
+preserves the full-suite ranking at Kendall $\tau = 0.84$ vs random
+$\tau = 0.82$ (App.~H.43). This demonstrates that
+Theorems~\ref{thm:body:deff}--\ref{thm:body:greedy} provide the
+theoretical guarantees that item-selection methods
+\citep{polo2024tinybenchmarks} currently lack.
+
+\paragraph{Falsification criteria.}
+Table~\ref{tab:falsify} lists the conditions under which each main
+result would be refuted, enabling independent verification.
+
+\begin{table}[h]
+\small\centering
+\caption{Falsification criteria.}
+\label{tab:falsify}
+\begin{tabular}{lp{3.0cm}p{3.5cm}}
+\toprule
+Result & Prediction & Falsified if \\
+\midrule
+Thm~\ref{thm:body:deff} & $d_{\mathrm{eff}}$ method-invariant & Pearson/Spearman $|\Delta| > 0.5$ \\
+Thm~\ref{thm:body:indist} & $\delta_H$ bounds pair gap & ${>}5\%$ of pairs exceed bound \\
+Thm~\ref{thm:body:greedy} & Greedy $\tau >$ random & Random $\tau >$ greedy at $r \le k/2$ \\
+Thm~\ref{thm:body:iterative} & Blind spot shrinks & Non-monotone at any $r$ \\
+Cor~\ref{cor:body:rank} & $\chi^2$ swap calibrated & Top-$2$ dev ${>}15$\,pp (App.~G.2) \\
+Prop~\ref{prop:body:width} & Linearisation tight & $R^2$ gap ${>}0.15$ on any benchmark \\
+\S8 monoculture & Shared eigenstructure & PC1 alignment ${<}0.7$ for any pair \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Code: \texttt{pip install -e .} from the supplementary
+repository; \texttt{reproduce.py} regenerates all experiments and
+figures (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
 \bibliography{references}

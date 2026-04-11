@@ -1,0 +1,12 @@
+pyproject.toml
+src/__init__.py
+src/corollaries.py
+src/theorem1.py
+src/theorem2.py
+src/theorem3.py
+src/utils.py
+stereology.egg-info/PKG-INFO
+stereology.egg-info/SOURCES.txt
+stereology.egg-info/dependency_links.txt
+stereology.egg-info/requires.txt
+stereology.egg-info/top_level.txt
