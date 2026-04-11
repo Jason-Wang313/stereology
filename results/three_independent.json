@@ -1,0 +1,51 @@
+{
+  "v2": {
+    "benchmarks": [
+      "IFEval",
+      "BBH",
+      "MATH Lvl 5",
+      "GPQA",
+      "MUSR",
+      "MMLU-PRO"
+    ],
+    "n": 148,
+    "d_eff": 3.2691624454701325,
+    "ci": [
+      2.8537936933337087,
+      3.5953275759848875
+    ]
+  },
+  "v1": {
+    "benchmarks": [
+      "ARC",
+      "HellaSwag",
+      "MMLU",
+      "TruthfulQA",
+      "Winogrande",
+      "GSM8K"
+    ],
+    "n": 148,
+    "d_eff": 2.704243085208758,
+    "ci": [
+      2.4589204151953106,
+      2.8919695629805147
+    ]
+  },
+  "livebench": {
+    "benchmarks": [
+      "LCB_generation",
+      "coding_completion",
+      "connections",
+      "paraphrase",
+      "plot_unscrambling",
+      "story_generation",
+      "typos"
+    ],
+    "n": 37,
+    "d_eff": 2.6332910965785583,
+    "ci": [
+      2.0607113591493738,
+      3.309076003732571
+    ]
+  }
+}

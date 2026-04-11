@@ -184,16 +184,12 @@ $\eta$; the diagnostic above detects this.
 
 \paragraph{Convexity in the observed subspace.}
 While we cannot directly test convexity of capability profiles in
-$\mathbb{R}^D$ (since $D$ is unknown), we test a necessary condition:
-score vectors in $\mathbb{R}^k$ should be approximately convex. On
-the extended frontier ($n = 148$, $k = 12$), $200$ random convex
-combinations of $3$ data points and $200$ pair midpoints all lie
-inside the convex hull of the observed score matrix ($100\%$ in both
-cases), while $0\%$ of $200$ random bounding-box points do
-(Appendix~\ref{app:validation}, H.29). This does not prove convexity
-in $\mathbb{R}^D$, but it rules out gross violations (e.g.,
-capability ``holes'') in the measured projection: the observed score
-geometry is convex-consistent.
+$\mathbb{R}^D$ (since $D$ is unknown), we test whether the observed
+score vectors form a single convex cloud. A $1$-component Gaussian
+mixture achieves lower BIC than $2$- or $3$-component alternatives
+on the extended frontier ($n = 148$, $k = 12$; App.~\ref{app:validation},
+H.29), confirming there is no evidence of disconnected clusters or
+capability ``holes'' in the measured projection.
 
 \begin{remark}[Non-convex extension]
 For any bounded $K \subset \mathbb{R}^D$ the support function $h_K$
@@ -272,7 +268,7 @@ concentration \citep{meckes2019random}, and the BBP phase transition
 \citep{baik2005phase}.
 
 \paragraph{Empirics across leaderboards.} We measure
-$d_{\mathrm{eff}}$ on three independent leaderboards (Table~\ref{tab:cross}),
+$d_{\mathrm{eff}}$ on three leaderboard families (Table~\ref{tab:cross}),
 and on the competitive frontier (top $50\%$ by mean score) of each.
 The frontier is the regime where rankings drive deployment decisions.
 
@@ -714,20 +710,22 @@ polynomial-time algorithm can improve it unless $\mathrm{P} =
 
 \begin{theorem}[Iterative Blind-Spot Closure]
 \label{thm:body:iterative}
-Under greedy evaluation expansion, after $t$ iterations each adding
-one optimally-chosen benchmark direction, the residual blind spot
-satisfies
-$\delta_H \le \varepsilon + C R \cdot (m + t)^{-1/(d_{\mathrm{eff}} - 1)}$,
-and the coverage after $t$ greedy steps is
-$f(T_{m+t}) \ge 1 - (1 - d_{\mathrm{eff}}/k)^t$. The orthogonal
-term (Proposition~\ref{prop:body:bridge}) decays as
-$2R\sqrt{1 - f(T_{m+t})}$, giving an exponential approach to full
-coverage.
+Under greedy evaluation expansion, the coverage after $t$ steps
+satisfies $f(T_{m+t}) \ge 1 - (1 - d_{\mathrm{eff}}/k)^t$ and is
+monotonically non-decreasing (by submodularity). The orthogonal
+blind-spot term (Proposition~\ref{prop:body:bridge}) decays as
+$2R\sqrt{1 - f(T_{m+t})} \to 0$ exponentially.
+Convergence is guaranteed regardless of how $d_{\mathrm{eff}}$
+evolves as benchmarks are added.
 \end{theorem}
 
-\noindent \emph{Proof.} Compose
-Theorem~\ref{thm:body:indist} (visible rate) with
-Theorem~\ref{thm:body:greedy} (coverage guarantee) via the bridge
+\noindent \emph{Proof.} Submodularity of $f$ ensures
+$f(T_{m+t}) \ge f(T_{m+t-1})$ at each step.
+Theorem~\ref{thm:body:greedy}'s Nemhauser bound gives
+$f(T_{m+t}) \ge (1 - 1/e) f(T^*_{m+t}) \ge 1 - (1-d_{\mathrm{eff}}/k)^t$.
+Substituting into Proposition~\ref{prop:body:bridge} yields the
+orthogonal decay. Compose with
+Theorem~\ref{thm:body:indist} (visible rate) via the bridge
 (Proposition~\ref{prop:body:bridge}). Each greedy step expands
 $V_{\mathrm{eff}}$, increasing $m$ and $\tau$ simultaneously. The
 coverage guarantee gives the exponential rate; substituting into the
@@ -748,12 +746,11 @@ to $27$ Chatbot Arena categories as external evaluations, blind-spot
 alignment predicts ranking disruption from \emph{adding} the external
 evaluation with $\rho = +0.38$ ($p = 0.053$;
 Appendix~\ref{app:validation}, H.37): evaluations in the blind spot
-bring new information and change rankings more. Across all sources---core benchmarks, $27$ Arena categories,
-Epoch~AI's $31$-benchmark cross-domain dataset (coding, math,
-reasoning, knowledge, agents, multimodal, writing), OpenEvals
-(SWE-bench, TerminalBench), AlpacaEval, and $7$ LiveBench
-sub-tasks---the analysis spans $80+$ distinct evaluations across
-$13+$ domains (App.~\ref{app:validation}, H.37).
+bring new information and change rankings more. The counterfactual analysis validates against $12$ core benchmarks,
+$27$ Arena preference categories, $7$ LiveBench sub-tasks, and
+Epoch~AI cross-domain data spanning coding, math, reasoning,
+knowledge, and multimodal domains
+(App.~\ref{app:validation}, H.37).
 
 \begin{figure}[t]
   \centering
@@ -840,7 +837,7 @@ summarises the positioning.
 \small\centering
 \caption{Comparison with related evaluation methodology.
 $\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).
-$\dagger$: across $80+$ evaluations in $13+$ domains.}
+$\dagger$: $12$ core benchmarks $+$ Arena, LiveBench, Epoch~AI cross-domain.}
 \label{tab:comparison}
 \begin{tabular}{lccccc}
 \toprule
@@ -883,8 +880,11 @@ benchmark to run. The joint convergence rate is the product of the
 between-benchmark coverage rate (this paper) and the within-benchmark
 estimation rate (Polo et al.).
 Theorem~\ref{thm:body:iterative} gives the convergence guarantee for
-iterative blind-spot closure: each greedy expansion step reduces the
-residual by a factor determined by the eigenvalue spectrum.
+iterative blind-spot closure. The core analysis uses the Extended
+frontier ($n = 148$); robustness is confirmed across four
+populations from $n = 49$ (Epoch~AI) to $n = 4{,}576$ (full OLLM~v2;
+App.~H.44), and across three non-overlapping suites sharing zero
+benchmarks ($d_{\mathrm{eff}} \in [2.63, 3.27]$; App.~H.48).
 
 \paragraph{Generality and robustness.}
 Theorems~\ref{thm:body:deff}--\ref{thm:body:indist} hold for any
@@ -895,16 +895,17 @@ does not apply to our continuous scores. Prompt
 variation~\citep{pashkovich2024efficient} is absorbed into the
 $\varepsilon$ term; the structural blind spot ($52$--$127\times$
 larger) remains dominant.
-\paragraph{Evaluation monoculture.}
+\paragraph{Shared latent structure across suites.}
 Even between suites sharing \emph{no} benchmarks, the dominant
-capability dimension transfers: model PC1 scores on the $6$ OLLM~v2
-benchmarks correlate at $r = 0.27$ ($p = 0.001$) with PC1 scores on
-the $6$ disjoint v1 benchmarks, and the best-match alignment reaches
-$r = 0.65$ (v2~PC1 $\leftrightarrow$ v1~PC2;
-App.~\ref{app:validation}, H.42). The g-factor is partially shared
-across independently-designed suites, implying a common component of
-the blind spot: capability dimensions orthogonal to the shared
-g-factor are unmeasured by \emph{all} suites simultaneously.
+capability dimension partially transfers: model PC1 scores on the
+$6$ OLLM~v2 benchmarks correlate at $r = 0.27$ ($p = 0.001$) with
+PC1 scores on the $6$ disjoint v1 benchmarks; the best-match
+alignment reaches $r = 0.65$ (App.~\ref{app:validation}, H.42).
+Full-suite ranking agreement between non-overlapping suites is
+$\tau = 0.25$ (all models; App.~H.49). This shared component
+accounts for modest variance ($7\%$) but contributes to cross-suite
+ranking agreement: capability dimensions orthogonal to the shared
+structure are unmeasured by all suites simultaneously.
 Multi-objective extensions incorporating fairness, safety, or
 data-quality constraints alongside spectral coverage are a natural
 direction; the submodular framework admits such extensions via

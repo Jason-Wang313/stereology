@@ -1,0 +1,62 @@
+{
+  "classes": [
+    {
+      "class": 1,
+      "models": [
+        "freewheelin/free-evo-qwen72b-v0.8-re",
+        "Qwen/Qwen2-72B",
+        "MTSAIR/MultiVerse_70B",
+        "mistralai/Mixtral-8x22B-Instruct-v0.1",
+        "ValiantLabs/Llama3-70B-Fireplace",
+        "tenyx/Llama3-TenyxChat-70B",
+        "abacusai/Smaug-72B-v0.1",
+        "failspy/llama-3-70B-Instruct-abliterated",
+        "meta-llama/Meta-Llama-3-70B-Instruct",
+        "01-ai/Yi-1.5-34B-Chat"
+      ],
+      "mean_scores": [
+        1.5320802931641158,
+        1.4603227079263383,
+        1.4458519821290177,
+        1.2420024552190374,
+        1.1754131766818345,
+        1.1352076715677815,
+        1.1137369192078437,
+        1.044976356762109,
+        1.0368132229653197,
+        0.942016684216633
+      ],
+      "size": 10
+    },
+    {
+      "class": 2,
+      "models": [
+        "152334H/miqu-1-70b-sf",
+        "Qwen/Qwen1.5-110B",
+        "mmnga/Llama-3-70B-japanese-suzume-vector",
+        "meta-llama/Meta-Llama-3-70B",
+        "abhishek/autotrain-llama3-70b-orpo-v2",
+        "cloudyu/Mixtral_34Bx2_MoE_60B",
+        "CohereForAI/c4ai-command-r-plus",
+        "cognitivecomputations/dolphin-2.9.1-yi-1",
+        "saltlux/luxia-21.4b-alignment-v1.2",
+        "01-ai/Yi-1.5-34B-Chat-16K"
+      ],
+      "mean_scores": [
+        0.9047650579754704,
+        0.8913265421847921,
+        0.8595491024356816,
+        0.7955417020503598,
+        0.7493439058332796,
+        0.74185049580894,
+        0.7319185473288189,
+        0.7203766054821528,
+        0.6991009012643641,
+        0.6695371066597593
+      ],
+      "size": 10
+    }
+  ],
+  "threshold": 0.4,
+  "sigma_h": 1.003
+}
