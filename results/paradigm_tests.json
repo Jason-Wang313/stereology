@@ -1,0 +1,40 @@
+{
+  "test_a": {
+    "pc1_cosine": 0.9856611893412003,
+    "signal": true,
+    "verdict": "INVEST"
+  },
+  "test_b": {
+    "d_effs": [
+      2.316141343977822,
+      4.669143215248201,
+      4.72074686425595,
+      NaN
+    ],
+    "monotone": false,
+    "spread": 2.404605520278128,
+    "signal": false,
+    "verdict": "SKIP"
+  },
+  "test_c": {
+    "generations": {
+      "gen1": {
+        "n": 9,
+        "d_eff": NaN,
+        "mean_std": 6.19309976027201
+      },
+      "gen2": {
+        "n": 29,
+        "d_eff": 3.3596096893336824,
+        "mean_std": 6.6068344203685685
+      }
+    },
+    "verdict": "MANUAL_CHECK"
+  },
+  "test_d": {
+    "d_eff": 3.588022696262997,
+    "n_metrics": 7,
+    "signal": true,
+    "verdict": "INVEST"
+  }
+}

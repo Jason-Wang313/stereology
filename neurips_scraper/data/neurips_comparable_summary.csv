@@ -1,0 +1,10 @@
+rank,year,similarity,score_norm,decision,tier,title
+1,2025,0.252,7.0,poster,C_weakly_similar,ClinBench: A Standardized Multi-Domain Framework for Evaluating Large Language Models in Clinical In
+2,2025,0.242,7.5,poster,C_weakly_similar,T-SHIRT: Token-Selective Hierarchical Data Selection for Instruction Tuning
+3,2025,0.233,7.6,spotlight,C_weakly_similar,AgentRecBench: Benchmarking LLM Agent-based Personalized Recommender Systems
+4,2025,0.231,7.3,poster,C_weakly_similar,BenchmarkCards: Standardized Documentation for Large Language Model Benchmarks
+5,2025,0.229,8.2,poster,C_weakly_similar,TCM-Ladder: A Benchmark for Multimodal Question Answering on Traditional Chinese Medicine
+6,2025,0.223,7.3,reject,C_weakly_similar,GraphRAG-Bench: Challenging Domain-specific Reasoning for Evaluating Graph Retrieval-Augmented Gener
+7,2024,0.208,6.3,poster,C_weakly_similar,Efficient multi-prompt evaluation of LLMs
+8,2025,0.208,7.8,spotlight,C_weakly_similar,Solving Inequality Proofs with Large Language Models
+9,2025,0.206,7.7,poster,C_weakly_similar,PRING: Rethinking Protein-Protein Interaction Prediction from Pairs to Graphs

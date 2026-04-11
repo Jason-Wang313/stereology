@@ -1,0 +1,269 @@
+{
+  "mae": 0.7639394727714182,
+  "binary_accuracy": 0.5,
+  "test_size": 2,
+  "train_size": 7,
+  "total_relevant": 9,
+  "phase": "PHASE_4B",
+  "top_20_comparables": [
+    {
+      "title": "ClinBench: A Standardized Multi-Domain Framework for Evaluating Large Language Models in Clinical Information Extraction",
+      "year": 2025,
+      "similarity": 0.2520833333333333,
+      "mean_score_normalized": 7.0,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        4.0,
+        5.0
+      ]
+    },
+    {
+      "title": "T-SHIRT: Token-Selective Hierarchical Data Selection for Instruction Tuning",
+      "year": 2025,
+      "similarity": 0.24166666666666667,
+      "mean_score_normalized": 7.4799999999999995,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        4.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "AgentRecBench: Benchmarking LLM Agent-based Personalized Recommender Systems",
+      "year": 2025,
+      "similarity": 0.23333333333333334,
+      "mean_score_normalized": 7.599999999999999,
+      "decision": "spotlight",
+      "scores": [
+        4.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "BenchmarkCards: Standardized Documentation for Large Language Model Benchmarks",
+      "year": 2025,
+      "similarity": 0.2308333333333333,
+      "mean_score_normalized": 7.3,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        4.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "TCM-Ladder: A Benchmark for Multimodal Question Answering on Traditional Chinese Medicine",
+      "year": 2025,
+      "similarity": 0.22916666666666669,
+      "mean_score_normalized": 8.2,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        5.0,
+        5.0,
+        6.0
+      ]
+    },
+    {
+      "title": "GraphRAG-Bench: Challenging Domain-specific Reasoning for Evaluating Graph Retrieval-Augmented Generation",
+      "year": 2025,
+      "similarity": 0.22291666666666665,
+      "mean_score_normalized": 7.3,
+      "decision": "reject",
+      "scores": [
+        4.0,
+        4.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "Efficient multi-prompt evaluation of LLMs",
+      "year": 2024,
+      "similarity": 0.20833333333333331,
+      "mean_score_normalized": 6.333333333333333,
+      "decision": "poster",
+      "scores": [
+        5.0,
+        6.0,
+        8.0
+      ]
+    },
+    {
+      "title": "Solving Inequality Proofs with Large Language Models",
+      "year": 2025,
+      "similarity": 0.20833333333333331,
+      "mean_score_normalized": 7.840000000000001,
+      "decision": "spotlight",
+      "scores": [
+        4.0,
+        4.0,
+        5.0,
+        5.0,
+        6.0
+      ]
+    },
+    {
+      "title": "PRING: Rethinking Protein-Protein Interaction Prediction from Pairs to Graphs",
+      "year": 2025,
+      "similarity": 0.20625,
+      "mean_score_normalized": 7.749999999999999,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "The Leaderboard Illusion",
+      "year": 2025,
+      "similarity": 0.19791666666666663,
+      "mean_score_normalized": 7.3,
+      "decision": "poster",
+      "scores": [
+        3.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "How Benchmark Prediction from Fewer Data Misses the Mark",
+      "year": 2025,
+      "similarity": 0.1975,
+      "mean_score_normalized": 7.3,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        4.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "DreamPRM: Domain-reweighted Process Reward Model for Multimodal Reasoning",
+      "year": 2025,
+      "similarity": 0.19583333333333333,
+      "mean_score_normalized": 6.400000000000001,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        4.0,
+        4.0
+      ]
+    },
+    {
+      "title": "Metritocracy: Representative Metrics for Lite Benchmarks",
+      "year": 2025,
+      "similarity": 0.19124999999999998,
+      "mean_score_normalized": 7.599999999999999,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "BRACE: A Benchmark for Robust Audio Caption Quality Evaluation",
+      "year": 2025,
+      "similarity": 0.18958333333333333,
+      "mean_score_normalized": 7.3,
+      "decision": "poster",
+      "scores": [
+        3.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "FlowerTune: A Cross-Domain Benchmark for Federated Fine-Tuning of Large Language Models",
+      "year": 2025,
+      "similarity": 0.18958333333333333,
+      "mean_score_normalized": 7.749999999999999,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "OMEGA: Can LLMs Reason Outside the Box in Math? Evaluating Exploratory, Compositional, and Transformative Generalization",
+      "year": 2025,
+      "similarity": 0.1875,
+      "mean_score_normalized": 7.4799999999999995,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        4.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "OpenUnlearning: Accelerating LLM Unlearning via Unified Benchmarking of Methods and Metrics",
+      "year": 2025,
+      "similarity": 0.18541666666666665,
+      "mean_score_normalized": 7.749999999999999,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "Disentanglement Beyond Static vs. Dynamic: A Benchmark and Evaluation Framework for Multi-Factor Sequential Representations",
+      "year": 2025,
+      "similarity": 0.18541666666666665,
+      "mean_score_normalized": 7.749999999999999,
+      "decision": "poster",
+      "scores": [
+        4.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "title": "Adaptive Layer Sparsity for Large Language Models via Activation Correlation Assessment",
+      "year": 2024,
+      "similarity": 0.18500000000000003,
+      "mean_score_normalized": 6.25,
+      "decision": "poster",
+      "scores": [
+        5.0,
+        6.0,
+        6.0,
+        8.0
+      ]
+    },
+    {
+      "title": "HyPoradise: An Open Baseline for Generative Speech Recognition with Large Language Models",
+      "year": 2023,
+      "similarity": 0.17916666666666667,
+      "mean_score_normalized": 6.6,
+      "decision": "poster",
+      "scores": [
+        6.0,
+        6.0,
+        6.0,
+        7.0,
+        8.0
+      ]
+    }
+  ]
+}

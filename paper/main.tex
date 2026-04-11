@@ -176,7 +176,11 @@ comparable to the top-pair gap and the framework should be replaced
 by a local nonlinear model in that regime. The key diagnostic is:
 compare the quadratic-vs-linear $R^2$ gap to the standardised
 runner-up gap $\Delta_2$; when they are of the same order, the width
-model is at its regime boundary.
+model is at its regime boundary. Among our $12$ benchmarks,
+TruthfulQA has the lowest $R^2$ ($0.769$) and highest $\eta$,
+consistent with its qualitative/adversarial nature. Safety and
+preference benchmarks (not in our suite) would likely have higher
+$\eta$; the diagnostic above detects this.
 
 \paragraph{Convexity in the observed subspace.}
 While we cannot directly test convexity of capability profiles in
@@ -226,7 +230,7 @@ Proposition~\ref{prop:body:width}), and $\kappa$ enters only the
 smooth rate (Theorem~\ref{thm:body:indist}c,
 Theorem~\ref{thm:body:gardner}).
 
-\section{Theorem 1: Effective Dimensionality}
+\section{Effective Dimensionality}
 
 Let $\Sigma = \mathrm{Corr}(S)$ have eigenvalues
 $\lambda_1 \ge \cdots \ge \lambda_k \ge 0$. The \emph{effective
@@ -330,7 +334,7 @@ Kaiser, and permutation eigenvalue thresholds
   \label{fig:biplot}
 \end{figure}
 
-\section{Theorem 2: Indistinguishability Bound}
+\section{Indistinguishability Bound}
 
 \paragraph{Centering convention.}
 We model capability profiles as origin-symmetric convex bodies
@@ -525,12 +529,16 @@ problem in convex geometry:
 
 \begin{theorem}[Resolution of Gardner's Problem 1.5 for $C^2$ bodies]
 \label{thm:body:gardner}
-For $C^2$ support functions on $S^{D-1}$ with curvature $\ge \kappa$,
-the minimax recovery rate from $m$ width measurements is
+Let $K \subset \mathbb{R}^D$ be a convex body with $C^2$ support
+function $h_K$ on $S^{D-1}$ and Gauss curvature $\ge \kappa > 0$.
+Given $m$ width measurements $w_K(u_i)$ at quasi-uniform directions
+$\{u_i\}_{i=1}^m \subset S^{D-1}$, the minimax recovery rate is
 $\Theta\!\big(R / (\kappa\, m^{2/(D-1)})\big)$. For $D = 2$ this is
-$\Theta(m^{-2})$. Since non-adaptive X-ray and width measurements
-achieve the same minimax rate (Appendix~\ref{app:gardner}, Theorem~18),
-this resolves Problem 1.5 as \citet{gardner1995geometric} stated it.
+$\Theta(m^{-2})$. For origin-symmetric bodies, width $w_K(u) = 2h_K(u)$
+and X-ray $\rho_K(u)$ determine the same support function; the
+non-adaptive minimax rates for both measurement models coincide
+(Appendix~\ref{app:gardner}, Theorem~18), resolving Problem~1.5
+as \citet{gardner1995geometric} stated it for all $D \ge 2$.
 \end{theorem}
 
 \noindent \emph{Proof sketch.} Upper bound via Jackson's inequality
@@ -600,7 +608,7 @@ non-decreasing in the frontier threshold $q$; tighter frontiers have
 % Figure 3 (divergence/ranking validation) moved to Appendix H.12
 % for page-limit compliance. Key result stated in text above.
 
-\section{Theorem 3: Greedy Coverage}
+\section{Greedy Coverage}
 
 Let $\Sigma$ be the benchmark correlation matrix with $j$-th loading
 vector $\ell_j$. For $T \subseteq [k]$, let $P_T$ be the orthogonal
@@ -622,7 +630,11 @@ classical result in experimental design \citep{daskempe2011submodular,
 krause2008submodular}; the rigorous proof, via the
 eigendecomposition $\Sigma = \sum_i \lambda_i v_i v_i^\top$ and the
 distance-from-span identity $\|P_T v\|^2 = \|v\|^2 - \mathrm{dist}(v,
-\mathrm{span}(T))^2$, is in Appendix~\ref{app:proof3}.
+\mathrm{span}(T))^2$, is in Appendix~\ref{app:proof3}. Among five
+alternative subset objectives (facility location, max-diversity,
+PCA-greedy, max-uncorrelated, random), the spectral objective matches
+or beats all on both coverage and Kendall $\tau$ at every $r$
+(App.~\ref{app:validation}, H.5).
 
 \paragraph{Remark (Anisotropy).} Without isotropy, the orthogonal
 term in Proposition~\ref{prop:body:bridge} becomes
@@ -786,7 +798,15 @@ operate at item level (complementary); convex recovery lower bounds
 \citep{guntuboyina2011minimax} treat the noisy case. The smooth rate
 uses Jackson--Bernstein theory \citep{ragozin1970polynomial,
 dai2013approximation} and Kolmogorov $n$-widths
-\citep{magaril2006optimal}.
+\citep{magaril2006optimal}. Dynamic evaluation protocols
+(Dynabench~\citep{kiela2021dynabench}, DyVal) increase
+\emph{within-benchmark} difficulty; our greedy algorithm adds
+\emph{orthogonal benchmarks} --- complementary strategies. The
+noiseless directional-discretisation regime dominates in modern
+large-item benchmarks because each aggregates $O(10^3)$ items,
+reducing statistical noise to negligible levels; the noisy
+$f$-divergence regime \citep{guntuboyina2011minimax} would re-emerge
+for single-item or few-item evaluations.
 
 \section{Discussion}
 
@@ -825,6 +845,20 @@ does not apply to our continuous scores. Prompt
 variation~\citep{pashkovich2024efficient} is absorbed into the
 $\varepsilon$ term; the structural blind spot ($52$--$127\times$
 larger) remains dominant.
+\paragraph{Evaluation monoculture.}
+Cross-suite PC alignment between OLLM v2 and the Extended suite
+(in their shared $6$-benchmark subspace) yields cosine similarity
+$0.986$ for PC1, $0.910$--$0.970$ for PCs~$2$--$5$ (bootstrap
+$95\%$ CI for PC1: $[0.939, 0.995]$; null: $0.343$,
+$p < 10^{-6}$; App.~\ref{app:validation}, H.42). The two suites
+measure \emph{nearly identical} capability dimensions. This implies
+a \emph{shared} blind spot: the directions unmeasured by one suite
+are unmeasured by all, creating correlated vulnerabilities across
+models optimised for any of them.
+Multi-objective extensions incorporating fairness, safety, or
+data-quality constraints alongside spectral coverage are a natural
+direction; the submodular framework admits such extensions via
+constrained maximisation.
 Code and data released on acceptance (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
@@ -867,6 +901,11 @@ Code and data released on acceptance (App.~\ref{app:repro}).
 23 & Population dependence ($d_{\mathrm{eff}}$ vs $q$) & Monotone non-decreasing & \S8, H.34 \\
 24 & Counterfactual benchmark importance & $\rho = -0.69$ ($p = 0.013$) & \S5, H.36 \\
 25 & External eval blind-spot alignment & $\rho = +0.38$ ($p = 0.053$), $27$ Arena cats & \S5, H.37 \\
+26 & Model de-duplication robustness & $d_{\mathrm{eff}}$: $4.80 \to 4.33$ ($96$ families) & \S8, H.38 \\
+27 & LiveBench bootstrap CI & $d_{\mathrm{eff}} = 4.74$ $[3.10, 4.60]$ & \S3, H.39 \\
+28 & Anisotropic calibration (real $\Sigma_{\mathrm{hidden}}$) & Iso $0.436$, aniso $0.457$, emp $0.411$ & \S4, H.40 \\
+29 & Standardisation sensitivity & $92\times$--$3854\times$ across $4$ methods & \S4, H.41 \\
+30 & Cross-suite PC alignment (monoculture) & PC1 cosine $= 0.986$ ($p < 10^{-6}$) & \S8, H.42 \\
 \bottomrule
 \end{tabular}
 \end{table}

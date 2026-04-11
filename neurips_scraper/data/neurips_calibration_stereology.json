@@ -1,0 +1,542 @@
+{
+  "metadata": {
+    "scrape_date": "2026-04-11",
+    "target_paper": "STEREOLOGY — The Evaluation Blind Spot",
+    "target_venue": "NeurIPS 2026 Main Track",
+    "pipeline_version": "1.0",
+    "validation_mae": 0.7639394727714182,
+    "validation_phase": "PHASE_4B",
+    "data_scope": "NeurIPS main track 2021-2025. Accepted papers all years. Opt-in rejected papers 2024 only. Survivorship bias present for 2021-2023 and 2025."
+  },
+  "global_stats": {
+    "total_papers": 20581,
+    "total_reviews": 81758,
+    "by_year": {
+      "2021": {
+        "n_papers": 2708,
+        "n_reviews": 10384,
+        "n_accepted": 2508,
+        "n_rejected": 200,
+        "mean_score": 6.404839276921997,
+        "std_score": 0.6694260485271671,
+        "scale": {
+          "min": 1,
+          "max": 10,
+          "desc": "1-10"
+        }
+      },
+      "2022": {
+        "n_papers": 3054,
+        "n_reviews": 11219,
+        "n_accepted": 0,
+        "n_rejected": 153,
+        "mean_score": 6.032173944234548,
+        "std_score": 0.7276596994481016,
+        "scale": {
+          "min": 1,
+          "max": 10,
+          "desc": "1-10"
+        }
+      },
+      "2023": {
+        "n_papers": 3777,
+        "n_reviews": 16666,
+        "n_accepted": 3584,
+        "n_rejected": 193,
+        "mean_score": 5.967107713698925,
+        "std_score": 0.6857936650862219,
+        "scale": {
+          "min": 1,
+          "max": 10,
+          "desc": "1-10"
+        }
+      },
+      "2024": {
+        "n_papers": 4830,
+        "n_reviews": 18562,
+        "n_accepted": 4518,
+        "n_rejected": 268,
+        "mean_score": 5.954133917321645,
+        "std_score": 0.6930324150548411,
+        "scale": {
+          "min": 1,
+          "max": 10,
+          "desc": "1-10"
+        }
+      },
+      "2025": {
+        "n_papers": 6212,
+        "n_reviews": 24927,
+        "n_accepted": 5812,
+        "n_rejected": 400,
+        "mean_score": 7.023683193818406,
+        "std_score": 0.7760769191915499,
+        "scale": {
+          "min": 1,
+          "max": 6,
+          "desc": "1-6 (2025 system)"
+        }
+      }
+    },
+    "score_to_acceptance_rate": {
+      "1": {
+        "n": 2,
+        "acceptance_rate": 0.0,
+        "caveat": null
+      },
+      "2": {
+        "n": 17,
+        "acceptance_rate": 0.0,
+        "caveat": null
+      },
+      "3": {
+        "n": 46,
+        "acceptance_rate": 0.0,
+        "caveat": null
+      },
+      "4": {
+        "n": 265,
+        "acceptance_rate": 0.2641509433962264,
+        "caveat": null
+      },
+      "5": {
+        "n": 1710,
+        "acceptance_rate": 0.804093567251462,
+        "caveat": "biased — mostly accepted papers in sample"
+      },
+      "6": {
+        "n": 8518,
+        "acceptance_rate": 0.9488142756515614,
+        "caveat": "biased — mostly accepted papers in sample"
+      },
+      "7": {
+        "n": 5309,
+        "acceptance_rate": 0.9757016387266906,
+        "caveat": "biased — mostly accepted papers in sample"
+      },
+      "8": {
+        "n": 1548,
+        "acceptance_rate": 0.9832041343669251,
+        "caveat": "biased — mostly accepted papers in sample"
+      },
+      "9": {
+        "n": 123,
+        "acceptance_rate": 0.8699186991869918,
+        "caveat": "biased — mostly accepted papers in sample"
+      },
+      "10": {
+        "n": 30,
+        "acceptance_rate": 0.6,
+        "caveat": "biased — mostly accepted papers in sample"
+      }
+    },
+    "decision_distribution": {
+      "spotlight": 1781,
+      "poster": 14344,
+      "reject": 1214,
+      "oral": 297,
+      "accept": 2834,
+      "journal": 111
+    },
+    "data_limitations": {
+      "survivorship_bias": "NeurIPS main track only publishes accepted paper reviews (2021-2023, 2025). 2024 has a small opt-in rejected subset. The weakness taxonomy is biased toward survivable weaknesses.",
+      "rejected_papers_available": false,
+      "rejected_opt_in_year": 2024
+    }
+  },
+  "comparable_papers": {
+    "total_above_threshold": 9,
+    "tier_A_count": 0,
+    "tier_B_count": 0,
+    "tier_C_count": 9,
+    "papers": [
+      {
+        "title": "ClinBench: A Standardized Multi-Domain Framework for Evaluating Large Language Models in Clinical Information Extraction",
+        "year": 2025,
+        "similarity": 0.252,
+        "tier": "C_weakly_similar",
+        "decision": "poster",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          4.0,
+          5.0
+        ],
+        "mean_score_normalized": 7.0,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "T-SHIRT: Token-Selective Hierarchical Data Selection for Instruction Tuning",
+        "year": 2025,
+        "similarity": 0.242,
+        "tier": "C_weakly_similar",
+        "decision": "poster",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          4.0,
+          5.0,
+          5.0,
+          5.0
+        ],
+        "mean_score_normalized": 7.48,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "AgentRecBench: Benchmarking LLM Agent-based Personalized Recommender Systems",
+        "year": 2025,
+        "similarity": 0.233,
+        "tier": "C_weakly_similar",
+        "decision": "spotlight",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          5.0,
+          5.0
+        ],
+        "mean_score_normalized": 7.6,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "BenchmarkCards: Standardized Documentation for Large Language Model Benchmarks",
+        "year": 2025,
+        "similarity": 0.231,
+        "tier": "C_weakly_similar",
+        "decision": "poster",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          4.0,
+          5.0,
+          5.0
+        ],
+        "mean_score_normalized": 7.3,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "TCM-Ladder: A Benchmark for Multimodal Question Answering on Traditional Chinese Medicine",
+        "year": 2025,
+        "similarity": 0.229,
+        "tier": "C_weakly_similar",
+        "decision": "poster",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          5.0,
+          5.0,
+          6.0
+        ],
+        "mean_score_normalized": 8.2,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 10.0,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "GraphRAG-Bench: Challenging Domain-specific Reasoning for Evaluating Graph Retrieval-Augmented Generation",
+        "year": 2025,
+        "similarity": 0.223,
+        "tier": "C_weakly_similar",
+        "decision": "reject",
+        "is_accepted": false,
+        "scores_raw": [
+          4.0,
+          4.0,
+          5.0,
+          5.0
+        ],
+        "mean_score_normalized": 7.3,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "Efficient multi-prompt evaluation of LLMs",
+        "year": 2024,
+        "similarity": 0.208,
+        "tier": "C_weakly_similar",
+        "decision": "poster",
+        "is_accepted": true,
+        "scores_raw": [
+          5.0,
+          6.0,
+          8.0
+        ],
+        "mean_score_normalized": 6.33,
+        "reviews": [
+          {
+            "score_normalized": 5.0,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 6.0,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.0,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "Solving Inequality Proofs with Large Language Models",
+        "year": 2025,
+        "similarity": 0.208,
+        "tier": "C_weakly_similar",
+        "decision": "spotlight",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          4.0,
+          5.0,
+          5.0,
+          6.0
+        ],
+        "mean_score_normalized": 7.84,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 10.0,
+            "weakness_categories": []
+          }
+        ]
+      },
+      {
+        "title": "PRING: Rethinking Protein-Protein Interaction Prediction from Pairs to Graphs",
+        "year": 2025,
+        "similarity": 0.206,
+        "tier": "C_weakly_similar",
+        "decision": "poster",
+        "is_accepted": true,
+        "scores_raw": [
+          4.0,
+          5.0,
+          5.0,
+          5.0
+        ],
+        "mean_score_normalized": 7.75,
+        "reviews": [
+          {
+            "score_normalized": 6.4,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          },
+          {
+            "score_normalized": 8.2,
+            "weakness_categories": []
+          }
+        ]
+      }
+    ]
+  },
+  "weakness_analysis": {
+    "caveat": "Based primarily on accepted papers. Weaknesses shown are those that SURVIVED review, not those that killed papers (except 2024 opt-in rejected).",
+    "weakness_frequency": {
+      "empirical_validation": 36921,
+      "significance": 27006,
+      "clarity_writing": 24828,
+      "related_work": 21423,
+      "scalability": 21326,
+      "reproducibility": 19704,
+      "assumptions": 13794,
+      "novelty": 12206,
+      "proof_correctness": 8695,
+      "overclaiming": 2171
+    },
+    "weakness_by_decision": {
+      "assumptions": {
+        "spotlight": 1140,
+        "poster": 8746,
+        "oral": 210,
+        "reject": 657,
+        "accept": 3041
+      },
+      "related_work": {
+        "spotlight": 1517,
+        "poster": 13767,
+        "oral": 281,
+        "reject": 1171,
+        "accept": 4687
+      },
+      "proof_correctness": {
+        "spotlight": 731,
+        "poster": 5279,
+        "oral": 147,
+        "reject": 439,
+        "accept": 2099
+      },
+      "significance": {
+        "spotlight": 1960,
+        "poster": 16992,
+        "oral": 390,
+        "reject": 1406,
+        "accept": 6258
+      },
+      "scalability": {
+        "spotlight": 1670,
+        "poster": 13927,
+        "oral": 334,
+        "reject": 1080,
+        "accept": 4315
+      },
+      "novelty": {
+        "spotlight": 747,
+        "poster": 7734,
+        "oral": 145,
+        "reject": 675,
+        "accept": 2905
+      },
+      "empirical_validation": {
+        "spotlight": 2703,
+        "poster": 24116,
+        "oral": 530,
+        "reject": 1911,
+        "accept": 7661
+      },
+      "clarity_writing": {
+        "spotlight": 1849,
+        "poster": 15842,
+        "oral": 356,
+        "reject": 1338,
+        "accept": 5443
+      },
+      "reproducibility": {
+        "poster": 12758,
+        "spotlight": 1499,
+        "oral": 308,
+        "reject": 1020,
+        "accept": 4119
+      },
+      "overclaiming": {
+        "poster": 1421,
+        "spotlight": 149,
+        "reject": 126,
+        "oral": 29,
+        "accept": 446
+      }
+    },
+    "strength_frequency": {
+      "novel_contribution": 34502,
+      "well_written": 26413,
+      "practical_impact": 25407,
+      "theoretical_depth": 19482,
+      "interesting_finding": 14554,
+      "strong_empirics": 7657
+    }
+  }
+}
