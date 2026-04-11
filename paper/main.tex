@@ -312,9 +312,13 @@ correlation method (Spearman vs Pearson, see column above), and to MP,
 Kaiser, and permutation eigenvalue thresholds
 (Appendix~\ref{app:validation}, H.1, H.6). On the full OLLM~v2 population ($n = 4{,}576$),
 $d_{\mathrm{eff}}$ ranges from $1.78$ (all models) to $3.94$ (top
-$10\%$), increasing monotonically with frontier stringency; our $n =
-229$ estimate of $2.86$ is consistent with the top $15$--$20\%$
-(App.~H.44).
+$10\%$); our $n = 229$ estimate of $2.86$ is consistent with the top
+$15$--$20\%$ (App.~H.44). On a $31$-benchmark cross-domain dataset
+spanning coding, math, reasoning, knowledge, agents, multimodal, and
+writing ($49$ frontier models, Epoch~AI), $d_{\mathrm{eff}} = 7.12$
+(frontier: $5.71$): more diverse benchmarks raise
+$d_{\mathrm{eff}}$ but it remains far below $k = 31$, confirming
+the blind spot persists across evaluation types.
 
 \begin{figure}[t]
   \centering
@@ -744,13 +748,12 @@ to $27$ Chatbot Arena categories as external evaluations, blind-spot
 alignment predicts ranking disruption from \emph{adding} the external
 evaluation with $\rho = +0.38$ ($p = 0.053$;
 Appendix~\ref{app:validation}, H.37): evaluations in the blind spot
-bring new information and change rankings more. Across all sources (core benchmarks, $27$ Arena categories, $8$
-OpenEvals benchmarks including SWE-bench and TerminalBench,
-AlpacaEval, and $7$ LiveBench sub-tasks), the analysis spans $55$
-distinct evaluations across $13$ domains: knowledge, math, reasoning,
-coding, instruction following, preference, creative writing, domain
-expertise, multilingual, hard prompts, safety, OCR, and multi-turn
-dialogue (App.~\ref{app:validation}, H.37).
+bring new information and change rankings more. Across all sources---core benchmarks, $27$ Arena categories,
+Epoch~AI's $31$-benchmark cross-domain dataset (coding, math,
+reasoning, knowledge, agents, multimodal, writing), OpenEvals
+(SWE-bench, TerminalBench), AlpacaEval, and $7$ LiveBench
+sub-tasks---the analysis spans $80+$ distinct evaluations across
+$13+$ domains (App.~\ref{app:validation}, H.37).
 
 \begin{figure}[t]
   \centering
@@ -826,7 +829,7 @@ summarises the positioning.
 \small\centering
 \caption{Comparison with related evaluation methodology.
 $\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).
-$\dagger$: across $55$ evaluations in $13$ domains.}
+$\dagger$: across $80+$ evaluations in $13+$ domains.}
 \label{tab:comparison}
 \begin{tabular}{lccccc}
 \toprule

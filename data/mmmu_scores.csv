@@ -1,0 +1,61 @@
+model,mmmu_score
+Qwen3.6 Plus,0.86
+GPT-5.1 Thinking,0.854
+GPT-5.1,0.854
+GPT-5.1 Instant,0.854
+GPT-5,0.842
+Qwen3.5-122B-A10B,0.839
+o3,0.829
+Qwen3.5-27B,0.823
+Gemini 2.5 Pro Preview 06-05,0.82
+o4-mini,0.816
+Qwen3.5-35B-A3B,0.814
+Gemini 2.5 Flash,0.797
+Gemini 2.5 Pro,0.796
+Step3-VL-10B,0.781
+Grok-3,0.78
+o1,0.776
+Gemini 2.0 Flash Thinking,0.754
+GPT-4.5,0.752
+Claude 3.7 Sonnet,0.75
+GPT-4.1,0.748
+Claude Sonnet 4,0.744
+Llama 4 Maverick,0.734
+Gemini 2.5 Flash-Lite,0.729
+GPT-4.1 mini,0.727
+GPT-4o,0.722
+Gemini 2.0 Flash,0.707
+QvQ-72B-Preview,0.703
+Qwen2.5 VL 72B Instruct,0.702
+Qwen2.5 VL 32B Instruct,0.7
+Kimi-k1.5,0.7
+Llama 4 Scout,0.694
+Claude 3.5 Sonnet,0.683
+Gemini 2.0 Flash-Lite,0.68
+Grok-2,0.661
+Gemini 1.5 Pro,0.659
+Pixtral Large,0.64
+Grok-2 mini,0.632
+Mistral Small 3.2 24B Instruct,0.625
+Gemini 1.5 Flash,0.623
+Nova Pro,0.617
+Llama 3.2 90B Instruct,0.603
+GPT-4o mini,0.594
+Mistral Small 3.1 24B Base,0.593
+Mistral Small 3.1 24B Instruct,0.593
+Qwen2.5-Omni-7B,0.592
+Qwen2.5 VL 7B Instruct,0.586
+Nova Lite,0.562
+GPT-4.1 nano,0.554
+Phi-4-multimodal-instruct,0.551
+Gemini 1.5 Flash 8B,0.537
+Grok-1.5,0.536
+Grok-1.5V,0.536
+Pixtral-12B,0.525
+DeepSeek VL2,0.511
+Llama 3.2 11B Instruct,0.507
+DeepSeek VL2 Small,0.48
+Gemini 1.0 Pro,0.479
+Phi-3.5-vision-instruct,0.43
+DeepSeek VL2 Tiny,0.407
+GPT-3.5 Turbo,0.0

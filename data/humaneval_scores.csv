@@ -1,0 +1,66 @@
+model,humaneval_pass1
+Kimi K2 0905,0.945
+Claude 3.5 Sonnet (20241022),0.937
+GPT-5,0.934
+Kimi K2 Instruct,0.933
+Qwen2.5-Coder 32B Instruct,0.927
+o1-mini,0.924
+Sarvam-30B,0.921
+Mistral Large 2,0.92
+Claude 3.5 Sonnet (20240620),0.92
+Qwen2.5 VL 32B Instruct,0.915
+GPT-4o,0.902
+Granite 3.3 8B Instruct,0.897
+Granite 3.3 8B Base,0.897
+Gemini Diffusion,0.896
+Nova Pro,0.89
+DeepSeek-V2.5,0.89
+Llama 3.1 405B Instruct,0.89
+Mistral Small 3.1 24B Instruct,0.884
+LongCat-Flash-Chat,0.884
+Llama 3.3 70B Instruct,0.884
+Qwen2.5-Coder 7B Instruct,0.884
+Qwen2.5 32B Instruct,0.884
+Grok-2,0.884
+Claude 3.5 Haiku,0.881
+o1,0.881
+GPT-4.5,0.88
+Gemma 3 27B,0.878
+GPT-4o mini,0.872
+GPT-4 Turbo,0.871
+Qwen2.5 72B Instruct,0.866
+Qwen2 72B Instruct,0.86
+Grok-2 mini,0.857
+Nova Lite,0.854
+Gemma 3 12B,0.854
+Claude 3 Opus,0.849
+Mistral Small 3 24B Instruct,0.848
+Qwen2.5 7B Instruct,0.848
+Gemini 1.5 Pro,0.841
+Qwen2.5 14B Instruct,0.835
+Phi 4,0.826
+IBM Granite 4.0 Tiny Preview,0.824
+Nova Micro,0.811
+Codestral-22B,0.811
+Llama 3.1 70B Instruct,0.805
+Qwen2 7B Instruct,0.799
+Qwen2.5-Omni-7B,0.787
+Claude 3 Haiku,0.759
+Gemma 3n E4B Instructed LiteRT Preview,0.75
+Gemma 3n E4B Instructed,0.75
+Gemini 1.5 Flash,0.743
+Grok-1.5,0.741
+Claude 3 Sonnet,0.73
+Llama 3.1 8B Instruct,0.726
+Pixtral-12B,0.72
+Gemma 3 4B,0.713
+Phi-3.5-MoE-instruct,0.707
+GPT-3.5 Turbo,0.68
+GPT-4,0.67
+Gemma 3n E2B Instructed LiteRT (Preview),0.665
+Gemma 3n E2B Instructed,0.665
+Phi-3.5-mini-instruct,0.628
+Gemma 2 27B,0.518
+Gemma 3 1B,0.415
+Gemma 2 9B,0.402
+Ministral 8B Instruct,0.348

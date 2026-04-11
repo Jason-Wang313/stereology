@@ -1,0 +1,80 @@
+model,swe_bench_verified
+Claude Mythos Preview,0.939
+Claude Opus 4.5,0.809
+Claude Opus 4.6,0.808
+Gemini 3.1 Pro,0.806
+MiniMax M2.5,0.802
+GPT-5.2,0.8
+Claude Sonnet 4.6,0.796
+Qwen3.6 Plus,0.788
+Gemini 3 Flash,0.78
+MiMo-V2-Pro,0.78
+GLM-5,0.778
+Muse Spark,0.774
+Kimi K2.5,0.768
+Seed 2.0 Pro,0.765
+Qwen3.5-397B-A17B,0.764
+GPT-5.1 Thinking,0.763
+GPT-5.1 Instant,0.763
+GPT-5.1,0.763
+Gemini 3 Pro,0.762
+GPT-5,0.749
+MiMo-V2-Omni,0.748
+GPT-5 Codex,0.745
+Claude Opus 4.1,0.745
+Step-3.5-Flash,0.744
+GLM-4.7,0.738
+GPT-5.1 Codex,0.737
+Seed 2.0 Lite,0.735
+MiMo-V2-Flash,0.734
+Claude Haiku 4.5,0.733
+DeepSeek-V3.2,0.731
+DeepSeek-V3.2-Speciale,0.731
+DeepSeek-V3.2 (Thinking),0.731
+Claude Sonnet 4,0.727
+Claude Opus 4,0.725
+Qwen3.5-27B,0.724
+Qwen3.5-122B-A10B,0.72
+Kimi K2-Thinking-0905,0.713
+Grok Code Fast 1,0.708
+Claude 3.7 Sonnet,0.703
+LongCat-Flash-Thinking-2601,0.7
+Qwen3-Coder 480B A35B Instruct,0.696
+Qwen3 Max,0.696
+MiniMax M2,0.694
+Qwen3.5-35B-A3B,0.692
+o3,0.691
+o4-mini,0.681
+GLM-4.6,0.68
+DeepSeek-V3.2-Exp,0.678
+Gemini 2.5 Pro Preview 06-05,0.672
+MiniMax M2.1,0.67
+DeepSeek-V3.1,0.66
+Kimi K2-Instruct-0905,0.658
+GLM-4.5,0.642
+Gemini 2.5 Pro,0.632
+Devstral Medium,0.616
+LongCat-Flash-Chat,0.604
+Gemini 2.5 Flash,0.604
+LongCat-Flash-Thinking,0.594
+GLM-4.7-Flash,0.592
+GLM-4.5-Air,0.576
+MiniMax M1 80K,0.56
+MiniMax M1 40K,0.556
+GPT-4.1,0.546
+LongCat-Flash-Lite,0.544
+Nemotron 3 Super (120B A12B),0.537
+Devstral Small 1.1,0.536
+o3-mini,0.493
+Claude 3.5 Sonnet,0.49
+Sarvam-105B,0.45
+DeepSeek-R1-0528,0.446
+DeepSeek-V3,0.42
+o1-preview,0.413
+o1,0.41
+Claude 3.5 Haiku,0.406
+Nemotron 3 Nano (30B A3B),0.388
+GPT-4.5,0.38
+Sarvam-30B,0.34
+GPT-4o,0.332
+Gemini 2.5 Flash-Lite,0.316
