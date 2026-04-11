@@ -744,11 +744,13 @@ to $27$ Chatbot Arena categories as external evaluations, blind-spot
 alignment predicts ranking disruption from \emph{adding} the external
 evaluation with $\rho = +0.38$ ($p = 0.053$;
 Appendix~\ref{app:validation}, H.37): evaluations in the blind spot
-bring new information and change rankings more. The $27$ Arena
-categories span accuracy (math, coding), preference (creative
-writing, instruction following), and domain expertise (medicine,
-legal, scientific), confirming the prediction holds across evaluation
-\emph{types}, not just accuracy benchmarks.
+bring new information and change rankings more. Across all sources (core benchmarks, $27$ Arena categories, $8$
+OpenEvals benchmarks including SWE-bench and TerminalBench,
+AlpacaEval, and $7$ LiveBench sub-tasks), the analysis spans $55$
+distinct evaluations across $13$ domains: knowledge, math, reasoning,
+coding, instruction following, preference, creative writing, domain
+expertise, multilingual, hard prompts, safety, OCR, and multi-turn
+dialogue (App.~\ref{app:validation}, H.37).
 
 \begin{figure}[t]
   \centering
@@ -797,6 +799,13 @@ identifies low $d_{\mathrm{eff}}$; we add the indistinguishability
 bound, greedy algorithm, and minimax rate.
 HypoSpace~\citep{hypospace2025} treats discrete underdetermination;
 ours is the continuous analogue with convergence rates.
+Social-choice-theoretic subset selection (Metritocracy) optimises
+positional proportionality (rank preservation); our spectral
+coverage optimises explained variance. Empirically the two objectives
+are near-orthogonal ($\rho = 0.09$ across $200$ random $6$-subsets;
+App.~H.45), confirming they are genuinely complementary: spectral
+coverage bounds the geometric blind spot while positional
+proportionality bounds rank distortion.
 IRT models \citep{burnell2024revealing, polo2024tinybenchmarks}
 operate at item level (complementary); convex recovery lower bounds
 \citep{guntuboyina2011minimax} treat the noisy case. The smooth rate
@@ -816,7 +825,8 @@ summarises the positioning.
 \begin{table}[h]
 \small\centering
 \caption{Comparison with related evaluation methodology.
-$\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).}
+$\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).
+$\dagger$: across $55$ evaluations in $13$ domains.}
 \label{tab:comparison}
 \begin{tabular}{lccccc}
 \toprule
@@ -828,7 +838,7 @@ Metritocracy & $\checkmark$ & -- & -- & -- & ${\sim}3$ \\
 Zhang et al. & -- & -- & -- & $\checkmark$ & ${\sim}15$ \\
 tinyBenchmarks & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
 PromptEval & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
-\textbf{This work} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark^*$ & $\mathbf{30+}$ \\
+\textbf{This work} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark^*$ & $\mathbf{30+}$\rlap{$^{\dagger}$} \\
 \bottomrule
 \end{tabular}
 \end{table}
