@@ -840,9 +840,31 @@ designs (e.g., COMPASS for code, which separates correctness,
 efficiency, and quality) corroborate the existence of independent
 axes but do not quantify coverage bounds; Bayesian rank models
 provide posterior uncertainty on composite scores but not on the
-geometric blind spot.
+geometric blind spot. Table~\ref{tab:comparison} summarises the
+positioning.
+
+\begin{table}[h]
+\small\centering
+\caption{Comparison with related evaluation methodology.
+$\checkmark^*$: via granularity-agnostic application (\S\ref{sec:discuss}).}
+\label{tab:comparison}
+\begin{tabular}{lccccc}
+\toprule
+ & Tight & Converg. & Cross- & Item & Valid. \\
+ & bounds & guarantee & suite & level & expts \\
+\midrule
+BenchScope & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
+Metritocracy & $\checkmark$ & -- & -- & -- & ${\sim}3$ \\
+Zhang et al. & -- & -- & -- & $\checkmark$ & ${\sim}15$ \\
+tinyBenchmarks & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
+PromptEval & -- & -- & -- & $\checkmark$ & ${\sim}5$ \\
+\textbf{This work} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark^*$ & $\mathbf{30+}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Discussion}
+\label{sec:discuss}
 \label{sec:discuss}
 
 \paragraph{Takeaways and limitations.}
@@ -906,10 +928,31 @@ Theorems~\ref{thm:body:deff}--\ref{thm:body:greedy} provide the
 theoretical guarantees that item-selection methods
 \citep{polo2024tinybenchmarks} currently lack.
 
+\paragraph{Falsification criteria.}
+Table~\ref{tab:falsify} lists the conditions under which each main
+result would be refuted.
+
+\begin{table}[h]
+\small\centering
+\caption{Falsification criteria.}
+\label{tab:falsify}
+\begin{tabular}{lp{3.0cm}p{3.5cm}}
+\toprule
+Result & Prediction & Falsified if \\
+\midrule
+Thm~\ref{thm:body:deff} & $d_{\mathrm{eff}}$ method-invariant & Pearson/Spearman $|\Delta| > 0.5$ \\
+Thm~\ref{thm:body:indist} & $\delta_H$ bounds pair gap & ${>}5\%$ of pairs exceed bound \\
+Thm~\ref{thm:body:greedy} & Greedy $\tau >$ random & Random $\tau >$ greedy at $r \le k/2$ \\
+Thm~\ref{thm:body:iterative} & Blind spot shrinks & Non-monotone at any $r$ \\
+Cor~\ref{cor:body:rank} & $\chi^2$ swap calibrated & Top-$2$ dev ${>}15$\,pp (App.~G.2) \\
+Prop~\ref{prop:body:width} & Linearisation tight & $R^2$ gap ${>}0.15$ on any benchmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \noindent Code: \texttt{pip install -e .} from the supplementary
 repository; \texttt{reproduce.py} regenerates all experiments and
-figures. Per-theorem falsification criteria are listed in
-Appendix~\ref{app:repro}.
+figures (App.~\ref{app:repro}).
 
 \bibliographystyle{plainnat}
 \bibliography{references}
