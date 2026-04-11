@@ -3,14 +3,14 @@
 % This file uses a generic article preamble; swap in neurips_2026.sty
 % when submitting.
 
-\documentclass[10pt]{article}
-\usepackage[margin=1in]{geometry}
+\documentclass{article}
+\usepackage[preprint]{neurips_2026}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{hyperref}
-\usepackage[round, authoryear]{natbib}
+% natbib loaded by neurips_2026.sty
 \usepackage{xcolor}
 \usepackage[expansion=false]{microtype}
 
@@ -746,75 +746,36 @@ knowledge, and multimodal domains
 \section{Corollaries in Practice}
 \label{sec:cor}
 
-\paragraph{Busemann--Petty analogue.} The classical Busemann--Petty
-problem (\emph{yes} for $d \le 4$, \emph{no} for $d \ge 5$
-\citep{lutwak1988intersection, gardner1994positive, zhang1999generalized,
-koldobsky1998intersection}) concerns hyperplane sections; the related
-Shephard problem for projections (\emph{no} for $d \ge 3$
-\citep{petty1967projection, schneider1967projections}) is closer to
-our setting because benchmark widths are essentially $1$D
-projections. We use the Shephard threshold $d_{\mathrm{eff}} \ge 3$
-in Proposition~\ref{prop:body:bp}, which is satisfied by every
-frontier slice we test (Table~\ref{tab:cross}); the more conservative
-Busemann--Petty threshold $d_{\mathrm{eff}} \ge 5$ is also satisfied
-by the extended and LiveBench frontiers.
-
-\begin{proposition}[Benchmark domination $\not\Rightarrow$ capability domination]
-\label{prop:body:bp}
-For $d_{\mathrm{eff}} \ge 3$ (the Shephard threshold for projection
-volumes), there exist convex profiles $K, L$ with $\pi_i(K) <
-\pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) > \mathrm{vol}_D(L)$.
-\end{proposition}
-
-\noindent \emph{Empirics.} $50$ domination-contradiction pairs found on
-random $6/6$ splits; $98\%$ of $n = 12$ draws produce $\ge 1$ rank
-reversal (App.~\ref{app:validation}, H.9, H.20).
+\paragraph{Corollary: benchmark domination $\not\Rightarrow$ capability domination.}
+By the Shephard problem for projections
+\citep{petty1967projection, schneider1967projections}, for
+$d_{\mathrm{eff}} \ge 3$ there exist convex profiles $K, L$ with
+$\pi_i(K) < \pi_i(L)$ for all $i$ yet $\mathrm{vol}_D(K) >
+\mathrm{vol}_D(L)$. Empirically, $50$ domination-contradiction pairs
+and $98\%$ of draws producing $\ge 1$ rank reversal
+(App.~\ref{app:validation}, H.9, H.20).
 
 \section{Related Work}
 \label{sec:related}
 
-Factor analysis of LLM score matrices reveals low-dimensional
-structure: \citet{burnell2024revealing} find three factors on HELM;
-metabench~\citep{kipnis2025metabench} finds a single dominant factor
-across $5{,}000+$ models at ICLR 2025; General
-Scales~\citep{hernandezorallo2026nature} provides demand-based ability
-profiles in Nature. We formalise what this structure \emph{implies}:
-Hausdorff bounds on indistinguishability, minimax recovery rates, and
-greedy convergence guarantees that none of these works provide.
-Concurrent BenchScope~\citep{shazhao2026benchscope} independently
-identifies low $d_{\mathrm{eff}}$; we add the indistinguishability
-bound, greedy algorithm, and minimax rate.
-Active evaluation acquisition \citep{li2025active} uses RL for subset
-selection; our submodular greedy provides the $(1-1/e)$ guarantee
-that RL lacks.
-HypoSpace~\citep{hypospace2025} treats discrete underdetermination;
-ours is the continuous analogue with convergence rates.
-Social-choice-theoretic subset selection (Metritocracy) optimises
-positional proportionality (rank preservation); our spectral
-coverage optimises explained variance. Empirically the two objectives
-are near-orthogonal ($\rho = 0.09$ across $200$ random $6$-subsets;
-App.~H.45), confirming they are genuinely complementary: spectral
-coverage bounds the geometric blind spot while positional
-proportionality bounds rank distortion.
-IRT models \citep{burnell2024revealing, polo2024tinybenchmarks}
-operate at item level (complementary); convex recovery lower bounds
-\citep{guntuboyina2011minimax} treat the noisy case. The smooth rate
-uses Jackson--Bernstein theory \citep{ragozin1970polynomial,
-dai2013approximation} and Kolmogorov $n$-widths
-\citep{magaril2006optimal}. Dynamic evaluation protocols
-(Dynabench~\citep{kiela2021dynabench}, DyVal) increase
-\emph{within-benchmark} difficulty; our greedy algorithm adds
-\emph{orthogonal benchmarks} --- complementary strategies. The
-noiseless directional-discretisation regime dominates in modern
-large-item benchmarks because each aggregates $O(10^3)$ items,
-reducing statistical noise to negligible levels; the noisy
-$f$-divergence regime \citep{guntuboyina2011minimax} would re-emerge
-for single-item or few-item evaluations. Multi-criteria benchmark
-designs (e.g., COMPASS for code, which separates correctness,
-efficiency, and quality) corroborate the existence of independent
-axes but do not quantify coverage bounds; Bayesian rank models
-provide posterior uncertainty on composite scores but not on the
-geometric blind spot.
+Low-dimensional structure in LLM scores is documented empirically
+\citep{burnell2024revealing, kipnis2025metabench,
+hernandezorallo2026nature}; we formalise what it \emph{implies}
+(bounds, rates, convergence).
+BenchScope~\citep{shazhao2026benchscope} shares the diagnostic; we
+add the indistinguishability bound, greedy algorithm, and minimax
+rate. Active evaluation~\citep{li2025active} uses RL for subset
+selection (no guarantee); social-choice selection (Metritocracy)
+optimises rank preservation, which is empirically near-orthogonal
+to spectral coverage ($\rho = 0.09$; App.~H.45).
+IRT models \citep{polo2024tinybenchmarks} operate at item level
+(complementary); convex recovery bounds
+\citep{guntuboyina2011minimax} treat the noisy case; ours treats
+noiseless directional discretisation via Jackson--Bernstein theory
+\citep{ragozin1970polynomial} and $n$-widths
+\citep{magaril2006optimal}. Dynamic protocols
+(Dynabench~\citep{kiela2021dynabench}) increase within-benchmark
+difficulty; our greedy adds orthogonal benchmarks.
 
 \section{Discussion}
 \label{sec:discuss}
