@@ -905,17 +905,16 @@ does not apply to our continuous scores. Prompt
 variation~\citep{pashkovich2024efficient} is absorbed into the
 $\varepsilon$ term; the structural blind spot ($52$--$127\times$
 larger) remains dominant.
-\paragraph{Shared latent structure across suites.}
-Even between suites sharing \emph{no} benchmarks, the dominant
-capability dimension partially transfers: model PC1 scores on the
-$6$ OLLM~v2 benchmarks correlate at $r = 0.27$ ($p = 0.001$) with
-PC1 scores on the $6$ disjoint v1 benchmarks; the best-match
-alignment reaches $r = 0.65$ (App.~\ref{app:validation}, H.42).
-Full-suite ranking agreement between non-overlapping suites is
-$\tau = 0.25$ (all models; App.~H.49). This shared component
-accounts for modest variance ($7\%$) but contributes to cross-suite
-ranking agreement: capability dimensions orthogonal to the shared
-structure are unmeasured by all suites simultaneously.
+\paragraph{Evaluation monoculture.}
+Three fundamentally different evaluation methodologies ---
+accuracy benchmarks, human pairwise preference (Arena), and
+LLM-as-judge (AlpacaEval) --- produce highly correlated rankings
+(mean Spearman $\rho = 0.75$, range $[0.60, 0.83]$ across four
+methodology pairs with $n = 10$--$31$ matched models;
+App.~\ref{app:validation}, H.42). The g-factor dominates across
+evaluation \emph{types}, not just benchmark suites: capability
+dimensions orthogonal to the shared ranking axis are unmeasured by
+\emph{all} methodologies simultaneously.
 Multi-objective extensions incorporating fairness, safety, or
 data-quality constraints alongside spectral coverage are a natural
 direction; the submodular framework admits such extensions via
