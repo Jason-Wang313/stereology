@@ -30,36 +30,24 @@ A Stereological Theory of Benchmark Coverage for Large Language Models}
 \maketitle
 
 \begin{abstract}
-We give a stereological theory of LLM benchmark coverage. For any
-suite with effective dimensionality $d_{\mathrm{eff}}$, the
-\emph{visible} Hausdorff distance between two convex capability
-profiles consistent with the same scores is bounded by $\varepsilon
-+ C R\,m^{-1/(d_{\mathrm{eff}}-1)}$, with matching Lipschitz lower
-bound (Theorem~\ref{thm:body:indist}). Empirically, three independent
-leaderboards (Open LLM v2, an extended $12$-benchmark suite,
-LiveBench) all have $d_{\mathrm{eff}} \in [2.86, 4.80]$ on their
-competitive frontier; the structural blind spot exceeds the observed
-runner-up score gap by two orders of magnitude and dominates
-statistical noise by $52$--$127\times$.
-Under a chi-squared projection model, the isotropic prior is the
-\emph{optimistic} case (Proposition~\ref{prop:body:swapmono}, via
-Schur-convexity); across six hidden-capability priors and four
-ambient dimensions the simulated half-split swap rate of the top
-two models stays in $[0.38, 0.49]$, and a $500$-trial random
-visible/held-out split shows that $92\%$ of trials swap the top-1
-ranking with on average $2.83$ of $5$ top-5 models changing. A
-submodular greedy algorithm with the Nemhauser $(1 - 1/e)$ guarantee
-finds a stable core of $4$ benchmarks; $7$ of $12$ suffice for
-$90\%$ coverage, and the trained subset transfers across temporal
-quarters with $93$--$97\%$ retention. A counterfactual validation across $12$ internal benchmarks and $27$
-Chatbot Arena categories confirms that the eigenstructure predicts
-which evaluations are irreplaceable ($\rho = -0.69$, $p = 0.013$
-for removal disruption) and which external evaluations bring new
-information ($\rho = +0.38$). As a second, independent theoretical
-contribution, we resolve Gardner's Problem~1.5 (1995) for $C^2$
-support functions, establishing the minimax rate
-$\Theta(R/(\kappa m^{2/(D-1)}))$ in general dimension via optimal
-recovery theory on $S^{D-1}$.
+Public LLM leaderboards observe capability only through a small number
+of benchmark directions. We give a stereological theory of this
+observation, showing (Theorem~\ref{thm:body:indist}) that two convex
+capability profiles consistent with the same scores can still differ
+in \emph{visible} Hausdorff distance by $\varepsilon + C R\,
+m^{-1/(d_{\mathrm{eff}}-1)}$, where $d_{\mathrm{eff}}$ is the
+effective dimensionality of the suite; the bound is tight via a
+matching Lipschitz lower bound. Empirically, on the competitive
+frontier of an extended $12$-benchmark suite, $d_{\mathrm{eff}} =
+4.80$ and the \emph{blind-spot / score-gap} ratio is $385\times$, so
+the top ranking is structurally underdetermined: a $500$-trial
+random visible/held-out split swaps the top-$1$ model in $92\%$ of
+trials, with $2.83$ of $5$ top-$5$ models changing on average.
+A submodular greedy procedure with the Nemhauser $(1 - 1/e)$
+guarantee (Theorem~\ref{thm:body:greedy}) recovers $90\%$ coverage
+with $7$ of $12$ benchmarks and transfers across temporal quarters
+with $93$--$97\%$ retention. Open LLM v2 and LiveBench are reported
+as corroborating suites.
 \end{abstract}
 
 \section{Introduction}
@@ -75,28 +63,40 @@ those limits to LLM evaluation, and shows that on real public
 leaderboards the geometric blind spot from low-dimensional
 measurement dominates statistical noise by an order of magnitude.
 
-\paragraph{Diagnose, prognose, treat.} We \emph{diagnose} the blind
-spot (Theorem~\ref{thm:body:deff}: $k$ benchmarks probe only
-$d_{\mathrm{eff}} \approx 3$--$5$ independent directions),
-\emph{prognose} its consequences
-(Theorem~\ref{thm:body:indist}: the visible indistinguishability
-bound is $\varepsilon + C R m^{-1/(d_{\mathrm{eff}}-1)}$, tight via
-matching Lipschitz lower bound;
-Corollary~\ref{cor:body:rank}: the
-top-two swap probability lies in $[0.38, 0.49]$ across six priors
-and four ambient dimensions), and \emph{treat} it
-(Theorem~\ref{thm:body:greedy}: a submodular greedy algorithm with
-the $(1-1/e)$ guarantee, $7$ of $12$ benchmarks for $90\%$ coverage,
-with a stable core of $4$ and $93$--$97\%$ cross-temporal transfer).
-Proposition~\ref{prop:body:width} formally justifies the
-benchmark-as-width model;
-Proposition~\ref{prop:body:swapmono} proves the isotropic chi-squared
-bound is the \emph{optimistic} case via Schur-convexity. As a second,
-independent contribution, we resolve Gardner's Problem~1.5
-(1995) for $C^2$ support functions
-(Theorem~\ref{thm:body:gardner}). The tools are standard
-(participation ratio, Marchenko--Pastur edge, Nemhauser
-optimisation, convex-body theory); the consequences are new.
+\paragraph{Contributions.} This paper makes four contributions, in
+priority order.
+\begin{enumerate}[leftmargin=*, topsep=2pt, itemsep=1pt]
+  \item \textbf{A theory of evaluation blind spots.} Theorem~\ref{thm:body:indist}
+  bounds the visible Hausdorff distance between two capability
+  profiles with identical scores by $\varepsilon + C R\,
+  m^{-1/(d_{\mathrm{eff}}-1)}$, with matching Lipschitz lower bound.
+  Proposition~\ref{prop:body:width} formally justifies the
+  benchmark-as-width model whose linearisation residual is
+  absorbed into $\varepsilon$.
+  \item \textbf{A quantitative account of ranking unreliability.}
+  Theorem~\ref{thm:body:deff} shows that $k$ benchmarks probe only
+  $d_{\mathrm{eff}} \approx 3$--$5$ independent directions on real
+  leaderboards. Corollary~\ref{cor:body:rank} and
+  Proposition~\ref{prop:body:swapmono} (via Schur-convexity) turn
+  this into top-pair swap probabilities, which held-out-direction
+  experiments confirm empirically ($92\%$ top-$1$ swap on the
+  extended frontier).
+  \item \textbf{An intervention with guarantees.}
+  Theorem~\ref{thm:body:greedy} formulates benchmark selection as a
+  monotone submodular coverage problem, so greedy selection achieves
+  the Nemhauser $(1-1/e)$ bound; empirically, $7$ of $12$ benchmarks
+  suffice for $90\%$ coverage and the trained subset transfers across
+  temporal quarters with $93$--$97\%$ retention. A counterfactual
+  validation confirms that the eigenstructure predicts which
+  evaluations are irreplaceable.
+  \item \textbf{An additional mathematical consequence.} The
+  smooth-rate machinery of Theorem~\ref{thm:body:indist} yields a
+  minimax recovery result connected to Gardner's Problem~1.5
+  (Theorem~\ref{thm:body:gardner}; full treatment in
+  Appendix~\ref{app:gardner}).
+\end{enumerate}
+The tools are standard (participation ratio, Marchenko--Pastur edge,
+Nemhauser optimisation, convex-body theory); the consequences are new.
 
 \paragraph{Related work, positioned.} Concurrent work by
 \citet{shazhao2026benchscope} (BenchScope) independently identifies
@@ -111,12 +111,11 @@ across benchmarks via submodular coverage. A full discussion is in
 Section~\ref{sec:related}.
 
 \paragraph{Geometric tomography.}
-\citet{gardner1995geometric, gardner2006geometric} posed Problem 1.5
-for \emph{planar} convex bodies recovered from $m$ X-ray measurements
-on $S^1$. Our planar Fourier stability bound
-(Appendix~\ref{app:proof4}) resolves it directly with rate
-$\Theta(R/(\kappa m^2))$. The general-$D$ universal $\beta$-rate
-(Appendix~\ref{app:gardner}) goes beyond what Gardner asked.
+The smooth-rate case of Theorem~\ref{thm:body:indist} yields a
+minimax recovery rate on $S^{D-1}$ that, as a standalone
+mathematical statement, resolves Gardner's Problem~1.5
+\citep{gardner1995geometric, gardner2006geometric}; we defer the
+full development to Appendix~\ref{app:gardner}.
 
 \section{Setup}
 
@@ -286,9 +285,11 @@ LiveBench       & mixed    & frontier  &  7 &  19 & 4.74              & 4.62 \\
 HellaSwag, ARC, TruthfulQA, Winogrande, GSM8K (from OLLM v1) and
 IFEval, BBH, MATH Lvl 5, GPQA, MUSR, MMLU-PRO (from v2). The finding
 generalises: every frontier slice has $d_{\mathrm{eff}} \in [2.86,
-4.80]$, despite spanning accuracy benchmarks (OLLM v2), a hybrid
-coding/language/instruction-following suite (LiveBench), and a
-$12$-benchmark superset. Low effective
+4.80]$, despite spanning a $12$-benchmark superset (our empirical
+anchor), accuracy benchmarks (OLLM v2), and a hybrid
+coding/language/instruction-following suite (LiveBench; reported as
+small-sample corroboration, $n = 19$ on the frontier, see
+App.~H.16 for non-monotonicity above $q = 0.6$). Low effective
 dimensionality is a property of LLM evaluation as a whole, not an
 artefact of a single methodology. The full population is dominated by
 a single g-factor (small $\to$ large capability); on the frontier the
@@ -328,6 +329,23 @@ the blind spot persists across evaluation types.
 \end{figure}
 
 \section{Indistinguishability Bound}
+
+\paragraph{Metric dictionary.} Three ratios recur in this paper and we
+name them here; all numerical values later in the text use this
+convention.
+\begin{itemize}[leftmargin=*, topsep=1pt, itemsep=1pt]
+  \item \textbf{Blind-spot / score-gap ratio} $= \delta_H^{\mathrm{vis}} / \Delta_2$:
+  structural blind spot divided by the top-pair standardised score
+  gap. Ratios are reported from Table~\ref{tab:calibration} using
+  $z$-score standardised $\Delta_2$ throughout.
+  \item \textbf{Blind-spot / noise ratio} $= \delta_0 / \sigma_{\mathrm{boot}}$:
+  geometric radius $\pi R / k$ divided by the bootstrap median
+  per-model standard deviation; developed in Appendix~H.12.
+  \item \textbf{Swap probability} $= P(\mathrm{top\text{-}1\ wrong})$
+  under a chi-squared projection model (Corollary~\ref{cor:body:rank}
+  and Proposition~\ref{prop:body:swapmono}); empirical analogue is
+  the half-split swap rate.
+\end{itemize}
 
 \paragraph{Centering convention.}
 We model capability profiles as origin-symmetric convex bodies
@@ -430,11 +448,12 @@ worst-case covering bounds.
 Theorem~\ref{thm:body:indist} bounds the \emph{structural} blind spot
 from unobserved directions, which persists with infinite data per
 benchmark. Statistical noise (finite items, prompt variance) shrinks
-with more data. The geometric radius exceeds the bootstrap
-statistical radius by $86.6\times$ (OLLM v2), $127.2\times$
-(Extended), and $51.6\times$ (LiveBench) on the frontier
-(Table~\ref{tab:calibration}; App.~H.12). The structural blind
-spot is the dominant source across every suite.
+with more data. On the extended frontier the structural blind spot
+dominates both references: the \textit{blind-spot / score-gap ratio}
+is $385\times$ (and $123\times$ on OLLM v2, $26\times$ on LiveBench;
+Table~\ref{tab:calibration}), while the \textit{blind-spot / noise
+ratio} on the extended frontier is $8.95\times$ (App.~H.12). The
+structural term dominates across every suite.
 
 \paragraph{A third source: decoding non-determinism.}
 Stochastic decoding (temperature $> 0$, nucleus sampling, best-of-$N$
@@ -442,8 +461,8 @@ selection) introduces within-model variance that is distinct from
 both the structural blind spot and statistical noise. Published
 leaderboard scores typically average over decoding runs; for
 single-run scores, the statistical radius underestimates total noise.
-But the structural blind spot ($52$--$127\times$ larger) remains the
-dominant term regardless.
+The structural blind spot remains the dominant term regardless
+(Table~\ref{tab:calibration}).
 
 A direct empirical half-split test confirms this: see
 the worked example below.
@@ -491,8 +510,9 @@ ranking is structurally indeterminate; the finding is robust across
 standardisations (App.~H.41).
 
 \paragraph{Worked example: a structurally indeterminate ranking.}
-On the Open LLM v2 frontier, $\delta_H^{\mathrm{vis}} = 21.2$
-exceeds $\Delta_2 = 0.17$ by $123\times$ (Table~\ref{tab:calibration}).
+On the Open LLM v2 frontier, $\delta_H^{\mathrm{vis}} = 21.2$ and the
+standardised $\Delta_2 = 0.17$, so the blind-spot / score-gap ratio
+is $123\times$ (Table~\ref{tab:calibration}).
 Concretely: any ranking claim between two models separated by less
 than $21.2$ standardised units is structurally indeterminate --- no
 amount of additional test items on the \emph{same} benchmarks can
@@ -511,11 +531,12 @@ models each (App.~H.47): practitioners should report ``these $10$
 models are in the top class (structurally indistinguishable)'' rather
 than ``Model A is \#1.''
 
-\paragraph{Second contribution: resolution of an open problem in geometric tomography.}
-The machinery of Theorem~\ref{thm:body:indist} yields a second,
-independent mathematical contribution. The smooth extension
-(Theorem~\ref{thm:body:indist}c) connects to a long-standing open
-problem in convex geometry:
+\paragraph{Additional mathematical consequence.}
+The smooth-rate machinery of Theorem~\ref{thm:body:indist}c yields
+a minimax recovery result on $S^{D-1}$ that, as a standalone
+mathematical statement, connects to a long-standing open problem in
+convex geometry. We state it here for completeness; the full
+development and proof are in Appendix~\ref{app:gardner}.
 
 \begin{theorem}[Resolution of Gardner's Problem 1.5 for $C^2$ bodies]
 \label{thm:body:gardner}
@@ -808,6 +829,43 @@ populations from $n = 49$ (Epoch~AI) to $n = 4{,}576$ (full OLLM~v2;
 App.~H.44), and across three non-overlapping suites sharing zero
 benchmarks ($d_{\mathrm{eff}} \in [2.63, 3.27]$; App.~H.48).
 
+\paragraph{When the model bites.} The four load-bearing assumptions,
+each with an empirical diagnostic and the direction of failure, are:
+
+\begin{table}[h]
+\small\centering
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.23\linewidth} p{0.37\linewidth} p{0.32\linewidth}}
+\toprule
+\textbf{Assumption} & \textbf{Empirical diagnostic} &
+\textbf{If it fails} \\
+\midrule
+Linearisation of the width function
+  (Prop.~\ref{prop:body:width})
+  & Quadratic-vs-linear $R^2$ gap $\le 0.067$ across all benchmarks;
+    safe when $\eta \ll \Delta_2$ (App.~H.46)
+  & Use local nonlinear model; blind-spot estimate grows \\
+Convexity of the capability body
+  (Thm.~\ref{thm:body:indist})
+  & Stated per-theorem; conservative by construction
+  & Non-convex bodies are harder to reconstruct; bound tightens in
+    the same direction \\
+Approximate isotropy of hidden capabilities
+  (Cor.~\ref{cor:body:rank})
+  & Swap rate maximised at isotropy
+    (Prop.~\ref{prop:body:swapmono}, Schur-convexity);
+    $\kappa_\perp = 0.48$ correction on Extended (App.~H.30)
+  & Anisotropy \emph{increases} swap rate; isotropy result is a
+    lower bound \\
+No shared items across benchmarks
+  & App.~H.28: controlling for $\log(\mathrm{params})$ raises
+    $d_{\mathrm{eff}}$ from $4.80$ to $5.11$
+  & Shared items deflate $d_{\mathrm{eff}}$ and \emph{understate}
+    the blind spot; qualitative conclusions unchanged \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{Generality and robustness.}
 Theorems~\ref{thm:body:deff}--\ref{thm:body:indist} hold for any
 score matrix, not only LLM benchmarks. Pearson, Spearman, and
@@ -815,8 +873,9 @@ Kendall correlations agree within $\Delta d_{\mathrm{eff}} < 0.3$
 (App.~H.33); binary attenuation~\citep{shazhao2026benchscope}
 does not apply to our continuous scores. Prompt
 variation~\citep{pashkovich2024efficient} is absorbed into the
-$\varepsilon$ term; the structural blind spot ($52$--$127\times$
-larger) remains dominant.
+$\varepsilon$ term; the structural blind spot (blind-spot /
+score-gap ratio $26$--$385\times$ across suites,
+Table~\ref{tab:calibration}) remains dominant.
 \paragraph{Evaluation monoculture.}
 Three fundamentally different evaluation methodologies ---
 accuracy benchmarks, human pairwise preference (Arena), and
